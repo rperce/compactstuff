@@ -104,7 +104,7 @@ public class CompactTickHandler implements ITickHandler {
 					EntityPlayer p = (EntityPlayer)e;
 					if(p.getLastAttackingEntity()!=null && p.getLastAttackingEntity().equals(player)) {
 						p.attackEntityFrom(DamageSource.causePlayerDamage(player), (int)(2./3*dmg));
-						p.setLastAttackingEntity(null);
+						p.setLastAttackingEntity(new EntityZombie());
 					}
 				} else if(e instanceof EntityMob) {
 					EntityPlayer attack = findPlayerToAttack((EntityMob)e);
