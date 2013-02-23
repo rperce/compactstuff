@@ -19,6 +19,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntitySlime;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
@@ -104,7 +105,7 @@ public class CompactTickHandler implements ITickHandler {
 					EntityPlayer p = (EntityPlayer)e;
 					if(p.getLastAttackingEntity()!=null && p.getLastAttackingEntity().equals(player)) {
 						p.attackEntityFrom(DamageSource.causePlayerDamage(player), (int)(2./3*dmg));
-						p.setLastAttackingEntity(new EntityZombie());
+						p.setLastAttackingEntity(new EntityZombie(p.worldObj));
 					}
 				} else if(e instanceof EntityMob) {
 					EntityPlayer attack = findPlayerToAttack((EntityMob)e);

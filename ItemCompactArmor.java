@@ -83,21 +83,20 @@ public class ItemCompactArmor extends ItemArmor implements IArmorTextureProvider
 		else if(id==wovnPants.itemID) list.add("Fire extinguishing");
 		else if(id==wovnBoots.itemID) list.add("No fall damage");
 		else if(id==pureHelmt.itemID) {
-			list.add("∞ water breathing");
-			list.add("∞ durability");
+			list.add("Infinite water breathing");
+			list.add("Infinite durability");
 		}
 		else if(id==purePlate.itemID) {
 			list.add("Force field to hostiles");
-			list.add("∞ durability");
+			list.add("Infinite durability");
 		}
 		else if(id==purePants.itemID) {
 			list.add("Fire immunity");
-			list.add("∞ durability");
+			list.add("Infinite durability");
 		}
 		else if(id==pureBoots.itemID) {
 			list.add("No fall damage");
-			list.add("Step over blocks");
-			list.add("∞ durability");
+			list.add("Infinite durability");
 		}
 	}
 }

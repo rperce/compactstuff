@@ -61,6 +61,7 @@ public class BlockCompressed extends Block {
         	case Metas.COMREDSTONE:	return 5f;
         	case Metas.COMDIAMOND:	return 16f;
         	case Metas.COMIRON:		return 16f;
+        	case Metas.STEELBLOCK:	return 16f;
         	case Metas.COMSTEEL:	return 16f;
         	default: return 4f;
         }

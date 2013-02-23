@@ -17,4 +17,22 @@ public final class Metas {
 		
 		
 		COMREDSTONE	= 15;
+	
+	public static final int
+		DYE_BLACK	= 0,
+		DYE_RED		= 1,
+		DYE_GREEN	= 2,
+		DYE_BROWN	= 3,
+		DYE_BLUE	= 4,
+		DYE_PURPLE	= 5,
+		DYE_CYAN	= 6,
+		DYE_LGRAY	= 7,
+		DYE_GRAY	= 8,
+		DYE_PINK	= 9,
+		DYE_LIME	= 10,
+		DYE_YELLOW	= 11,
+		DYE_LBLUE	= 12,
+		DYE_MAGENTA	= 13,
+		DYE_ORANGE	= 14,
+		DYE_WHITE	= 15;
 }

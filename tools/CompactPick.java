@@ -19,6 +19,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class CompactPick extends ItemPickaxe {
+	private boolean okay=false;
 	public CompactPick(int id, EnumToolMaterial material, int icon) {
 		super(id,material);
 		this.setIconIndex(icon);
@@ -28,9 +29,12 @@ public class CompactPick extends ItemPickaxe {
 	@Override public boolean getIsRepairable(ItemStack thisOne, ItemStack otherOne) {
         return CompactTool.getIsRepairable(thisOne,otherOne,"Pick");
     }
-	@Override public boolean onBlockDestroyed(ItemStack thisStack, World world, int blockSlot, int x, int y, int z, EntityLiving holder) {
+	/*@Override public boolean onBlockDestroyed(ItemStack thisStack, World world, int blockSlot, int x, int y, int z, EntityLiving holder) {
 		if(thisStack.itemID!=CompactStuff.heatPick.itemID || !(holder instanceof EntityPlayer))
 			return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z, holder);
+		((CompactPick)thisStack.getItem()).okay=!((CompactPick)thisStack.getItem()).okay;
+		if(!okay) return false;
+		if(blockSlot==0 || Block.blocksList[blockSlot].getBlockHardness(world, x, y, z)==0) return true;
 		EntityPlayer player = (EntityPlayer)holder;
 		if(blockSlot==Block.oreIron.blockID || blockSlot==Block.oreGold.blockID || blockSlot==Block.stone.blockID) {
 			ItemStack origDrop = new ItemStack(
@@ -38,16 +42,22 @@ public class CompactPick extends ItemPickaxe {
 					Block.blocksList[blockSlot].quantityDropped(world.rand),
 					Block.blocksList[blockSlot].damageDropped(world.getBlockMetadata(x,y,z)));
 			EntityItem drop = new EntityItem(world, x, y, z,
-					FurnaceRecipes.smelting().getSmeltingResult(origDrop));
+					FurnaceRecipes.smelting().getSmeltingResult(origDrop)) {
+				@Override public void onUpdate() {
+					super.onUpdate();
+					System.out.println("ENTITYITEM age "+this.age+"/"+this.lifespan+"; "+this.posX+","+this.posY+","+this.posZ);
+				}
+			};
 			drop.delayBeforeCanPickup = 10;
 			world.setBlockAndMetadataWithNotify(x, y, z, 0, 0);
 			world.spawnEntityInWorld(drop);
-			System.out.println("Just dropped "+FurnaceRecipes.smelting().getSmeltingResult(origDrop).getDisplayName());
+			System.out.println("Just dropped "+FurnaceRecipes.smelting().getSmeltingResult(origDrop).getDisplayName()+
+					"; age "+drop.age+"/"+drop.lifespan);
 			thisStack.damageItem(1, player);
 			return true;
 		}
 		return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z, holder);
-	}
+	}*/
 	@SideOnly(Side.CLIENT)
 	@Override public void addInformation(ItemStack thisStack, EntityPlayer player, List list, boolean boo) {
 		if(thisStack.itemID!=CompactStuff.heatPick.itemID) return;

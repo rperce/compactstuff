@@ -433,13 +433,24 @@ public class CompactStuff {
 		}
 		
 		public void setUpBagOfHolding() {
-			ItemStack bag = new ItemStack(this.bagOfHolding);
+			ItemStack bag = new ItemStack(this.bagOfHolding,1,0);
 			LanguageRegistry.addName(bag, "Bag of Holding");
 			
 			GameRegistry.addRecipe(bag, "fef", "fnf", "fff",
 					'f', new ItemStack(this.carbon,1,6),
 					'e', new ItemStack(Item.emerald),
 					'n', new ItemStack(Item.eyeOfEnder));
+			
+			for(int bagMeta = 0; bagMeta<16; bagMeta++) {
+				for(int dyeMeta = 0; dyeMeta<16; dyeMeta++) {
+					int newbag = ItemBagOfHolding.COLOR_CRAFTING[dyeMeta][bagMeta];
+					if(newbag!=-1) {
+						GameRegistry.addShapelessRecipe(new ItemStack(this.bagOfHolding,1,newbag),
+							new ItemStack(this.bagOfHolding,1,bagMeta),
+							new ItemStack(Item.dyePowder,1,dyeMeta));
+					}
+				}
+			}
 		}
 		public void setUpTools() {
 			//setUpCobbleTools();
