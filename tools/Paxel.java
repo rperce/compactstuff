@@ -71,7 +71,7 @@ public class Paxel extends ItemTool {
 	    			}
 	    		} else {
 	    			for(Block[] breakThese : allTheThingsToBreak) {
-	    				int dmg = recursivelyBreakThings(breakThese, world, x, y, z, (EntityPlayer)player, 0);
+	    				int dmg = recursivelyBreakThings(breakThese, world, x, y, z, (EntityPlayer)player, x,y,z);
 	    				if(dmg>0) {
 	    					thisStack.damageItem(dmg,player);
 	    					return true;
@@ -81,8 +81,8 @@ public class Paxel extends ItemTool {
 	    	}
     	}
     	return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z, player);
-    } private int recursivelyBreakThings(Block[] breakThese, World world, int x, int y, int z, EntityPlayer player,int stop) {
-    	if(stop>128) return 0;
+    } private int recursivelyBreakThings(Block[] breakThese, World world, int x, int y, int z, EntityPlayer player,int ox,int oy,int oz) {
+    	if(Math.abs(ox-x)>32 || Math.abs(oy-y)>32 || Math.abs(oz-z)>32) return 0;
     	int thisBlockID = world.getBlockId(x, y, z);
     	if(thisBlockID==0 || thisBlockID==1) return 0;
     	boolean edgeCase = true;
@@ -112,12 +112,12 @@ public class Paxel extends ItemTool {
     	
     	world.setBlockAndMetadataWithNotify(x, y, z, 0, 0);
     	return (thisBlockID==Block.leaves.blockID ? 0 : 1) +
-	    	recursivelyBreakThings(breakThese, world, x-1, y, z, player, stop+1)+
-	    	recursivelyBreakThings(breakThese, world, x+1, y, z, player, stop+1)+
-	    	recursivelyBreakThings(breakThese, world, x, y-1, z, player, stop+1)+
-	    	recursivelyBreakThings(breakThese, world, x, y+1, z, player, stop+1)+
-	    	recursivelyBreakThings(breakThese, world, x, y, z-1, player, stop+1)+
-	    	recursivelyBreakThings(breakThese, world, x, y, z+1, player, stop+1);
+	    	recursivelyBreakThings(breakThese, world, x-1, y, z, player, ox,oy,oz)+
+	    	recursivelyBreakThings(breakThese, world, x+1, y, z, player, ox,oy,oz)+
+	    	recursivelyBreakThings(breakThese, world, x, y-1, z, player, ox,oy,oz)+
+	    	recursivelyBreakThings(breakThese, world, x, y+1, z, player, ox,oy,oz)+
+	    	recursivelyBreakThings(breakThese, world, x, y, z-1, player, ox,oy,oz)+
+	    	recursivelyBreakThings(breakThese, world, x, y, z+1, player, ox,oy,oz);
     } private int recursivelyBreakOres(World world, int x, int y, int z, EntityPlayer player, int stop) {
     	if(stop>128) return 0;
     	int thisBlockID = world.getBlockId(x, y, z);

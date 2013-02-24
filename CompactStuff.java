@@ -422,8 +422,8 @@ public class CompactStuff {
 			FurnaceRecipes.smelting().addSmelting(wafe.itemID,0,carb,3.0f);
 			
 			GameRegistry.addShapelessRecipe(dens, carb,carb,carb,carb,carb,carb,carb,carb);
-			GameRegistry.addRecipe(comp,"xxx","xyx","xxx",'x',new ItemStack(comBlock,1,Metas.COMCOBBLE),'y',dens);
-			GameRegistry.addRecipe(heat,"xxx","xyx","xxx",'x',new ItemStack(comBlock,1,Metas.COMRACK),'y',comp);
+			GameRegistry.addRecipe(comp," x ","xyx"," x ",'x',new ItemStack(comBlock,1,Metas.COMCOBBLE),'y',dens);
+			GameRegistry.addRecipe(heat," x ","xyx"," x ",'x',new ItemStack(comBlock,1,Metas.COMRACK),'y',comp);
 			GameRegistry.addRecipe(fibr2,"gcg","csc","gcg",
 					'g',new ItemStack(itemStuff,1,ItemStuff.GLASS_FIBER), 'c', carb, 's', new ItemStack(Item.slimeBall));
 			GameRegistry.addRecipe(fibr2,"cgc","gsg","cgc",
