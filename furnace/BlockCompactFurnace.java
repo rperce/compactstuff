@@ -59,10 +59,13 @@ public class BlockCompactFurnace extends BlockFurnace {
 		int blockIndex = this.blockImageIndex + 16*this.getFirstMetaBit(ba,x,y,z);
 		if(s==0 || s==1) return blockIndex;
 		TileEntityCompactFurnace te = (TileEntityCompactFurnace)(ba.getBlockTileEntity(x, y, z));
-		boolean hasOutput = te.hasOutput();
+		boolean hasOutput = te.hasOutput(),
+				hasFuel = te.hasFuel();
 		int front = getFront(ba,x,y,z);
 		boolean isActive = isActive(ba,x,y,z);
-        return (s!=front)?blockIndex+1:(isActive?blockIndex+3:blockIndex+2);
+		System.out.printf("%d, %d, %d: %shasFuel, %shasOut%n",x,y,z,hasFuel?"":"no",hasOutput?"":"no");
+		int out = blockIndex + ((s!=front)?1:(hasFuel?hasOutput?4:2:6));
+		return (isActive && s==front)?out+1:out;
 	}
 	
 	@Override public int getBlockTextureFromSide(int side) {
@@ -72,26 +75,15 @@ public class BlockCompactFurnace extends BlockFurnace {
 		int blockIndex = blockImageIndex+16*Integer.parseInt(""+getMetaStr(meta)[0]);
 		return (side==1||side==0)?blockIndex:(side==3?blockIndex+2:blockIndex+1);
 	}
-	public static void updateFurnaceBlockState(boolean isActive, World world, int x, int y, int z) {
-		if(isActive) setIsActive(world,x,y,z,true);
-		else setIsActive(world,x,y,z,false);
+	public void updateBlockNonStatic(World world, int x, int y, int z) {
+		int meta = world.getBlockMetadata(x,y,z);
+		keepInv=true;
+		world.setBlockMetadata(x,y,z,meta+1);
+		world.setBlockMetadataWithNotify(x,y,z,meta);
+		this.setIsActive(world, x, y, z, ((TileEntityCompactFurnace)world.getBlockTileEntity(x, y, z)).isBurning());
+		keepInv=false;
+	}
 		
-		int meta = world.getBlockMetadata(x, y, z);
-        TileEntity te = world.getBlockTileEntity(x, y, z);
-        
-        keepInv = true;
-        world.setBlockWithNotify(x, y, z, CompactStuff.furnace.blockID);
-        world.setBlockMetadata(x,y,z,meta);
-        keepInv = false;
-
-        
-        if (te != null)
-        {
-            te.validate();
-            world.setBlockTileEntity(x, y, z, te);
-        }
-    }
-	
 	@Override public TileEntity createNewTileEntity(World par1World,int meta) {
         if(meta<8) return new TileEntityCobbleFurnace();
         return new TileEntityCarbonFurnace();

@@ -14,6 +14,7 @@ import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ISidedInventory;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -60,13 +61,15 @@ public abstract class TileEntityCompactFurnace extends TileEntity implements IIn
     }
 	
 	public boolean hasOutput() {
-		return getStackInSlot(2)!=null;
+		return getStackInSlot(2)!=null && getStackInSlot(2).stackSize>0;
+	}
+	public boolean hasFuel() {
+		return getItemBurnTime(getStackInSlot(1))>0;
 	}
 	
-
-	public void updateBlock() {
-		BlockCompactFurnace.updateFurnaceBlockState(getFurnaceBurnTime()>0,
-				this.worldObj, this.xCoord, this.yCoord, this.zCoord);
+	@Override public void onInventoryChanged() {
+		super.onInventoryChanged();
+		((BlockCompactFurnace)Block.blocksList[worldObj.getBlockId(xCoord, yCoord, zCoord)]).updateBlockNonStatic(worldObj,xCoord,yCoord,zCoord);
 	}
 	
 	public static int getItemBurnTime(ItemStack stack)

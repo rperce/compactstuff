@@ -147,7 +147,7 @@ public class ContainerCompactFurnace extends Container {
 
             var4.onPickupFromSlot(par1EntityPlayer, var5);
         }
-
+        this.furnace.onInventoryChanged();
         return var3;
     }
 }

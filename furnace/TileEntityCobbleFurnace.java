@@ -58,7 +58,6 @@ public class TileEntityCobbleFurnace extends TileEntityCompactFurnace {
 
             if (burning != this.furnaceBurnTime > 0) {
                 invChange = true;
-                updateBlock();
             }
         }
 

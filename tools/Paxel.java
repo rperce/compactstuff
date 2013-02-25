@@ -82,7 +82,7 @@ public class Paxel extends ItemTool {
     	}
     	return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z, player);
     } private int recursivelyBreakThings(Block[] breakThese, World world, int x, int y, int z, EntityPlayer player,int ox,int oy,int oz) {
-    	if(Math.abs(ox-x)>32 || Math.abs(oy-y)>32 || Math.abs(oz-z)>32) return 0;
+    	if(Math.abs(ox-x)>16 || Math.abs(oy-y)>16 || Math.abs(oz-z)>16) return 0;
     	int thisBlockID = world.getBlockId(x, y, z);
     	if(thisBlockID==0 || thisBlockID==1) return 0;
     	boolean edgeCase = true;

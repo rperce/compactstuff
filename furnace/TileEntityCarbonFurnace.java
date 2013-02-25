@@ -104,7 +104,6 @@ public class TileEntityCarbonFurnace extends TileEntityCompactFurnace {
 
             if (burning != this.furnaceBurnTime > 0) {
                 invChange = true;
-                updateBlock();
             }
         }
 
