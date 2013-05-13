@@ -1,15 +1,16 @@
-package compactstuff.boh;
+package mods.CompactStuff.boh;
 
 import java.util.List;
 
+import mods.CompactStuff.CSIcons;
+import mods.CompactStuff.CompactStuff;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
-
-import compactstuff.ImageFiles;
-import compactstuff.CompactStuff;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -33,22 +34,23 @@ public class ItemBagOfHolding extends Item {
 		{/*14*/-1, -1, -1, -1,  3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 14 },
 		{/*15*/ 8,  9, 10, 15, 12, 15, 15, 15,  7, 15, 15, 15, 15, 15, 15, -1 },
 	};
+	private static Icon[] icons = new Icon[16];
 	static int rows;
 	public ItemBagOfHolding(int id) {
 		super(id);
 		setHasSubtypes(true);
-		setIconIndex(80);
 		setMaxStackSize(1);
 		this.rows = 3;
-		this.setItemName("Bag of Holding");
+		this.setUnlocalizedName("Bag of Holding");
 		this.setCreativeTab(CompactStuff.compactTab);
 	}
-		
-	@Override public String getTextureFile() {
-		return ImageFiles.ITEMS.path;
+	@Override public void updateIcons(IconRegister ir) {
+		for(int i=0; i<16; i++) {
+			icons[i] = ir.registerIcon(CSIcons.PREFIX+"boh"+i);
+		}
 	}
-	@Override public int getIconFromDamage(int meta) {
-		return 80+meta;
+	@Override public Icon getIconFromDamage(int meta) {
+		return icons[meta];
 	}	
 	@Override public ItemStack onItemRightClick(ItemStack thisStack, World world, EntityPlayer player) {
 		player.openGui(CompactStuff.instance, 2, world, (int)player.posX, (int)player.posY, (int)player.posZ);

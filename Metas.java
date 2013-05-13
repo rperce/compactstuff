@@ -1,4 +1,4 @@
-package compactstuff;
+package mods.CompactStuff;
 
 public final class Metas {
 	public static final int
@@ -13,10 +13,7 @@ public final class Metas {
 		COMSAND		= 8,
 		COMDIRT		= 9,
 		COMGRAVEL	= 10,
-		COMGLASS	= 11,
-		
-		
-		COMREDSTONE	= 15;
+		COMGLASS	= 11;
 	
 	public static final int
 		DYE_BLACK	= 0,

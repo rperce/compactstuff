@@ -1,24 +1,8 @@
-package compactstuff;
-
-import static compactstuff.CompactStuff.carbBoots;
-import static compactstuff.CompactStuff.carbHelmt;
-import static compactstuff.CompactStuff.carbPants;
-import static compactstuff.CompactStuff.carbPlate;
-import static compactstuff.CompactStuff.cobBoots;
-import static compactstuff.CompactStuff.cobHelmt;
-import static compactstuff.CompactStuff.cobPants;
-import static compactstuff.CompactStuff.cobPlate;
-import static compactstuff.CompactStuff.pureBoots;
-import static compactstuff.CompactStuff.pureHelmt;
-import static compactstuff.CompactStuff.purePlate;
-import static compactstuff.CompactStuff.purePants;
-import static compactstuff.CompactStuff.wovnBoots;
-import static compactstuff.CompactStuff.wovnHelmt;
-import static compactstuff.CompactStuff.wovnPants;
-import static compactstuff.CompactStuff.wovnPlate;
+package mods.CompactStuff;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.ItemArmor;
@@ -28,19 +12,20 @@ import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import static mods.CompactStuff.CompactStuff.*;
 
 public class ItemCompactArmor extends ItemArmor implements IArmorTextureProvider {
-
-	public ItemCompactArmor(int id, EnumArmorMaterial material, int rend, int armorType) {
+	private String path;
+	public ItemCompactArmor(int id, EnumArmorMaterial material, int rend, int armorType, String path) {
 		super(id, material, rend, armorType);
 		this.setCreativeTab(CompactStuff.compactTab);
+		this.path = CSIcons.PREFIX + path;
 	}
 	
-	@SideOnly(Side.CLIENT)
-	public String getTextureFile() {
-		return ImageFiles.ITEMS.path;
+	@Override public void updateIcons(IconRegister ir) {
+		iconIndex = ir.registerIcon(path);
 	}
-
+	
 	@ForgeSubscribe
 	public static void onEntityLivingFallEvent(LivingFallEvent evt) {
 		if(evt.entity instanceof EntityPlayer) {

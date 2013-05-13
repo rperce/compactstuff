@@ -1,4 +1,4 @@
-package compactstuff;
+package mods.CompactStuff;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,7 +20,6 @@ public class EntityFallingCompact extends Entity {
 	public int blockID,
     	metadata;
 
-    /** How long the block has been falling for. */
     public int fallTime;
     public boolean shouldDropItem;
     private int field_82156_g;
@@ -31,7 +30,7 @@ public class EntityFallingCompact extends Entity {
     	this.fallTime=0;
     	this.shouldDropItem=true;
     	this.field_82156_g = 40;
-      this.field_82158_h = 2.0F;
+    	this.field_82158_h = 2.0F;
     }
     public EntityFallingCompact(World par1World, double x, double y, double z, int id, int meta) {
         super(par1World);
@@ -85,7 +84,7 @@ public class EntityFallingCompact extends Entity {
                     return;
                 }
 
-                this.worldObj.setBlockWithNotify(var1, var2, var3, 0);
+                this.worldObj.setBlockToAir(var1, var2, var3);
             }
 
             if (this.onGround) {
@@ -96,7 +95,9 @@ public class EntityFallingCompact extends Entity {
                 if (this.worldObj.getBlockId(var1, var2, var3) != Block.pistonMoving.blockID) {
                     this.setDead();
 
-                    if (this.worldObj.canPlaceEntityOnSide(this.blockID, var1, var2, var3, true, 1, (Entity)null) && !BlockSand.canFallBelow(this.worldObj, var1, var2 - 1, var3) && this.worldObj.setBlockAndMetadataWithNotify(var1, var2, var3, this.blockID, this.metadata));
+                    if(this.worldObj.canPlaceEntityOnSide(this.blockID, var1, var2, var3, true, 1, (Entity)null, (ItemStack)null) &&
+                    		!BlockCompressed.canFallBelow(this.worldObj, var1, var2 - 1, var3) &&
+                    		this.worldObj.setBlock(var1, var2, var3, this.blockID, this.metadata, 3));
                     else if (this.shouldDropItem) {
                         this.entityDropItem(new ItemStack(this.blockID, 1, Block.blocksList[this.blockID].damageDropped(this.metadata)), 0.0F);
                     }

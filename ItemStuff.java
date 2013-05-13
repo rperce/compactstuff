@@ -1,12 +1,14 @@
-package compactstuff;
+package mods.CompactStuff;
 
 import java.util.List;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemStuff extends Item {
 	public static final int
@@ -16,29 +18,33 @@ public class ItemStuff extends Item {
 		ALLOY_PLATE	= 3,
 		IRON_PLATE	= 4,
 		STEEL_PLATE	= 5,
-		STEEL_INGOT	= 6;
+		STEEL_INGOT	= 6,
+		TMOG_CRYSTAL= 7,
+		MAXDMG		= 7;
 	
 	public static final String[] names =
-		{"Glass Slag", "Glass Fiber","Diamond Plating",
-		 "Carbon Alloy Plating","Iron Plating","CS Steel Plating",
-		 "CS Steel Ingot"};
-	
+		{"Glass Slag", "Glass Fiber","Diamond Plate",
+		 "Carbon Alloy Plate","Iron Plate","CS Steel Plate",
+		 "CS Steel Ingot", "Transmogrifier Crystal"};
+	private static Icon[] icons = new Icon[MAXDMG+1];
 	public ItemStuff(int id) {
 		super(id);
 		setHasSubtypes(true);
 		setMaxStackSize(64);
 		setCreativeTab(CompactStuff.compactTab);
-		setItemName("itemstuff");
+		setUnlocalizedName("itemstuff");
 	}
-	@Override public String getTextureFile() {
-		return ImageFiles.ITEMS.path;
+	@Override public void updateIcons(IconRegister ir) {
+		for(int i=0; i<=MAXDMG; i++) {
+			icons[i] = ir.registerIcon(CSIcons.PREFIX+"itemstuff"+i);
+		}
+	}
+		
+	@Override public Icon getIconFromDamage(int dmg) {
+		return icons[dmg];
 	}
 	
-	@Override public int getIconFromDamage(int dmg) {
-		return 64+dmg;
-	}
-	
-	@Override public String getItemNameIS(ItemStack i) {
+	@Override public String getUnlocalizedName(ItemStack i) {
 		try { return names[i.getItemDamage()]; }
 		catch(NullPointerException e) { return "Stuff"; }
 	}

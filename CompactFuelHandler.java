@@ -1,4 +1,4 @@
-package compactstuff;
+package mods.CompactStuff;
 
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.IFuelHandler;

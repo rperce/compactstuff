@@ -1,29 +1,34 @@
-package compactstuff.boh;
+package mods.CompactStuff.boh;
 
+import mods.CompactStuff.ImageFiles;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
 
-import compactstuff.ImageFiles;
-
 public class BagOfHoldingGUI extends GuiContainer {
 	private InventoryPlayer inv;
-	public BagOfHoldingGUI(InventoryPlayer inv, InventoryBagOfHolding bag) {
+	String custom = "";
+	public BagOfHoldingGUI(InventoryPlayer inv, InventoryBagOfHolding bag, ItemStack stack) {
 		super(new ContainerBagOfHolding(inv,bag));
 		this.inv = inv;
+		if(stack.hasTagCompound() && stack.getTagCompound().hasKey("display")) {
+			if(stack.getTagCompound().getCompoundTag("display").hasKey("Name")) {
+				custom = ": "+stack.getTagCompound().getCompoundTag("display").getString("Name");
+			}
+		}
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int _, int __) {
-		fontRenderer.drawString("Bag of Holding", 8, 5, 0x404040);
+		fontRenderer.drawString("Bag of Holding"+custom, 8, 5, 0x404040);
 	}
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
-		int texture = mc.renderEngine.getTexture(ImageFiles.HOLDINGBAG_GUI.path);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture(texture);
+        mc.renderEngine.bindTexture(ImageFiles.HOLDINGBAG_GUI.path);
         int x = (width - xSize) / 2;
         int y = (height - ySize) / 2;
         drawTexturedModalRect(x, y, 0, 0, xSize, ySize);		

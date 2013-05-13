@@ -1,24 +1,24 @@
-package compactstuff;
+package mods.CompactStuff;
 
 import java.util.HashMap;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockGlass;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
 public class BlockCompressed extends Block {
 	public static HashMap<Integer,String> names = new HashMap<Integer,String>();
+	public static HashMap<Integer, Icon> icons = new HashMap<Integer, Icon>();
 	private final static int tickRate = 5;
 	static {
 		names.put(Metas.COMCOBBLE, 	"Compressed Cobblestone");
 		names.put(Metas.COMCOAL, 	"Coal Block");
 		names.put(Metas.COMRACK, 	"Compressed Netherrack");
-		names.put(Metas.COMREDSTONE,"Redstone Block");
 		names.put(Metas.COMDIAMOND, "Compressed Diamond Block");
 		names.put(Metas.COMIRON,	"Compressed Iron Block");
 		names.put(Metas.DIORITE, 	"Diorite");
@@ -36,15 +36,16 @@ public class BlockCompressed extends Block {
 	public BlockCompressed(int id,Material m) {
 		super(id,m);
 	}
-	@Override
-	public String getTextureFile () {
-		return ImageFiles.BLOCKS.path;
-	}
-	
+		
 	@Override public int damageDropped(int meta) { return meta; }
 	
-	@Override public int getBlockTextureFromSideAndMetadata(int side, int meta) {
-		return meta;
+	@Override public void registerIcons(IconRegister ir) {
+		for(int i=0; i<11; i++)
+			icons.put(i, ir.registerIcon(CSIcons.PREFIX+CSIcons.comString(i)));		
+	}
+	
+	@Override public Icon getBlockTextureFromSideAndMetadata(int side, int meta) {
+		return icons.get(meta);
     }
 	@Override public float getBlockHardness(World world, int x, int y, int z) {
         return getResFromMeta(world.getBlockMetadata(x, y, z));
@@ -58,7 +59,6 @@ public class BlockCompressed extends Block {
         	case Metas.DIORITE:		return 20f;
         	case Metas.COMCOAL:		return 5f;
         	case Metas.COMRACK:		return 3.2f;
-        	case Metas.COMREDSTONE:	return 5f;
         	case Metas.COMDIAMOND:	return 16f;
         	case Metas.COMIRON:		return 16f;
         	case Metas.STEELBLOCK:	return 16f;
@@ -82,7 +82,7 @@ public class BlockCompressed extends Block {
     }
    
     @Override public void onNeighborBlockChange(World world, int x, int y, int z, int something) {
-        world.scheduleBlockUpdate(x, y, z, this.blockID, this.tickRate());
+        world.scheduleBlockUpdate(x, y, z, this.blockID, this.tickRate(world));
     }
 
     @Override public void updateTick(World world, int x, int y, int z, Random par5Random) {
@@ -105,10 +105,11 @@ public class BlockCompressed extends Block {
                 world.spawnEntityInWorld(var9);
             }
         } else {
-            world.setBlockWithNotify(x, y, z, 0);
+        	int meta = world.getBlockMetadata(x,y,z);
+            world.setBlockToAir(x,y,z);
 
             while (canFallBelow(world, x, y - 1, z) && y > 0) y--;
-            if (y > 0) world.setBlockWithNotify(x, y, z, this.blockID);
+            if (y > 0) world.setBlock(x, y, z, this.blockID, meta, 3);
         }
     }
 

@@ -1,11 +1,10 @@
-package compactstuff.furnace;
+package mods.CompactStuff.furnace;
 
+import mods.CompactStuff.ImageFiles;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 
 import org.lwjgl.opengl.GL11;
-
-import compactstuff.ImageFiles;
 
 
 public class CompactFurnaceGUI extends GuiContainer {
@@ -27,9 +26,8 @@ public class CompactFurnaceGUI extends GuiContainer {
 	
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
-		int texture = mc.renderEngine.getTexture(ImageFiles.FURNACE_GUI.path);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture(texture);
+        mc.renderEngine.bindTexture(ImageFiles.FURNACE_GUI.path);
         int x = (width - xSize) / 2;
         int y = (height - ySize) / 2;
         drawTexturedModalRect(x, y, 0, 0, xSize, ySize);

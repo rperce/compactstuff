@@ -1,4 +1,4 @@
-package compactstuff.boh;
+package mods.CompactStuff.boh;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -99,5 +99,15 @@ public class InventoryBagOfHolding implements IInventory {
 
 	@Override public void openChest() {}
 	@Override public void closeChest() {}
+
+	@Override
+	public boolean isInvNameLocalized() {
+		return false;
+	}
+
+	@Override
+	public boolean isStackValidForSlot(int i, ItemStack itemstack) {
+		return true;
+	}
 
 }

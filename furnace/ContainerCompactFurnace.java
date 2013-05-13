@@ -1,9 +1,8 @@
-package compactstuff.furnace;
+package mods.CompactStuff.furnace;
 
 
 import java.util.Iterator;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -43,8 +42,7 @@ public class ContainerCompactFurnace extends Container {
         }
     }
 
-    public void addCraftingToCrafters(ICrafting par1ICrafting)
-    {
+    public void addCraftingToCrafters(ICrafting par1ICrafting) {
         super.addCraftingToCrafters(par1ICrafting);
         par1ICrafting.sendProgressBarUpdate(this, 0, this.furnace.getFurnaceCookTime());
         par1ICrafting.sendProgressBarUpdate(this, 1, this.furnace.getFurnaceBurnTime());
@@ -54,8 +52,7 @@ public class ContainerCompactFurnace extends Container {
     /**
      * Updates crafting matrix; called from onCraftMatrixChanged. Args: none
      */
-    public void detectAndSendChanges()
-    {
+    public void detectAndSendChanges() {
         super.detectAndSendChanges();
         Iterator var1 = this.crafters.iterator();
 
@@ -85,8 +82,7 @@ public class ContainerCompactFurnace extends Container {
     }
 
     @SideOnly(Side.CLIENT)
-    public void updateProgressBar(int par1, int par2)
-    {
+    public void updateProgressBar(int par1, int par2) {
         if (par1 == 0)
         {
             this.furnace.setFurnaceCookTime(par2);
@@ -103,13 +99,11 @@ public class ContainerCompactFurnace extends Container {
         }
     }
 
-    public boolean canInteractWith(EntityPlayer par1EntityPlayer)
-    {
+    public boolean canInteractWith(EntityPlayer par1EntityPlayer) {
         return this.furnace.isUseableByPlayer(par1EntityPlayer);
     }
 
-    @Override public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
-    {
+    @Override public ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2) {
     	ItemStack var3 = null;
         Slot var4 = (Slot)this.inventorySlots.get(par2);
 
@@ -124,7 +118,7 @@ public class ContainerCompactFurnace extends Container {
             } else if (par2 != 1 && par2 != 0) {
                 if (FurnaceRecipes.smelting().getSmeltingResult(var5) != null) {
                     if (!this.mergeItemStack(var5, 0, 1, false)) return null;
-                } else if(furnace.isCarbonFurnace() && TileEntityCarbonFurnace.custom.containsKey(new ItemStack(Block.thinGlass))) {
+                } else if(furnace.isCarbonFurnace() && TileEntityCarbonFurnace.custom.containsKey(var5)) {
                 	if (!this.mergeItemStack(var5, 0, 1, false)) return null;
                 } else if (TileEntityFurnace.isItemFuel(var5)) {
                     if (!this.mergeItemStack(var5, 1, 2, false)) return null;
@@ -147,7 +141,6 @@ public class ContainerCompactFurnace extends Container {
 
             var4.onPickupFromSlot(par1EntityPlayer, var5);
         }
-        this.furnace.onInventoryChanged();
         return var3;
     }
 }

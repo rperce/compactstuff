@@ -1,20 +1,19 @@
-package compactstuff.furnace;
+package mods.CompactStuff.furnace;
 
 import java.util.HashMap;
 
+import mods.CompactStuff.CompactStuff;
+import mods.CompactStuff.ItemStuff;
+import mods.CompactStuff.Metas;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
-
-import compactstuff.CompactStuff;
-import compactstuff.ItemStuff;
-import compactstuff.Metas;
 
 public class TileEntityCarbonFurnace extends TileEntityCompactFurnace {
 	public static final int[] oreIDs = {
 		Block.oreCoal.blockID, Block.oreDiamond.blockID, Block.oreEmerald.blockID,
 		Block.oreGold.blockID, Block.oreIron.blockID, Block.oreLapis.blockID,
-		Block.oreRedstone.blockID
+		Block.oreRedstone.blockID, Block.oreNetherQuartz.blockID
 	};
 	private static ItemStack glassPaneStack = new ItemStack(Block.thinGlass);
 	private ItemStack[] furnaceItemStacks = new ItemStack[3];
@@ -49,6 +48,7 @@ public class TileEntityCarbonFurnace extends TileEntityCompactFurnace {
 	@Override public String getInvName() {
 		return "compactstuff.carbonfurnace";
 	}
+	@Override public HashMap<ItemStack, ItemStack> getCustom() { return custom; }
 	
 	private int getChange() {
 		change = (byte)((change+1)%4);
@@ -104,6 +104,7 @@ public class TileEntityCarbonFurnace extends TileEntityCompactFurnace {
 
             if (burning != this.furnaceBurnTime > 0) {
                 invChange = true;
+                updateBlock();
             }
         }
 

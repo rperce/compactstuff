@@ -1,13 +1,12 @@
-package compactstuff.tools;
+package mods.CompactStuff.tools;
 
 import java.lang.reflect.Field;
 
+import mods.CompactStuff.CompactStuff;
+import mods.CompactStuff.ItemStuff;
+import mods.CompactStuff.Metas;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
-import compactstuff.CompactStuff;
-import compactstuff.ItemStuff;
-import compactstuff.Metas;
 
 public class CompactTool {
 	public static boolean getIsRepairable(ItemStack thisOne, ItemStack otherOne, String itemName) {
