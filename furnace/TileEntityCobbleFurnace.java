@@ -1,4 +1,4 @@
-package compactstuff.furnace;
+package mods.CompactStuff.furnace;
 
 
 import net.minecraft.item.ItemStack;

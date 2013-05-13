@@ -1,5 +1,7 @@
-package compactstuff.furnace;
+package mods.CompactStuff.furnace;
 
+
+import java.util.HashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -11,14 +13,13 @@ import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.ISidedInventory;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-public abstract class TileEntityCompactFurnace extends TileEntity implements IInventory, ISidedInventory {
+public abstract class TileEntityCompactFurnace extends TileEntity implements IInventory {
 	
 	public abstract ItemStack[] getFurnaceItemStacks();
 	public abstract void setFurnaceItemStacks(ItemStack[] i);
@@ -33,12 +34,9 @@ public abstract class TileEntityCompactFurnace extends TileEntity implements IIn
 	public abstract void smeltItem();
 	public abstract boolean canSmelt();
 	
-	public boolean isCarbonFurnace() {
-		return false;
-	}
-	public boolean isCobbleFurnace() {
-		return false;
-	}
+	public boolean isCarbonFurnace() { return false; }
+	public boolean isCobbleFurnace() { return false; }
+	public HashMap<ItemStack, ItemStack> getCustom() { return null; }
 	
 	public TileEntityCompactFurnace() {
 		super();
@@ -60,12 +58,15 @@ public abstract class TileEntityCompactFurnace extends TileEntity implements IIn
     }
 	
 	public boolean hasOutput() {
-		return getStackInSlot(2)!=null;
+		return getStackInSlot(2)!=null && getStackInSlot(2).stackSize>0;
+	}
+	public boolean hasFuel() {
+		return getItemBurnTime(getStackInSlot(1))>0;
 	}
 	
 
 	public void updateBlock() {
-		BlockCompactFurnace.updateFurnaceBlockState(getFurnaceBurnTime()>0,
+		BlockCompactFurnace.updateFurnace(isBurning(),
 				this.worldObj, this.xCoord, this.yCoord, this.zCoord);
 	}
 	
@@ -86,7 +87,7 @@ public abstract class TileEntityCompactFurnace extends TileEntity implements IIn
                     return 300;
             }
             if (var2 instanceof ItemTool && ((ItemTool) var2).getToolMaterialName().equals("WOOD")) return 200;
-            if (var2 instanceof ItemSword && ((ItemSword) var2).func_77825_f().equals("WOOD")) return 200;
+            if (var2 instanceof ItemSword && ((ItemSword) var2).getToolMaterialName().equals("WOOD")) return 200;
             if (var2 instanceof ItemHoe && ((ItemHoe) var2).func_77842_f().equals("WOOD")) return 200;
             if (var1 == Item.stick.itemID) return 100;
             if (var1 == Item.coal.itemID) return 1600;
@@ -147,19 +148,20 @@ public abstract class TileEntityCompactFurnace extends TileEntity implements IIn
         return null;
     }
 	
-	@Override public ItemStack decrStackSize(int par1, int par2) {
-        if (getFurnaceItemStacks()[par1] != null) {
+	@Override public ItemStack decrStackSize(int slot, int amt) {
+        if (getFurnaceItemStacks()[slot] != null) {
             ItemStack var3;
 
-            if (getFurnaceItemStacks()[par1].stackSize <= par2) {
-                var3 = getFurnaceItemStacks()[par1];
-                getFurnaceItemStacks()[par1] = null;
+            if (getFurnaceItemStacks()[slot].stackSize <= amt) {
+                var3 = getFurnaceItemStacks()[slot];
+                getFurnaceItemStacks()[slot] = null;
                 return var3;
             } else {
-                var3 = this.getFurnaceItemStacks()[par1].splitStack(par2);
+                var3 = this.getFurnaceItemStacks()[slot].splitStack(amt);
 
-                if (this.getFurnaceItemStacks()[par1].stackSize == 0)
-                    this.getFurnaceItemStacks()[par1] = null;
+                if (this.getFurnaceItemStacks()[slot].stackSize == 0) {
+                    this.getFurnaceItemStacks()[slot] = null;
+                }
 
                 return var3;
             }
@@ -173,16 +175,18 @@ public abstract class TileEntityCompactFurnace extends TileEntity implements IIn
 				(double)this.yCoord + 0.5D,
 				(double)this.zCoord + 0.5D) <= 64.0D;
 	}
-	@Override public int getStartInventorySide(ForgeDirection side) {
-		if (side == ForgeDirection.DOWN) return 1;
-        if (side == ForgeDirection.UP) return 0; 
-        return 2;
-	}
 	@Override public ItemStack getStackInSlot(int par1) {
         return getFurnaceItemStacks()[par1];
     }
+	@Override public boolean isInvNameLocalized() { return false; }
+	
+	@Override public boolean isStackValidForSlot(int slot, ItemStack stack) {
+		switch(slot) {
+			case 0: return FurnaceRecipes.smelting().getSmeltingResult(stack)!=null || getCustom()!=null && getCustom().containsKey(stack);
+			case 1: return getItemBurnTime(stack)>0;
+		} return false;
+	}
 	@Override public int getInventoryStackLimit() { return 64; }
-	@Override public int getSizeInventorySide(ForgeDirection side) { return 1; }
 	@Override public void openChest()  { }
 	@Override public void closeChest() { }
 }

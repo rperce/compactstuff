@@ -1,4 +1,4 @@
-package compactstuff.furnace;
+package mods.CompactStuff.furnace;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class ItemCompactFurnace extends ItemBlock {
 		list.add(new ItemStack(i,1,10));
 	}
 	
-	@Override public String getItemNameIS(ItemStack i) {
+	@Override public String getUnlocalizedName(ItemStack i) {
 		return i.getItemDamage()<8?"Compression Furnace":"Carbon Furnace";
 	}
 }

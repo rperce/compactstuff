@@ -1,5 +1,9 @@
-package compactstuff.client;
+package mods.CompactStuff.client;
 
+import mods.CompactStuff.CSIcons;
+import mods.CompactStuff.CompactStuff;
+import mods.CompactStuff.EntityFallingCompact;
+import mods.CompactStuff.ImageFiles;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.entity.RenderFallingSand;
@@ -8,10 +12,6 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
-
-import compactstuff.CompactStuff;
-import compactstuff.EntityFallingCompact;
-import compactstuff.ImageFiles;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -27,12 +27,12 @@ public class RenderFallingCompressed extends RenderFallingSand {
 	/**
 	* The actual render method that is used in doRender
 	*/
-	public void doRenderFalling(EntityFallingCompact entityFalling, double x, double y, double z, float par8, float par9) {
+	public void doRenderFalling(EntityFallingCompact entityFalling, double x, double y, double z, float useless, float floats) {
         GL11.glPushMatrix();
         GL11.glTranslatef((float)x, (float)y, (float)z);
-        this.loadTexture(ImageFiles.BLOCKS.path);
         Block block = CompactStuff.comBlock;
         World world = entityFalling.getWorld();
+        this.loadTexture("/terrain.png");
         GL11.glDisable(GL11.GL_LIGHTING);
         
         int xx = MathHelper.floor_double(entityFalling.posX),

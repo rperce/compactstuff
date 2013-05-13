@@ -1,4 +1,4 @@
-package compactstuff;
+package mods.CompactStuff;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class ItemBlockCompressed extends ItemBlock {
 		for(Integer meta : BlockCompressed.names.keySet()) list.add(new ItemStack(i,1,meta));
 	}
 	
-	@Override public String getItemNameIS(ItemStack stack) {
+	@Override public String getUnlocalizedName(ItemStack stack) {
 		try { return BlockCompressed.names.get(stack.getItemDamage()); }
 		catch(NullPointerException e) { return "Compressed Block"; }
 	}

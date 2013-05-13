@@ -1,12 +1,12 @@
-package compactstuff;
+package mods.CompactStuff;
 
-import static compactstuff.CompactStuff.pureBoots;
-import static compactstuff.CompactStuff.pureHelmt;
-import static compactstuff.CompactStuff.purePants;
-import static compactstuff.CompactStuff.purePlate;
-import static compactstuff.CompactStuff.wovnHelmt;
-import static compactstuff.CompactStuff.wovnPants;
-import static compactstuff.CompactStuff.wovnPlate;
+import static mods.CompactStuff.CompactStuff.pureBoots;
+import static mods.CompactStuff.CompactStuff.pureHelmt;
+import static mods.CompactStuff.CompactStuff.purePants;
+import static mods.CompactStuff.CompactStuff.purePlate;
+import static mods.CompactStuff.CompactStuff.wovnHelmt;
+import static mods.CompactStuff.CompactStuff.wovnPants;
+import static mods.CompactStuff.CompactStuff.wovnPlate;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

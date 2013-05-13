@@ -1,29 +1,34 @@
-package compactstuff;
+package mods.CompactStuff;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemPlantBall extends Item {
 	private String[] names = {"Oak Sapling Ball","Spruce Sapling Ball","Birch Sapling Ball","Jungle Sapling Ball","Seed Ball"};
+	private static Icon[] plantBallIcons = new Icon[5];
 	public ItemPlantBall(int id) {
 		super(id);
 		setHasSubtypes(true);
 		setMaxStackSize(64);
 		setCreativeTab(CompactStuff.compactTab);
-		setItemName("seedBall");
+		setUnlocalizedName("plantBall");
 	}
-	public String getTextureFile() {
-		return ImageFiles.ITEMS.path;
+	@Override public void updateIcons(IconRegister ir) {
+		for(int i=0; i<5; i++) {
+			plantBallIcons[i] = ir.registerIcon(CSIcons.PREFIX + "plantBall" + i);
+		}
 	}
-	public int getIconFromDamage(int dmg) {
-		return dmg;
+	public Icon getIconFromDamage(int dmg) {
+		return plantBallIcons[dmg];
 	}
-	public String getItemNameIS(ItemStack i) {
+	@Override public String getUnlocalizedName(ItemStack i) {
 		try { return names[i.getItemDamage()]; }
 		catch(NullPointerException e) { return "Seed Ball"; }
 	}

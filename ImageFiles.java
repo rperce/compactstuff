@@ -1,9 +1,6 @@
-package compactstuff;
+package mods.CompactStuff;
 
 public enum ImageFiles {
-	ITEMS("items.png"),
-	BLOCKS("blocks.png"),
-	GLASS("glass.png"),
 	COBBLE_1("cobble_1.png"),
 	COBBLE_2("cobble_2.png"),
 	CARBON_1("carbon_1.png"),
@@ -16,5 +13,5 @@ public enum ImageFiles {
 	HOLDINGBAG_GUI("holding_gui.png");
 		
 	public String path;
-	ImageFiles(String p) { path = "/compactstuff/img/"+p; }
+	ImageFiles(String p) { path = "/mods/CompactStuff/textures/"+p; }
 }

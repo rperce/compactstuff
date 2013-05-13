@@ -1,9 +1,11 @@
-package compactstuff.tools;
+package mods.CompactStuff.tools;
 
 import java.util.Random;
 
+import mods.CompactStuff.CSIcons;
+import mods.CompactStuff.CompactStuff;
 import net.minecraft.block.Block;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,14 +15,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.world.World;
 
-import compactstuff.CompactStuff;
-import compactstuff.ImageFiles;
-
 public class Paxel extends ItemTool {
     public static Block[] blocksEffectiveAgainst = Block.blocksList;
     public static Block[] ores = {
     	Block.oreCoal, Block.oreDiamond, Block.oreEmerald, Block.oreGold, Block.oreIron,
-    	Block.oreLapis, Block.oreRedstone, Block.oreRedstoneGlowing
+    	Block.oreLapis, Block.oreRedstone, Block.oreRedstoneGlowing, Block.oreNetherQuartz
     };
     public static Block[] glow = {Block.glowStone};
     public static Block[] tree = {Block.wood, Block.leaves};
@@ -34,12 +33,13 @@ public class Paxel extends ItemTool {
 		setMaxStackSize(1);
     }
     
-    @Override public String getTextureFile() { return ImageFiles.ITEMS.path; }
-    
+    @Override public void updateIcons(IconRegister i) {
+    	iconIndex = i.registerIcon(CSIcons.PREFIX + CSIcons.PAXEL);
+    }
     @Override public boolean canHarvestBlock(Block block) { return true; }
     
     @Override public boolean onBlockDestroyed(ItemStack thisStack, World world, int blockSlot, int x, int y, int z, EntityLiving holder) {
-	    if(!(holder instanceof EntityPlayer) || world.getBlockId(x, y, z)==0) return true;
+	    if(!(holder instanceof EntityPlayer) || world.getBlockId(x, y, z)==0 || world.isRemote) return true;
 	    EntityPlayer player = (EntityPlayer)holder;
     	if(player.isSneaking()) {
 	    	if(world.getBlockId(x, y, z)==Block.sand.blockID) {
@@ -51,7 +51,7 @@ public class Paxel extends ItemTool {
 	    		    				Block.sand.quantityDropped(rand), 
 	    		    				Block.sand.damageDropped(world.getBlockMetadata(r, y, c))));
 	    		    		world.spawnEntityInWorld(drop);
-	    		    		world.setBlockAndMetadataWithNotify(r, y, c, 0, 0);
+	    		    		world.setBlockToAir(r, y, c);
 	    		    		thisStack.damageItem(1, player);
 	    				}
 	    			}
@@ -59,11 +59,11 @@ public class Paxel extends ItemTool {
 	    		return true;
 	    	}
     		if(player instanceof EntityPlayer) {
-    			try { Block.blocksList[world.getBlockId(x, y, z)].getBlockName().toLowerCase(); }
+    			try { Block.blocksList[world.getBlockId(x, y, z)].getUnlocalizedName().toLowerCase(); }
     			catch(NullPointerException e) {
     				return false;
     			}
-	    		if(Block.blocksList[world.getBlockId(x, y, z)].getBlockName().toLowerCase().contains("ore")) {
+	    		if(Block.blocksList[world.getBlockId(x, y, z)].getUnlocalizedName().toLowerCase().contains("ore")) {
 	    			int dmg = recursivelyBreakOres(world, x, y, z, (EntityPlayer)player, 0);
 	    			if(dmg>0) {
 	    				thisStack.damageItem(dmg,player);
@@ -82,7 +82,7 @@ public class Paxel extends ItemTool {
     	}
     	return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z, player);
     } private int recursivelyBreakThings(Block[] breakThese, World world, int x, int y, int z, EntityPlayer player,int ox,int oy,int oz) {
-    	if(Math.abs(ox-x)>32 || Math.abs(oy-y)>32 || Math.abs(oz-z)>32) return 0;
+    	if(Math.abs(ox-x)>8 || Math.abs(oy-y)>8 || Math.abs(oz-z)>8) return 0;
     	int thisBlockID = world.getBlockId(x, y, z);
     	if(thisBlockID==0 || thisBlockID==1) return 0;
     	boolean edgeCase = true;
@@ -110,7 +110,7 @@ public class Paxel extends ItemTool {
     		world.spawnEntityInWorld(drop);
     	}
     	
-    	world.setBlockAndMetadataWithNotify(x, y, z, 0, 0);
+    	world.setBlockToAir(x,y,z);
     	return (thisBlockID==Block.leaves.blockID ? 0 : 1) +
 	    	recursivelyBreakThings(breakThese, world, x-1, y, z, player, ox,oy,oz)+
 	    	recursivelyBreakThings(breakThese, world, x+1, y, z, player, ox,oy,oz)+
@@ -122,13 +122,13 @@ public class Paxel extends ItemTool {
     	if(stop>128) return 0;
     	int thisBlockID = world.getBlockId(x, y, z);
     	if(thisBlockID==0 || thisBlockID==1) return 0;
-    	if(!Block.blocksList[thisBlockID].getBlockName().toLowerCase().contains("ore")) return 0;
+    	if(!Block.blocksList[thisBlockID].getUnlocalizedName().toLowerCase().contains("ore")) return 0;
     	EntityItem drop = new EntityItem(world, player.posX, player.posY, player.posZ, new ItemStack(
 				Block.blocksList[thisBlockID].idDropped(world.getBlockMetadata(x,y,z), rand, 0),
 				Block.blocksList[thisBlockID].quantityDropped(rand), 
 				Block.blocksList[thisBlockID].damageDropped(world.getBlockMetadata(x, y, z))));
 		world.spawnEntityInWorld(drop);
-		world.setBlockAndMetadataWithNotify(x, y, z, 0, 0);
+		world.setBlockToAir(x, y, z);
     	return (thisBlockID==Block.leaves.blockID ? 0 : 1) +
 	    	recursivelyBreakOres(world, x-1, y, z, player, stop+1) +
 	    	recursivelyBreakOres(world, x+1, y, z, player, stop+1) +

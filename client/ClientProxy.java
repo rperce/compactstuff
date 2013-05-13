@@ -1,11 +1,9 @@
-package compactstuff.client;
+package mods.CompactStuff.client;
 
+import mods.CompactStuff.CommonProxy;
+import mods.CompactStuff.EntityFallingCompact;
+import mods.CompactStuff.ImageFiles;
 import net.minecraftforge.client.MinecraftForgeClient;
-
-import compactstuff.CommonProxy;
-import compactstuff.EntityFallingCompact;
-import compactstuff.ImageFiles;
-
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
 public class ClientProxy extends CommonProxy {

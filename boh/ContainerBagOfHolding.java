@@ -1,4 +1,4 @@
-package compactstuff.boh;
+package mods.CompactStuff.boh;
 
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
 
 public class ContainerBagOfHolding extends Container {
 	private InventoryPlayer playerInventory;
-	private IInventory itemBag;
+	private InventoryBagOfHolding itemBag;
 	
 	public ContainerBagOfHolding(InventoryPlayer inv, InventoryBagOfHolding bag) {
 		this.playerInventory = inv;
@@ -37,7 +37,7 @@ public class ContainerBagOfHolding extends Container {
 	}
 	
 	@Override public void onCraftGuiClosed(EntityPlayer player) {
-		((InventoryBagOfHolding)itemBag).saveInventoryToItemStack(player.getHeldItem());
+		itemBag.saveInventoryToItemStack(player.getHeldItem());
 	}
 	
 	@Override
@@ -61,7 +61,8 @@ public class ContainerBagOfHolding extends Container {
             else
             	slot.onSlotChanged();
         }
-
+        
+        
         return out;
 	}
 }
