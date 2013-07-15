@@ -6,6 +6,7 @@ import mods.CompactStuff.CompactStuff;
 import mods.CompactStuff.ItemStuff;
 import mods.CompactStuff.Metas;
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 
@@ -42,6 +43,7 @@ public class TileEntityCarbonFurnace extends TileEntityCompactFurnace {
 	static {
 		custom.put(new ItemStack(Block.thinGlass), new ItemStack(CompactStuff.itemStuff,1,ItemStuff.GLASS_SLAG));
 		custom.put(new ItemStack(CompactStuff.comBlock, 1, Metas.COMSAND), new ItemStack(CompactStuff.comGlass,3));
+		custom.put(new ItemStack(Block.cactus), new ItemStack(Item.dyePowder, 2, 2));
 	}
 	
 	@Override public boolean isCarbonFurnace() { return true; }

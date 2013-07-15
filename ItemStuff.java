@@ -2,9 +2,12 @@ package mods.CompactStuff;
 
 import java.util.List;
 
+import mods.CompactStuff.client.CSIcons;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemAppleGold;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import cpw.mods.fml.relauncher.Side;
@@ -19,13 +22,24 @@ public class ItemStuff extends Item {
 		IRON_PLATE	= 4,
 		STEEL_PLATE	= 5,
 		STEEL_INGOT	= 6,
-		TMOG_CRYSTAL= 7,
-		MAXDMG		= 7;
+		GOLD_PLATE	= 7,
+		TMOG_CRYSTAL= 8,
+		BLAZE_EMERALD=9,
+		GOLD_ALLOYED= 10,
+		MAXDMG		= 10;
 	
 	public static final String[] names =
 		{"Glass Slag", "Glass Fiber","Diamond Plate",
 		 "Carbon Alloy Plate","Iron Plate","CS Steel Plate",
-		 "CS Steel Ingot", "Transmogrifier Crystal"};
+		 "CS Steel Ingot", "Gold Plate", "Transmogrifier Crystal",
+		 "Blaze Emerald", "Gilded Carbon Alloy Plate"};
+	
+	public static ItemStack stack(int i) {
+		return stack(i, 1);
+	} public static ItemStack stack(int i, int size) {
+		if(i>MAXDMG) return null;
+		return new ItemStack(CompactStuff.itemStuff, size, i);
+	}
 	private static Icon[] icons = new Icon[MAXDMG+1];
 	public ItemStuff(int id) {
 		super(id);
@@ -34,10 +48,14 @@ public class ItemStuff extends Item {
 		setCreativeTab(CompactStuff.compactTab);
 		setUnlocalizedName("itemstuff");
 	}
-	@Override public void updateIcons(IconRegister ir) {
+	@Override public void registerIcons(IconRegister ir) {
 		for(int i=0; i<=MAXDMG; i++) {
 			icons[i] = ir.registerIcon(CSIcons.PREFIX+"itemstuff"+i);
 		}
+	}
+	
+	@Override public boolean hasEffect(ItemStack stack) {
+		return stack.getItemDamage() == TMOG_CRYSTAL;
 	}
 		
 	@Override public Icon getIconFromDamage(int dmg) {
@@ -55,5 +73,4 @@ public class ItemStuff extends Item {
 			list.add(new ItemStack(id,1,i));
 		}
 	}
-
 }

@@ -1,8 +1,8 @@
 package mods.CompactStuff.tools;
 
-import mods.CompactStuff.CSIcons;
 import mods.CompactStuff.CompactStuff;
-import mods.CompactStuff.ImageFiles;
+import mods.CompactStuff.client.CSIcons;
+import mods.CompactStuff.client.ImageFiles;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.ItemStack;
@@ -15,8 +15,8 @@ public class CompactSword extends ItemSword {
 		this.path = path;
 		setCreativeTab(CompactStuff.compactTab);
 	}
-	@Override public void updateIcons(IconRegister i) {
-		iconIndex = i.registerIcon(CSIcons.PREFIX + path);
+	@Override public void registerIcons(IconRegister i) {
+		itemIcon = i.registerIcon(CSIcons.PREFIX + path);
 	}
 	@Override public boolean getIsRepairable(ItemStack thisOne, ItemStack otherOne) {
         return CompactTool.getIsRepairable(thisOne,otherOne,"Sword");

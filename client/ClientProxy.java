@@ -2,7 +2,6 @@ package mods.CompactStuff.client;
 
 import mods.CompactStuff.CommonProxy;
 import mods.CompactStuff.EntityFallingCompact;
-import mods.CompactStuff.ImageFiles;
 import net.minecraftforge.client.MinecraftForgeClient;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 

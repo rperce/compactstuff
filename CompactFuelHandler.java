@@ -1,5 +1,6 @@
 package mods.CompactStuff;
 
+import net.minecraft.client.audio.SoundManager;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.IFuelHandler;
 
@@ -15,5 +16,4 @@ public class CompactFuelHandler implements IFuelHandler {
 		}
 		return 0;
 	}
-
 }

@@ -2,8 +2,8 @@ package mods.CompactStuff.tools;
 
 import java.util.Random;
 
-import mods.CompactStuff.CSIcons;
 import mods.CompactStuff.CompactStuff;
+import mods.CompactStuff.client.CSIcons;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLiving;
@@ -33,8 +33,8 @@ public class Paxel extends ItemTool {
 		setMaxStackSize(1);
     }
     
-    @Override public void updateIcons(IconRegister i) {
-    	iconIndex = i.registerIcon(CSIcons.PREFIX + CSIcons.PAXEL);
+    @Override public void registerIcons(IconRegister i) {
+    	itemIcon = i.registerIcon(CSIcons.PREFIX + CSIcons.PAXEL);
     }
     @Override public boolean canHarvestBlock(Block block) { return true; }
     

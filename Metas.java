@@ -13,7 +13,7 @@ public final class Metas {
 		COMSAND		= 8,
 		COMDIRT		= 9,
 		COMGRAVEL	= 10,
-		COMGLASS	= 11;
+		COMGOLD		= 11;
 	
 	public static final int
 		DYE_BLACK	= 0,
@@ -32,4 +32,12 @@ public final class Metas {
 		DYE_MAGENTA	= 13,
 		DYE_ORANGE	= 14,
 		DYE_WHITE	= 15;
+	
+	public static final int
+		PLUS_X		= 5,
+		MINUS_X		= 4,
+		PLUS_Z		= 3,
+		MINUS_Z		= 2,
+		PLUS_Y		= 1,
+		MINUS_Y		= 0;
 }

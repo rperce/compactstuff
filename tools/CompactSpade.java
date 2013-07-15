@@ -2,8 +2,8 @@ package mods.CompactStuff.tools;
 
 import java.util.List;
 
-import mods.CompactStuff.CSIcons;
 import mods.CompactStuff.CompactStuff;
+import mods.CompactStuff.client.CSIcons;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLiving;
@@ -22,8 +22,8 @@ public class CompactSpade extends ItemSpade {
 		this.path = path;
 		setCreativeTab(CompactStuff.compactTab);
 	}
-	@Override public void updateIcons(IconRegister ir) {
-		iconIndex = ir.registerIcon(CSIcons.PREFIX + path);
+	@Override public void registerIcons(IconRegister ir) {
+		itemIcon = ir.registerIcon(CSIcons.PREFIX + path);
 	}
 	@Override public boolean getIsRepairable(ItemStack thisOne, ItemStack otherOne) {
         return CompactTool.getIsRepairable(thisOne,otherOne,"Spade");

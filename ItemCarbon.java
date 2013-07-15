@@ -2,6 +2,7 @@ package mods.CompactStuff;
 
 import java.util.List;
 
+import mods.CompactStuff.client.CSIcons;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -11,7 +12,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemCarbon extends Item {
-	private static String[] names = {"Carbon Wafer","Carbon","Dense Carbon","Compressed Carbon","Metamorphic Carbon","Carbon Fiber","Woven Carbon Fiber" };
+	public static String[] names = {"Impure Carbon","Carbon","Dense Carbon","Compressed Carbon","Metamorphic Carbon","Carbon Fiber","Woven Carbon Fiber" };
 	private static Icon[] icons = new Icon[names.length];
 	public ItemCarbon(int id) {
 		super(id);
@@ -21,7 +22,7 @@ public class ItemCarbon extends Item {
 		setUnlocalizedName("carbon");
 	}
 	
-	@Override public void updateIcons(IconRegister ir) {
+	@Override public void registerIcons(IconRegister ir) {
 		for(int i=0; i<icons.length; i++) {
 			icons[i] = ir.registerIcon(CSIcons.PREFIX+"carbon"+i);
 		}

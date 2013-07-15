@@ -1,36 +1,50 @@
 package mods.CompactStuff.tmog;
 
 import java.util.HashSet;
+import java.util.Stack;
 
 import mods.CompactStuff.CompactStuff;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 
-public class TileEntityTransmog extends TileEntity {
+public class TileEntityTransmog extends TileEntity implements IInventory {
 	public static final int CORE=0, SHIELD=1, FRAME=2;
-	private int type;
+	private int type=-1;
 	private boolean valid;
-	private TileEntityTransmog core;
+	private Stack<String> worldActions;
+	public TileEntityTransmog core;
+	
+	private ItemStack[] inventory;
 	public TileEntityTransmog() {
-		type = blockMetadata & 3; //last two bits
 		valid = false;
 		core = null;
+		worldActions = new Stack<String>();
+		inventory = new ItemStack[3*9];
 	}
 	
+	@Override public void updateEntity() {
+		if(worldActions.isEmpty() || worldObj==null) return;
+		if(worldActions.pop().equals("CORE")) checkCoreValidity();
+		else checkEdgeValidity(new HashSet<Integer>());
+	}
 	public void clicked(EntityPlayer player) {
-		if(valid) return;
+		if(!valid) return;
 		core.openGui(player);
 	}
 
+	public void setType() {
+		if(type==-1) type = getBlockMetadata() & 3;
+	}
 	public void checkValidity() {
-		System.out.println("Blll");
 		checkEdgeValidity(new HashSet<Integer>());
 	} private boolean checkEdgeValidity(HashSet<Integer> been) {
-		System.out.println("Holding steady...");
 		if(been.contains(this.hashCode())) return false;
-		System.out.println("Not been!");
-		System.out.println("Type: "+(type==CORE?"CORE":type==FRAME?"FRAME":"SHIELD"));
 		been.add(this.hashCode());
+		setType();
 		if(type==CORE) {
 			checkCoreValidity();
 			been.clear();
@@ -49,7 +63,6 @@ public class TileEntityTransmog extends TileEntity {
 		return false;
 	} private void checkCoreValidity() {
 		int x=xCoord, y=yCoord, z=zCoord;
-		System.out.printf("Found core at %d, %d, %d%n",x,y,z);
 		//check shielding;
 		int[] dx = {-1, 0, 0, 0, 0, 1},
 			  dy = { 0, 1, 0,-1, 0, 0},
@@ -62,43 +75,122 @@ public class TileEntityTransmog extends TileEntity {
 				break;
 			}
 		}
+//		System.out.println("Shielding "+(good?"":"not ")+"good");
 		if(good) {
 			//check frames;
-			dx = new int[] {-1,-1,-1,-1,-1,-1,-1,-1,  0, 0, 0, 0, 0, 0, 0, 0,  1, 1, 1, 1, 1, 1, 1, 1};
-			dy = new int[] { 1, 1, 1, 0, 0,-1,-1,-1,  1, 1, 1, 0, 0,-1,-1,-1,  1, 1, 1, 0, 0,-1,-1,-1};
-			dz = new int[] {-1, 0, 1,-1, 1,-1, 0, 1, -1, 0, 1,-1, 1,-1, 0, 1, -1, 0, 1,-1, 1,-1, 0, 1};
+			dx = new int[] {-1,-1,-1,-1,-1,-1,-1,-1,  0, 0, 0, 0,  1, 1, 1, 1, 1, 1, 1, 1};
+			dy = new int[] { 1, 1, 1, 0, 0,-1,-1,-1,  1, 1,-1,-1,  1, 1, 1, 0, 0,-1,-1,-1};
+			dz = new int[] {-1, 0, 1,-1, 1,-1, 0, 1, -1, 1,-1, 1, -1, 0, 1,-1, 1,-1, 0, 1};
 			for(int i=0; i<dx.length; i++) {
 				if(worldObj.getBlockId(x+dx[i], y+dy[i], z+dz[i])!=CompactStuff.transmog.blockID ||
 				(worldObj.getBlockMetadata(x+dx[i],  y+dy[i],  z+dz[i])&3)!=FRAME) {
+					System.out.printf("Missing frame at %d, %d, %d%n",x+dx[i],y+dy[i],z+dz[i]);
 					good = false;
 					break;
 				}
 			}
 		}
+//		System.out.println("Framing "+(good?"":"not ")+"good");
 		dx = new int[] {-1,-1,-1,-1,-1,-1,-1,-1,-1,  0, 0, 0, 0, 0, 0, 0, 0, 0,  1, 1, 1, 1, 1, 1, 1, 1, 1};
 		dy = new int[] { 1, 1, 1, 0, 0, 0,-1,-1,-1,  1, 1, 1, 0, 0, 0,-1,-1,-1,  1, 1, 1, 0, 0, 0,-1,-1,-1};
 		dz = new int[] {-1, 0, 1,-1, 0, 1,-1, 0, 1, -1, 0, 1,-1, 0, 1,-1, 0, 1, -1, 0, 1,-1, 0, 1,-1, 0, 1};
 		TileEntity te = null;
 		for(int i=0; i<dx.length; i++) {
 			te = worldObj.getBlockTileEntity(x+dx[i], y+dy[i], z+dz[i]);
-			if(te==null || (te instanceof TileEntityTransmog)) 
+			if(te!=null && (te instanceof TileEntityTransmog)) {
 				BlockTmog.setValid(worldObj,x+dx[i],y+dy[i],z+dz[i],good); 
+				((TileEntityTransmog)te).valid = good;
+				((TileEntityTransmog)te).core = this;
+			}
 		}
 	}
 	
 	public void unvalid() {
+		if(!valid) return;
 		int[] dx = new int[] {-1,-1,-1,-1,-1,-1,-1,-1,-1,  0, 0, 0, 0, 0, 0, 0, 0, 0,  1, 1, 1, 1, 1, 1, 1, 1, 1};
 		int[] dy = new int[] { 1, 1, 1, 0, 0, 0,-1,-1,-1,  1, 1, 1, 0, 0, 0,-1,-1,-1,  1, 1, 1, 0, 0, 0,-1,-1,-1};
 		int[] dz = new int[] {-1, 0, 1,-1, 0, 1,-1, 0, 1, -1, 0, 1,-1, 0, 1,-1, 0, 1, -1, 0, 1,-1, 0, 1,-1, 0, 1};
+		int x=core.xCoord, y=core.yCoord, z=core.zCoord;
 		TileEntity te = null;
 		for(int i=0; i<dx.length; i++) {
-			te = worldObj.getBlockTileEntity(xCoord+dx[i], yCoord+dy[i], zCoord+dz[i]);
-			if(te==null || (te instanceof TileEntityTransmog)) 
-				BlockTmog.setValid(worldObj,xCoord+dx[i],yCoord+dy[i],zCoord+dz[i],false); 
+			te = worldObj.getBlockTileEntity(x+dx[i], y+dy[i], z+dz[i]);
+			if(te==null || (te instanceof TileEntityTransmog)) {
+				BlockTmog.setValid(worldObj,x+dx[i],y+dy[i],z+dz[i],false); 
+			}
 		}
 	}
 	
 	public void openGui(EntityPlayer player) {
 		player.sendChatToPlayer("Gui opened!");
+		player.openGui(CompactStuff.instance, 4, worldObj, xCoord, yCoord, zCoord);
 	}
+	
+	@Override public void readFromNBT(NBTTagCompound tagList) {
+        super.readFromNBT(tagList);
+        
+        this.valid = tagList.getBoolean("tetValid");
+        this.type = tagList.getInteger("tetType");
+		if(type==CORE) worldActions.push("CORE");
+        else worldActions.push("EDGE");
+		
+		NBTTagList items = new NBTTagList("items");
+		for(int i=0; i<items.tagCount(); i++) {
+			NBTTagCompound ntc = (NBTTagCompound)items.tagAt(i);
+			int slot = ntc.getByte("slot") & 255;
+			if(slot>=0 && slot<getSizeInventory())
+				setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(ntc));
+		}
+    }
+	
+	@Override public void writeToNBT(NBTTagCompound tagList) {
+        super.writeToNBT(tagList);
+        
+        tagList.setBoolean("tetValid", valid);
+        tagList.setInteger("tetType", this.type);
+        
+        NBTTagList items = new NBTTagList();
+        for(int i=0; i<getSizeInventory(); i++) {
+        	if(getStackInSlot(i)==null) continue;
+        	NBTTagCompound j = new NBTTagCompound();
+        	j.setByte("slot", (byte)i);
+        	getStackInSlot(i).writeToNBT(j);
+        	items.appendTag(j);
+        }
+        
+        tagList.setTag("items", items);
+	}
+
+	@Override
+	public ItemStack decrStackSize(int slot, int amt) {
+		ItemStack out = getStackInSlot(slot).copy();
+		if(out==null || amt==0) return null;
+		if(getStackInSlot(slot).stackSize<=amt) {
+			setInventorySlotContents(slot, null);
+			onInventoryChanged();
+			return out;
+		} onInventoryChanged();
+		return out.splitStack(amt);
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int i) {
+		ItemStack out = getStackInSlot(i);
+		setInventorySlotContents(i, null);
+		return out;
+	}	
+
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer player) {
+		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord)==this && player.getDistance(xCoord, yCoord, zCoord)<=8d;
+	}
+	
+	@Override public void setInventorySlotContents(int i, ItemStack s) { inventory[i]=s; }
+	@Override public boolean isStackValidForSlot(int i, ItemStack s) { return true; }
+	@Override public String getInvName() { return "compactstuff.transmogrifier"; }
+ 	@Override public ItemStack getStackInSlot(int i) { return inventory[i]; }
+	@Override public int getSizeInventory() { return inventory.length; }
+	@Override public boolean isInvNameLocalized() { return false; }
+	@Override public int getInventoryStackLimit() { return 64; }
+	@Override public void closeChest() {}
+	@Override public void openChest() {}
 }

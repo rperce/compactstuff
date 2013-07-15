@@ -2,8 +2,8 @@ package mods.CompactStuff.tools;
 
 import java.util.List;
 
-import mods.CompactStuff.CSIcons;
 import mods.CompactStuff.CompactStuff;
+import mods.CompactStuff.client.CSIcons;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.EntityLiving;
@@ -22,13 +22,14 @@ public class CompactAxe extends ItemAxe {
 		this.path = path;
 		setCreativeTab(CompactStuff.compactTab);
 	}
-	@Override public void updateIcons(IconRegister ir) {
-		iconIndex = ir.registerIcon(CSIcons.PREFIX+path);
+	@Override public void registerIcons(IconRegister ir) {
+		itemIcon = ir.registerIcon(CSIcons.PREFIX+path);
 	}
 	@Override public boolean getIsRepairable(ItemStack thisOne, ItemStack otherOne) {
         return CompactTool.getIsRepairable(thisOne,otherOne,"Axe");
     }
 	@Override public boolean onBlockDestroyed(ItemStack thisStack, World world, int blockSlot, int x, int y, int z, EntityLiving holder) {
+		if(world.isRemote) return false;
 		if(thisStack.itemID!=CompactStuff.heatAxe.itemID || !(holder instanceof EntityPlayer) || world.isAirBlock(x, y, z))
 			return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z, holder);
 		if(blockSlot==Block.wood.blockID) {
@@ -37,6 +38,17 @@ public class CompactAxe extends ItemAxe {
 			world.setBlockToAir(x, y, z);
 			thisStack.damageItem(1, holder);
 			world.spawnEntityInWorld(drop);
+			return true;
+		} else if(blockSlot==Block.cactus.blockID) {
+			int ty = y;
+			EntityItem drop;
+			while(world.getBlockId(x,ty,z)==Block.cactus.blockID) {
+				drop = new EntityItem(world, x+.5, ty+.5, z+.5, new ItemStack(Item.dyePowder,1,2));
+				world.setBlock(x,ty,z,0,0,2);
+				thisStack.damageItem(1, holder);
+				world.spawnEntityInWorld(drop);
+				ty++;
+			}
 			return true;
 		} return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z, holder);
 	}

@@ -1,6 +1,6 @@
 package mods.CompactStuff.furnace;
 
-import mods.CompactStuff.ImageFiles;
+import mods.CompactStuff.client.ImageFiles;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 
@@ -18,7 +18,7 @@ public class CompactFurnaceGUI extends GuiContainer {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		if(furnace.isCarbonFurnace()) {
-			fontRenderer.drawString("Carbon Furnace", 8, 5, 0x404040);	
+			fontRenderer.drawString("Metamorphic Furnace", 8, 5, 0x404040);	
 		} else {
 			fontRenderer.drawString("Compression Furnace", 8, 5, 0x404040);
 		}

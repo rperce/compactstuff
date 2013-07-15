@@ -1,4 +1,6 @@
-package mods.CompactStuff;
+package mods.CompactStuff.client;
+
+import mods.CompactStuff.Metas;
 
 public class CSIcons {
 	public final static String
@@ -22,9 +24,11 @@ public class CSIcons {
 		COMSTEEL = "comsteel",
 		DIORITE = "diorite",
 		STEELBLOCK = "steelblock",
+		COMGOLD	= "comgold",
 		
 		COMPACTOR_TOP = "compactor_top",
-		COMPACTOR_SIDE = "compactor_side",
+		COMPACTOR_SIDE1 = "compactor_side",
+		COMPACTOR_SIDE2 = "compactor_side2",
 		COMPACTOR_BOTTOM = "compactor_bottom",
 		PAXEL = "paxel";
 	
@@ -41,6 +45,7 @@ public class CSIcons {
 			case Metas.COMSTEEL : return COMSTEEL;
 			case Metas.DIORITE : return DIORITE;
 			case Metas.STEELBLOCK : return STEELBLOCK;
+			case Metas.COMGOLD: return COMGOLD;
 		} return "herpderp";
 	}
 }

@@ -14,6 +14,9 @@ public class ItemBlockTmog extends ItemBlock {
 		super(id);
 		setHasSubtypes(true);
 	}
+	@Override public int getMetadata(int d) {
+		return d;
+	}
 	
 	@SideOnly(Side.CLIENT)
 	@Override public void getSubItems(int id, CreativeTabs tab, List list) {

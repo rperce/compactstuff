@@ -1,7 +1,7 @@
 package mods.CompactStuff.compactor;
 
-import mods.CompactStuff.CSIcons;
 import mods.CompactStuff.CompactStuff;
+import mods.CompactStuff.client.CSIcons;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -16,7 +16,7 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 
 public class BlockCompactor extends BlockContainer {
-	private static Icon[] icons = new Icon[3];
+	private static Icon[] icons = new Icon[4];
 	
 	public BlockCompactor(int id) {
 		super(id, Material.rock);
@@ -29,11 +29,12 @@ public class BlockCompactor extends BlockContainer {
 	@Override public void registerIcons(IconRegister ir) {
 		icons[0] = ir.registerIcon(CSIcons.PREFIX + CSIcons.COMPACTOR_BOTTOM);
 		icons[1] = ir.registerIcon(CSIcons.PREFIX + CSIcons.COMPACTOR_TOP);
-		icons[2] = ir.registerIcon(CSIcons.PREFIX + CSIcons.COMPACTOR_SIDE);
+		icons[2] = ir.registerIcon(CSIcons.PREFIX + CSIcons.COMPACTOR_SIDE1);
+		icons[3] = ir.registerIcon(CSIcons.PREFIX + CSIcons.COMPACTOR_SIDE2);
 	}
 	
-	@Override public Icon getBlockTextureFromSideAndMetadata(int side, int meta) {
-		return icons[(side==0||side==1)?side:2];
+	@Override public Icon getIcon(int side, int meta) {
+		return icons[(side==0||side==1)?side:(side<4?2:3)];
 	}
 	
 	@Override public TileEntity createTileEntity(World world, int meta) {

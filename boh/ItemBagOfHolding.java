@@ -2,8 +2,8 @@ package mods.CompactStuff.boh;
 
 import java.util.List;
 
-import mods.CompactStuff.CSIcons;
 import mods.CompactStuff.CompactStuff;
+import mods.CompactStuff.client.CSIcons;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,7 +44,7 @@ public class ItemBagOfHolding extends Item {
 		this.setUnlocalizedName("Bag of Holding");
 		this.setCreativeTab(CompactStuff.compactTab);
 	}
-	@Override public void updateIcons(IconRegister ir) {
+	@Override public void registerIcons(IconRegister ir) {
 		for(int i=0; i<16; i++) {
 			icons[i] = ir.registerIcon(CSIcons.PREFIX+"boh"+i);
 		}

@@ -3,8 +3,8 @@ package mods.CompactStuff.furnace;
 import java.util.HashMap;
 import java.util.Random;
 
-import mods.CompactStuff.CSIcons;
 import mods.CompactStuff.CompactStuff;
+import mods.CompactStuff.client.CSIcons;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFurnace;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -51,6 +52,9 @@ public class BlockCompactFurnace extends BlockFurnace {
 		setCreativeTab(CompactStuff.compactTab);
 	}
 	
+	@Override public int idPicked(World world, int x, int y, int z) {
+		return CompactStuff.furnace.blockID;
+	}
 	@Override public int idDropped(int a, Random b, int c) {
 		return CompactStuff.furnace.blockID;
 	}
@@ -81,7 +85,7 @@ public class BlockCompactFurnace extends BlockFurnace {
 		return icons.get(blockIndex+(s==front? (isActive ? 3 : 2) : 1));
 	}
 	
-	@Override public Icon getBlockTextureFromSideAndMetadata(int side, int meta) {
+	@Override public Icon getIcon(int side, int meta) {
 		int blockIndex = 16*Integer.parseInt(""+getMetaStr(meta)[0]);
 		return icons.get((side==1||side==0)?blockIndex:(side==3?blockIndex+2:blockIndex+1));
 	}

@@ -2,6 +2,7 @@ package mods.CompactStuff;
 
 import java.util.HashMap;
 
+import mods.CompactStuff.client.CSIcons;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -20,7 +21,6 @@ public class BlockComGlass extends Block {
 		setStepSound(Block.soundGlassFootstep);
 		setHardness(0.7f);
 		setLightOpacity(0);
-		LanguageRegistry.addName(this, "Compressed Glass");
 		setUnlocalizedName("comglass");
 		setResistance(21f);
 		this.fancy = fancy;
@@ -37,7 +37,7 @@ public class BlockComGlass extends Block {
 	@Override public boolean renderAsNormalBlock() { return false; }
 	@Override public boolean isBlockSolidOnSide(World w, int x, int y, int z, ForgeDirection side) { return true; }
 	
-	@Override public Icon getBlockTextureFromSideAndMetadata(int s, int m) {
+	@Override public Icon getIcon(int side, int meta) {
 		return icons.get(0);
 	}
 	@Override public Icon getBlockTexture(IBlockAccess ba, int x, int y, int z, int side) {

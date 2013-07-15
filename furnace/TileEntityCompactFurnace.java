@@ -6,7 +6,7 @@ import java.util.HashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemHoe;
@@ -19,8 +19,11 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-public abstract class TileEntityCompactFurnace extends TileEntity implements IInventory {
-	
+public abstract class TileEntityCompactFurnace extends TileEntity implements ISidedInventory {
+	/**
+	 * Slot 0: Material; 1: Fuel; 2: Output
+	 * @return
+	 */
 	public abstract ItemStack[] getFurnaceItemStacks();
 	public abstract void setFurnaceItemStacks(ItemStack[] i);
 	public abstract int getSizeInventory();
@@ -88,7 +91,7 @@ public abstract class TileEntityCompactFurnace extends TileEntity implements IIn
             }
             if (var2 instanceof ItemTool && ((ItemTool) var2).getToolMaterialName().equals("WOOD")) return 200;
             if (var2 instanceof ItemSword && ((ItemSword) var2).getToolMaterialName().equals("WOOD")) return 200;
-            if (var2 instanceof ItemHoe && ((ItemHoe) var2).func_77842_f().equals("WOOD")) return 200;
+            if (var2 instanceof ItemHoe && ((ItemHoe) var2).getMaterialName().equals("WOOD")) return 200;
             if (var1 == Item.stick.itemID) return 100;
             if (var1 == Item.coal.itemID) return 1600;
             if (var1 == Item.bucketLava.itemID) return 20000;
@@ -189,4 +192,16 @@ public abstract class TileEntityCompactFurnace extends TileEntity implements IIn
 	@Override public int getInventoryStackLimit() { return 64; }
 	@Override public void openChest()  { }
 	@Override public void closeChest() { }
+	
+	@Override public int[] getAccessibleSlotsFromSide(int side) {
+		if(side==1) return new int[] {0,1}; //top: material and fuel
+		if(side==0) return new int[] {1,2}; //bottom: result and fuel (bucket)
+		return new int[] {0,1,2}; //sides: material, fuel, result
+	}
+	@Override public boolean canInsertItem(int slot, ItemStack item, int side) {
+		return isStackValidForSlot(slot, item);
+	}
+	@Override public boolean canExtractItem(int slot, ItemStack item, int side) {
+		return slot==2 || item.itemID==Item.bucketEmpty.itemID;
+	}
 }

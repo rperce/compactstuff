@@ -52,7 +52,7 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
-@Mod(modid="robertwan_compactstuff", name="CompactStuff", version="1.4.7")
+@Mod(modid="robertwan_compactstuff", name="CompactStuff", version="1.5.2")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false)
 public class CompactStuff {
 		@Instance("robertwan_compactstuff")
@@ -98,6 +98,7 @@ public class CompactStuff {
 		@PreInit
 		public void preInit(FMLPreInitializationEvent e) {
 			proxy.registerRenderers();
+			NetworkRegistry.instance().registerChannel(new PacketHandler(), "compactorClick");
 			
 			compactTab = new CreativeTabs("compactTab") {
 				@Override public ItemStack getIconItemStack() {
@@ -218,16 +219,9 @@ public class CompactStuff {
 		
 		@Init
 		public void init(FMLInitializationEvent e) {
-			setUpPlantBalls();
-			setUpcomBlocks();
-			setUpFurnaces();
-			setUpCompactors();
-			setUpCarbon();
-			setUpBagOfHolding();
+			CompactRecipes.setUpRecipes();
 			setUpTools();
 			setUpArmor();
-			setUpGlassAndStuff();
-			setUpSmeltStick();
 			
 			MinecraftForge.EVENT_BUS.register(this);
 			
@@ -235,273 +229,10 @@ public class CompactStuff {
 			NetworkRegistry.instance().registerGuiHandler(this, proxy);
 			TickRegistry.registerTickHandler(new CompactTickHandler(EnumSet.of(TickType.SERVER)), Side.SERVER);
 			
-			GameRegistry.addShapelessRecipe(new ItemStack(Item.coal),
-					new ItemStack(Item.coal,1,1), //charcoal
-					new ItemStack(Block.cobblestone));
-			GameRegistry.addShapelessRecipe(new ItemStack(Item.coal,32),new ItemStack(Item.diamond));
-			
 			GameRegistry.registerFuelHandler(new CompactFuelHandler());
 		}
-		private void setUpSmeltStick() {
-			ItemStack stick = new ItemStack(smeltOnAStick),
-					dmnd = new ItemStack(Item.diamond),
-					stel = new ItemStack(itemStuff,1,ItemStuff.STEEL_INGOT),
-					coal = new ItemStack(Item.coal),
-					lava = new ItemStack(Item.bucketLava),
-					stck = new ItemStack(Item.stick);
-			LanguageRegistry.addName(stick, "Smelt-On-A-Stick");
-			GameRegistry.addRecipe(stick, "cdc", "sls", " t ",
-					'c', coal, 'd', dmnd, 's', stel, 'l', lava, 't', stck);
-		}
-		private void setUpGlassAndStuff() {
-			ItemStack slag 	= new ItemStack(itemStuff,1,ItemStuff.GLASS_SLAG),
-					fibr	= new ItemStack(itemStuff,1,ItemStuff.GLASS_FIBER),
-					dplt	= new ItemStack(itemStuff,1,ItemStuff.DIAMOND_PLATE),
-					ally	= new ItemStack(itemStuff,1,ItemStuff.ALLOY_PLATE),
-					iron	= new ItemStack(itemStuff,1,ItemStuff.IRON_PLATE),
-					splt	= new ItemStack(itemStuff,1,ItemStuff.STEEL_PLATE),
-					stel	= new ItemStack(itemStuff,1,ItemStuff.STEEL_INGOT),
-					crys	= new ItemStack(itemStuff,1,ItemStuff.TMOG_CRYSTAL),
-					stack;
-			
-			for(int i=0; i<ItemStuff.names.length; i++) {
-				if(ItemStuff.names[i]==null) continue;
-				stack = new ItemStack(itemStuff,1,i);
-				LanguageRegistry.addName(stack, stack.getItem().getUnlocalizedName(stack));
-			}			
-			GameRegistry.addRecipe(fibr,"xxx",'x',slag);
-			GameRegistry.addRecipe(ally,"sds","dhd","sds",
-					's',splt,
-					'd',dplt,
-					'h',new ItemStack(carbon,1,4));
-			GameRegistry.addRecipe(crys,"mgm","beb","mbm",
-					'm',new ItemStack(carbon,1,4),
-					'g',new ItemStack(Item.ghastTear),
-					'b',new ItemStack(Item.blazePowder),
-					'e',new ItemStack(Item.enderPearl));
-			
-			GameRegistry.addShapelessRecipe(new ItemStack(itemStuff,5,ItemStuff.DIAMOND_PLATE),
-					new ItemStack(comBlock,1,Metas.COMDIAMOND));
-			GameRegistry.addShapelessRecipe(new ItemStack(Item.diamond,16),dplt);
-			
-			GameRegistry.addShapelessRecipe(new ItemStack(itemStuff,5,ItemStuff.IRON_PLATE),
-					new ItemStack(comBlock,1,Metas.COMIRON));
-			GameRegistry.addShapelessRecipe(new ItemStack(Item.ingotIron,16),iron);
-			
-			GameRegistry.addShapelessRecipe(new ItemStack(itemStuff,5,ItemStuff.STEEL_PLATE),
-					new ItemStack(comBlock,1,Metas.COMSTEEL));
-			GameRegistry.addShapelessRecipe(new ItemStack(itemStuff,16,ItemStuff.STEEL_INGOT),splt);
-			
-			GameRegistry.addShapelessRecipe(stel, new ItemStack(Item.ingotIron), new ItemStack(carbon,1,1));
-			
-			FurnaceRecipes.smelting().addSmelting(slag.itemID,ItemStuff.GLASS_SLAG,new ItemStack(Block.thinGlass),0f);
-		}
-
-		public void setUpcomBlocks() {
-			GameRegistry.registerBlock(comBlock, ItemBlockCompressed.class, "Compressed Block");
-			GameRegistry.registerBlock(comGlass, "Compressed Glass");
-			
-			MinecraftForge.setBlockHarvestLevel(comBlock,  "pickaxe", 1);
-			
-			for(Integer i : BlockCompressed.names.keySet())
-				LanguageRegistry.addName(new ItemStack(comBlock,1,i),BlockCompressed.names.get(i));
-			LanguageRegistry.addName(comGlass, "Compressed Glass");
-			
-			ItemStack 
-				blockCoal = new ItemStack(comBlock,1,Metas.COMCOAL),
-				comIron   = new ItemStack(comBlock,1,Metas.COMIRON),
-				blckSteel = new ItemStack(comBlock,1,Metas.STEELBLOCK),
-				comSteeel = new ItemStack(comBlock,1,Metas.COMSTEEL),
-				cmDiorite = new ItemStack(comBlock,1,Metas.DIORITE),
-				comCobble = new ItemStack(comBlock,1,Metas.COMCOBBLE),
-				comDiamnd = new ItemStack(comBlock,1,Metas.COMDIAMOND),
-				comNeRack = new ItemStack(comBlock,1,Metas.COMRACK),
-				comSand	  = new ItemStack(comBlock,1,Metas.COMSAND),
-				comDirt	  = new ItemStack(comBlock,1,Metas.COMDIRT),
-				comGravel = new ItemStack(comBlock,1,Metas.COMGRAVEL),
-				stackGlass= new ItemStack(comGlass,5),
-				coal 	  = new ItemStack(Item.coal),
-				blockIron = new ItemStack(Block.blockSteel),
-				cobb = new ItemStack(Block.cobblestone),
-				rack = new ItemStack(Block.netherrack),
-				stel = new ItemStack(itemStuff,1,ItemStuff.STEEL_INGOT);
-			
-			GameRegistry.addShapelessRecipe(blockCoal,coal,coal,coal,coal,coal,coal,coal,coal);
-			GameRegistry.addShapelessRecipe(new ItemStack(Item.coal,8),blockCoal);
-			
-			GameRegistry.addRecipe(comIron,"iii","iii","iii",'i',blockIron);
-			//plates in setUpGlassAndStuff
-			
-			GameRegistry.addRecipe(blckSteel,"sss","sss","sss",'s',stel);
-			GameRegistry.addShapelessRecipe(new ItemStack(itemStuff,9,ItemStuff.STEEL_INGOT),blckSteel);
-			
-			GameRegistry.addRecipe(comSteeel,"sss","sss","sss",'s',blckSteel);
-			//plates in setUpGlassAndStuff
-			
-			GameRegistry.addRecipe(comDiamnd,"ddd","ddd","ddd",'d',new ItemStack(Block.blockDiamond));
-			//plates in setUpGlassAndStuff
-			
-			GameRegistry.addRecipe(cmDiorite,"ccc","cic","ccc",'c',comCobble,'i',new ItemStack(Item.ingotIron));
-			GameRegistry.addShapelessRecipe(new ItemStack(comBlock,8,Metas.COMCOBBLE),cmDiorite);
-			
-			GameRegistry.addShapelessRecipe(comCobble,cobb,cobb,cobb,cobb,cobb,cobb,cobb,cobb);
-			GameRegistry.addShapelessRecipe(new ItemStack(Block.cobblestone,8),comCobble);
-			
-			GameRegistry.addShapelessRecipe(comNeRack,	rack,rack,rack,rack,rack,rack,rack,rack);			
-			GameRegistry.addShapelessRecipe(new ItemStack(Block.netherrack,8),comNeRack);
-			
-			GameRegistry.addRecipe(comDirt,"ddd","ddd","ddd",'d',new ItemStack(Block.dirt));
-			GameRegistry.addShapelessRecipe(new ItemStack(Block.dirt,9),comDirt);
-			
-			GameRegistry.addRecipe(comSand,"sss","sss","sss",'s',new ItemStack(Block.sand));
-			GameRegistry.addShapelessRecipe(new ItemStack(Block.sand,9),comSand);
-			
-			GameRegistry.addRecipe(comGravel,"ggg","ggg","ggg",'g',new ItemStack(Block.gravel));
-			GameRegistry.addShapelessRecipe(new ItemStack(Block.gravel,9),comGravel);
-			
-			GameRegistry.addRecipe(stackGlass,"gcg","igi","gcg",'g',new ItemStack(Block.glass),
-					'c',comCobble,'i',new ItemStack(Item.ingotIron));
-			GameRegistry.addRecipe(stackGlass,"gig","cgc","gig",'g',new ItemStack(Block.glass),
-					'c',comCobble,'i',new ItemStack(Item.ingotIron));
-		}
 		
-		public void setUpPlantBalls() {
-			LanguageRegistry.addName(new ItemStack(plantBall,1,0), "Oak Sapling Ball");
-			LanguageRegistry.addName(new ItemStack(plantBall,1,1), "Spruce Sapling Ball");
-			LanguageRegistry.addName(new ItemStack(plantBall,1,2), "Birch Sapling Ball");
-			LanguageRegistry.addName(new ItemStack(plantBall,1,3), "Jungle Sapling Ball");
-			LanguageRegistry.addName(new ItemStack(plantBall,1,4), "Seed Ball");
-			
-			ItemStack seeds = new ItemStack(Item.seeds);
-			ItemStack oak = new ItemStack(Block.sapling,1,0);
-			ItemStack spruce = new ItemStack(Block.sapling,1,1);
-			ItemStack birch = new ItemStack(Block.sapling,1,2);
-			ItemStack jungle = new ItemStack(Block.sapling,1,3);
-			
-			
-			GameRegistry.addShapelessRecipe(new ItemStack(plantBall,1,0),
-					oak,oak,oak,oak,oak,oak,oak,oak);
-			GameRegistry.addShapelessRecipe(new ItemStack(plantBall,1,1),
-					spruce,spruce,spruce,spruce,spruce,spruce,spruce,spruce);
-			GameRegistry.addShapelessRecipe(new ItemStack(plantBall,1,2),
-					birch,birch,birch,birch,birch,birch,birch,birch);
-			GameRegistry.addShapelessRecipe(new ItemStack(plantBall,1,3),
-					jungle,jungle,jungle,jungle,jungle,jungle,jungle,jungle);
-			GameRegistry.addShapelessRecipe(new ItemStack(plantBall,1,4),
-					seeds,seeds,seeds,seeds,seeds,seeds,seeds,seeds);
-			
-
-			GameRegistry.addShapelessRecipe(new ItemStack(Block.sapling,8,0),new ItemStack(plantBall,1,0));
-			GameRegistry.addShapelessRecipe(new ItemStack(Block.sapling,8,1),new ItemStack(plantBall,1,1));
-			GameRegistry.addShapelessRecipe(new ItemStack(Block.sapling,8,2),new ItemStack(plantBall,1,2));
-			GameRegistry.addShapelessRecipe(new ItemStack(Block.sapling,8,3),new ItemStack(plantBall,1,3));
-			GameRegistry.addShapelessRecipe(new ItemStack(Item.seeds,8),new ItemStack(plantBall,1,4));	
-		}
-		
-		
-		
-		public void setUpFurnaces() {
-			GameRegistry.registerBlock(furnace, ItemCompactFurnace.class, "Compact Furnace");
-			GameRegistry.registerTileEntity(TileEntityCobbleFurnace.class, "compactstuff.cobblefurnace");
-			GameRegistry.registerTileEntity(TileEntityCarbonFurnace.class, "compactstuff.carbonfurnace");
-			MinecraftForge.setBlockHarvestLevel(furnace,	"pickaxe", 0);
-			
-			ItemStack c = new ItemStack(comBlock,1,Metas.COMCOBBLE),
-					f	= new ItemStack(Block.furnaceIdle),
-					n	= new ItemStack(this.carbon,1,4),
-				comp 	= new ItemStack(furnace,1,2),
-				carb 	= new ItemStack(furnace,1,10);
-			
-			LanguageRegistry.addName(comp, "Compression Furnace");
-			LanguageRegistry.addName(carb, "Carbon Furnace");
-						
-			GameRegistry.addRecipe(comp, "ccc","c c","ccc",'c',c);
-			GameRegistry.addRecipe(comp, "fff","f f","fff",'f',f);
-			GameRegistry.addRecipe(carb ,"nnn","nfn","nnn",'n',n,'f',comp);
-		}
-		
-		public void setUpCompactors() {
-			GameRegistry.registerBlock(compactor, "Compactor");
-			GameRegistry.registerBlock(transmog, ItemBlockTmog.class, "Transmogrifier");
-			GameRegistry.registerTileEntity(TileEntityCompactor.class,	"compactstuff.compactor");
-			GameRegistry.registerTileEntity(TileEntityTransmog.class,	"compactstuff.transmog");
-			MinecraftForge.setBlockHarvestLevel(compactor, "pickaxe", 1);
-			MinecraftForge.setBlockHarvestLevel(transmog, "pickaxe", 1);
-			
-			ItemStack comp = new ItemStack(compactor),
-					tmogCore = new ItemStack(transmog,1,0),
-					tmogShield = new ItemStack(transmog,1,1),
-					tmogFrame = new ItemStack(transmog,1,2);
-			
-			LanguageRegistry.addName(comp, "Compactor");
-			GameRegistry.addRecipe(comp, "prp","iei","prp",
-				'p', new ItemStack(itemStuff,1,ItemStuff.IRON_PLATE),
-				'r', new ItemStack(Item.redstone),
-				'i', new ItemStack(Block.pistonBase),
-				'e', new ItemStack(Item.enderPearl));
-			
-			LanguageRegistry.addName(tmogShield, "Transmogrifier Shield");
-			LanguageRegistry.addName(tmogFrame, "Transmogrifier Frame");
-			LanguageRegistry.addName(tmogCore, "Transmogrifier Core");
-		}
-		public void setUpCarbon() {
-			ItemStack wafe = new ItemStack(carbon,1,0),
-				carb = new ItemStack(carbon,1,1),
-				dens = new ItemStack(carbon,1,2),
-				comp = new ItemStack(carbon,1,3),
-				heat = new ItemStack(carbon,1,4),
-				fibr = new ItemStack(carbon,1,5),
-				fibr2= new ItemStack(carbon,2,5),
-				wovn = new ItemStack(carbon,1,6);
-			
-			LanguageRegistry.addName(wafe, "Impure Carbon");
-			LanguageRegistry.addName(carb, "Carbon");
-			LanguageRegistry.addName(dens, "Dense Carbon");	
-			LanguageRegistry.addName(comp, "Compressed Carbon");
-			LanguageRegistry.addName(heat, "Metamorphic Carbon");
-			LanguageRegistry.addName(fibr, "Carbon Fiber");
-			LanguageRegistry.addName(wovn, "Woven Carbon Fiber");
-
-			
-			ItemStack coal = new ItemStack(Item.coal);
-			GameRegistry.addShapelessRecipe(wafe,coal,coal,coal,coal);
-			FurnaceRecipes.smelting().addSmelting(wafe.itemID,0,carb,3.0f);
-			
-			GameRegistry.addShapelessRecipe(dens, carb,carb,carb,carb,carb,carb,carb,carb);
-			GameRegistry.addRecipe(comp," x ","xyx"," x ",'x',new ItemStack(comBlock,1,Metas.COMCOBBLE),'y',dens);
-			GameRegistry.addRecipe(heat," x ","xyx"," x ",'x',new ItemStack(comBlock,1,Metas.COMRACK),'y',comp);
-			GameRegistry.addRecipe(fibr2,"gcg","csc","gcg",
-					'g',new ItemStack(itemStuff,1,ItemStuff.GLASS_FIBER), 'c', carb, 's', new ItemStack(Item.slimeBall));
-			GameRegistry.addRecipe(fibr2,"cgc","gsg","cgc",
-					'g',new ItemStack(itemStuff,1,ItemStuff.GLASS_FIBER), 'c', carb, 's', new ItemStack(Item.slimeBall));
-			GameRegistry.addRecipe(wovn,"xx","xx",'x',fibr);
-			FurnaceRecipes.smelting().addSmelting(heat.itemID,4,new ItemStack(Item.diamond),15.0f);
-		}
-		
-		public void setUpBagOfHolding() {
-			ItemStack bag = new ItemStack(this.bagOfHolding,1,0);
-			LanguageRegistry.addName(bag, "Bag of Holding");
-			
-			GameRegistry.addRecipe(bag, "fef", "fnf", "fff",
-					'f', new ItemStack(this.carbon,1,6),
-					'e', new ItemStack(Item.emerald),
-					'n', new ItemStack(Item.eyeOfEnder));
-			
-			for(int bagMeta = 0; bagMeta<16; bagMeta++) {
-				for(int dyeMeta = 0; dyeMeta<16; dyeMeta++) {
-					int newbag = ItemBagOfHolding.COLOR_CRAFTING[dyeMeta][bagMeta];
-					if(newbag!=-1) {
-						GameRegistry.addShapelessRecipe(new ItemStack(this.bagOfHolding,1,newbag),
-							new ItemStack(this.bagOfHolding,1,bagMeta),
-							new ItemStack(Item.dyePowder,1,dyeMeta));
-					}
-				}
-			}
-		}
 		public void setUpTools() {
-			//setUpCobbleTools();
-			//setUpHeatTools();
-			//setUpSteelTools();
 			setUpAToolSet(new Item[] {
 				comCobSword,comCobPick,comCobAxe,comCobHoe,comCobSpade},
 				new ItemStack(comBlock,1,Metas.DIORITE),"Diorite",2,null,null);
@@ -517,14 +248,12 @@ public class CompactStuff {
 			ItemStack paxel = new ItemStack(this.paxel);
 			LanguageRegistry.addName(paxel, "CompactStuff Paxel");
 			
-			ItemStack pick 	= new ItemStack(Item.pickaxeDiamond);
-			ItemStack axes 	= new ItemStack(Item.axeDiamond);
-			ItemStack shvl	= new ItemStack(Item.shovelDiamond);
-			ItemStack carb	= new ItemStack(itemStuff,1,ItemStuff.STEEL_INGOT);
-			ItemStack blze	= new ItemStack(Item.blazeRod);
-
 			GameRegistry.addRecipe(paxel,"asp","cbc","cbc",
-					'a', axes, 'p', pick, 's', shvl, 'c', carb, 'b', blze);
+					'a', new ItemStack(Item.axeDiamond),
+					'p', new ItemStack(Item.pickaxeDiamond),
+					's', new ItemStack(Item.shovelDiamond),
+					'c', ItemStuff.stack(ItemStuff.STEEL_INGOT),
+					'b', new ItemStack(Item.blazeRod));
 		}
 
 		/**
@@ -534,6 +263,8 @@ public class CompactStuff {
 		 * @param material	The material the tools are made of (e.g. steel)
 		 * @param name		The name of each tool prepended to its type (e.g. "CS Steel" Pickaxe)
 		 * @param dmgval	The strength of the tool (0=wood, 1=stone, 2=iron, 3=diamond)
+		 * @param swo		The enchantment to apply to the sword, if applicable.  May be null.
+		 * @param too		The enchantment to apply to the pick, axe, and spade, if applicable.  May be null.
 		 */
 		public void setUpAToolSet(Item[] tools, ItemStack material, String name, int dmgval, Enchantment swo, Enchantment too) {
 			setUpAToolSet(tools, material, name, dmgval, swo, too, null);
@@ -554,6 +285,7 @@ public class CompactStuff {
 			for(int i=0; i<toolnames.length; i++)
 				LanguageRegistry.addName(toolstacks[i], name+" "+toolnames[i]);
 			if(swo!=null) toolstacks[0].addEnchantment(swo, specEnchant);
+			if(name.equals("Metamorphic Carbon")) toolstacks[0].addEnchantment(Enchantment.looting, specEnchant);
 			if(too!=null) {
 				toolstacks[1].addEnchantment(too, specEnchant);
 				toolstacks[2].addEnchantment(too, specEnchant);

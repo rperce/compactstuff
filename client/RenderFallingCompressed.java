@@ -1,9 +1,7 @@
 package mods.CompactStuff.client;
 
-import mods.CompactStuff.CSIcons;
 import mods.CompactStuff.CompactStuff;
 import mods.CompactStuff.EntityFallingCompact;
-import mods.CompactStuff.ImageFiles;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.entity.RenderFallingSand;

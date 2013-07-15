@@ -2,6 +2,8 @@ package mods.CompactStuff;
 
 import java.util.List;
 
+import mods.CompactStuff.client.CSIcons;
+import mods.CompactStuff.client.ImageFiles;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumArmorMaterial;
@@ -22,8 +24,8 @@ public class ItemCompactArmor extends ItemArmor implements IArmorTextureProvider
 		this.path = CSIcons.PREFIX + path;
 	}
 	
-	@Override public void updateIcons(IconRegister ir) {
-		iconIndex = ir.registerIcon(path);
+	@Override public void registerIcons(IconRegister ir) {
+		itemIcon = ir.registerIcon(path);
 	}
 	
 	@ForgeSubscribe

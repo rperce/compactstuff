@@ -1,6 +1,6 @@
 package mods.CompactStuff.boh;
 
-import mods.CompactStuff.ImageFiles;
+import mods.CompactStuff.client.ImageFiles;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
