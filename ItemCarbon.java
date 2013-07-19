@@ -47,4 +47,10 @@ public class ItemCarbon extends Item {
 		list.add(new ItemStack(i,1,5));
 		list.add(new ItemStack(i,1,6));
 	}
+
+	public static ItemStack stack(int meta) {
+		return stack(meta,1);
+	} public static ItemStack stack(int meta, int amt) {
+		return new ItemStack(CompactStuff.carbon, amt, meta);
+	}
 }

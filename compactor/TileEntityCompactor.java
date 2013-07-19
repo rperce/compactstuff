@@ -1,19 +1,22 @@
 package mods.CompactStuff.compactor;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
 
-import mods.CompactStuff.CompactStuff;
-import mods.CompactStuff.ItemStuff;
 import mods.CompactStuff.Metas;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 
 public class TileEntityCompactor extends TileEntity implements ISidedInventory {
@@ -22,74 +25,93 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory {
 	 * 3x9 inventory, 3x3 crafting grid, 1 crafting result, 3x2 compacting list
 	 * 27 + 9 + 1 + 6 = 43
 	 */
-	ItemStack[] stacks = new ItemStack[27+9/*+1+6*/]; //3x9 inventory, nine crafting grid.  in that order.
+	ItemStack[] stacks = new ItemStack[27+9+1+6]; //3x9 inventory, nine crafting grid, 1 output, 6 compression.  in that order.
 	public static final int INVFIRST = 0, INVLAST = 26, CRAFTFIRST = 27, CRAFTLAST = 35, OUTPUT = 36, COMFIRST = 37, COMLAST = 42;
-	private HashMap<ItemStack, ItemStack> compactables = new HashMap<ItemStack, ItemStack>() {
-		@Override public boolean containsKey(Object o) {
-			if(!(o instanceof ItemStack)) return false;
-			ItemStack item = (ItemStack)o;
-			for(ItemStack key : this.keySet())
-				if(key.itemID == item.itemID && key.stackSize == item.stackSize && key.getItemDamage() == item.getItemDamage())
-					return true;
-			return false;
-		}
-	};
-		
-	public TileEntityCompactor() { 
+	private Comparator sorter;
+	public HashSet<ItemStack> enabled;
+	public ContainerCompactor container;
+	
+	public synchronized HashSet<ItemStack> enabled() { return enabled; }
+	public TileEntityCompactor() {
 		super();
-		compactables.put(new ItemStack(Block.sapling,8,0), new ItemStack(CompactStuff.plantBall, 1, 0));
-		compactables.put(new ItemStack(Block.sapling,8,1), new ItemStack(CompactStuff.plantBall, 1, 1));
-		compactables.put(new ItemStack(Block.sapling,8,2), new ItemStack(CompactStuff.plantBall, 1, 2));
-		compactables.put(new ItemStack(Block.sapling,8,3), new ItemStack(CompactStuff.plantBall, 1, 3));
-		compactables.put(new ItemStack(Item.seeds,8), new ItemStack(CompactStuff.plantBall, 1, 4));
-		compactables.put(new ItemStack(Item.coal,8), new ItemStack(CompactStuff.comBlock, 1, Metas.COMCOAL));
-		compactables.put(new ItemStack(Block.cobblestone,9), new ItemStack(CompactStuff.comBlock, 1, Metas.COMCOBBLE));
-		compactables.put(new ItemStack(Block.dirt,9), new ItemStack(CompactStuff.comBlock, 1, Metas.COMDIRT));
-		compactables.put(new ItemStack(Block.gravel,9), new ItemStack(CompactStuff.comBlock, 1, Metas.COMGRAVEL));
-		compactables.put(new ItemStack(Block.netherrack,9), new ItemStack(CompactStuff.comBlock, 1, Metas.COMRACK));
-		compactables.put(new ItemStack(Block.sand,9), new ItemStack(CompactStuff.comBlock, 1, Metas.COMSAND));
-		compactables.put(new ItemStack(Item.clay,4), new ItemStack(Block.blockClay));
-		compactables.put(new ItemStack(Item.diamond,9), new ItemStack(Block.blockDiamond));
-		compactables.put(new ItemStack(Item.emerald,9), new ItemStack(Block.blockEmerald));
-		compactables.put(new ItemStack(Item.ingotGold,9), new ItemStack(Block.blockGold));
-		compactables.put(new ItemStack(Item.dyePowder, 9, Metas.DYE_BLUE), new ItemStack(Block.blockLapis));
-		compactables.put(new ItemStack(Item.netherQuartz, 9), new ItemStack(Block.blockNetherQuartz));
-		compactables.put(new ItemStack(Item.redstone, 9), new ItemStack(Block.blockRedstone));
-		compactables.put(new ItemStack(Item.snowball, 4), new ItemStack(Block.blockSnow));
-		compactables.put(new ItemStack(Item.ingotIron, 9), new ItemStack(Block.blockIron));
-		compactables.put(new ItemStack(Item.brick, 4), new ItemStack(Block.brick));
-		compactables.put(new ItemStack(Item.netherrackBrick, 4), new ItemStack(Block.netherBrick));
-		compactables.put(ItemStuff.stack(ItemStuff.STEEL_INGOT, 9), new ItemStack(CompactStuff.comBlock, 1, Metas.STEELBLOCK));
+		sorter = new Comparator() {
+			public int compare(Object a, Object b) {
+				if(b==null) return -1;
+				if(a==null || !(a instanceof ItemStack && b instanceof ItemStack) ) return 1;
+				return ((ItemStack)a).itemID - ((ItemStack)b).itemID;
+			}
+		};
+		enabled = new HashSet<ItemStack>();
+		enabled().addAll(CompactorRecipes.defaultEnabled);
+	}
+		
+	@Override public void onInventoryChanged() {
+		ArrayList<ItemStack> tStacks = new ArrayList<ItemStack>();
+		for(int i=INVFIRST; i<=INVLAST; i++) if(getStackInSlot(i)!=null) tStacks.add(getStackInSlot(i));
+		Collections.sort(tStacks, sorter);
+		for(int i=0; i<tStacks.size()-1; i++) {
+			ItemStack cur = tStacks.get(i);
+			if(cur.stackSize==cur.getMaxStackSize()) continue;
+			if(CompactorRecipes.areShallowEqual(cur,tStacks.get(i+1))) {
+				int transfer = Math.min(cur.getMaxStackSize()-cur.stackSize, tStacks.get(i+1).stackSize);
+				tStacks.get(i+1).stackSize-=transfer;
+				tStacks.get(i).stackSize+=transfer;
+				if(tStacks.get(i+1).stackSize<1) tStacks.remove(i+1);
+				i--;
+			}
+		}
+		for(int i=INVFIRST; i<=INVLAST; i++) {
+			if(i-INVFIRST>=tStacks.size()) stacks[i]=null;
+			else stacks[i] = tStacks.get(i-INVFIRST);
+		}
+	}
+	@Override public void updateEntity() {
+		if(worldObj.isRemote) return;
+		for(IRecipe r : CompactorRecipes.getEnabledRecipes(enabled())) {
+			if(tryToMake(r)==0) break;
+		}
 	}
 	
-	@Override public void updateEntity() {
-		for(int i=0; i<getSizeInventory(); i++) {
-			ItemStack stack = stacks[i];
-			if(stack==null) continue;
-			boolean done = false;
-			for(ItemStack input : compactables.keySet()) {
-				if(stack.isItemEqual(input) && stack.stackSize >= input.stackSize) {
-					int spot = -1;
-					for(int j=0; j<getSizeInventory(); j++) {
-						if(stacks[j]==null ||
-						(stacks[j].isItemEqual(compactables.get(input)) &&
-						stacks[j].stackSize+compactables.get(input).stackSize<=compactables.get(input).getMaxStackSize())) {
-							spot = j;
-							break;
-						}
-					}
-					if(spot>-1) {
-						decrStackSize(i, input.stackSize);
-						addStackToSlot(spot, new ItemStack(compactables.get(input).getItem(), compactables.get(input).stackSize, compactables.get(input).getItemDamage()));
-					}
-					done = true;
+	public int tryToMake(IRecipe r) {
+		if(r==null) return -1;
+		List<ItemStack> reqs = CompactorRecipes.getRequirements(r);
+		int[] indices = new int[reqs.size()];
+		Arrays.fill(indices, -1);
+		int i = INVFIRST;
+		for(int o=0; o<reqs.size(); o++) {
+			ItemStack req = reqs.get(o);
+			i = INVFIRST;
+			for(; i<=INVLAST; i++) {
+				ItemStack stack = getStackInSlot(i);
+				if(stack==null) break;
+				if(CompactorRecipes.areShallowEqual(stack, req) && stack.stackSize>=req.stackSize) {
+					indices[o] = i;
 					break;
 				}
 			}
-			if(done) {
-				onInventoryChanged();
-				break;			
+			if(getStackInSlot(i)==null) {
+				i = -1;
+				break;
 			}
+		}
+		if(i==-1) return -1;
+		else {
+			for(int j=0; j<indices.length; j++) {
+				getStackInSlot(indices[j]).stackSize-=reqs.get(j).stackSize;
+				if(getStackInSlot(indices[j]).stackSize<1) setInventorySlotContents(indices[j],null);
+			}
+			ItemStack out = r.getRecipeOutput().copy();
+			for(int j=INVFIRST; j<INVLAST; j++) {
+				ItemStack cur = getStackInSlot(j);
+				if(getStackInSlot(j)==null) {
+					setInventorySlotContents(j,out);
+					break;
+				} else if(CompactorRecipes.areShallowEqual(cur,out) && cur.getMaxStackSize()-cur.stackSize >= out.stackSize) {
+					getStackInSlot(j).stackSize+=out.stackSize;
+				}
+			}
+			onInventoryChanged();
+			return 0;
 		}
 	}
 	@Override public String getInvName() { return "compactstuff.compactor"; }
@@ -158,7 +180,7 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory {
 	
 	@Override public void readFromNBT(NBTTagCompound tagList) {
         super.readFromNBT(tagList);
-        NBTTagList itemList = tagList.getTagList("Items");
+        NBTTagList itemList = tagList.getTagList("Items"), enabledList = tagList.getTagList("Enabled");
         stacks = new ItemStack[this.getSizeInventory()];
 
         for (int i = 0; i < itemList.tagCount(); i++) {
@@ -168,11 +190,17 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory {
             if (slot >= 0 && slot < this.stacks.length)
             	stacks[slot] = ItemStack.loadItemStackFromNBT(tags);
         }
+        
+        enabled = new HashSet<ItemStack>();
+        for(int i=0; i<enabledList.tagCount(); i++) {
+        	NBTTagCompound tags = (NBTTagCompound)enabledList.tagAt(i);
+        	enabled.add(ItemStack.loadItemStackFromNBT(tags));
+        }
     }
 	
 	@Override public void writeToNBT(NBTTagCompound tagList) {
         super.writeToNBT(tagList);
-        NBTTagList itemList = new NBTTagList();
+        NBTTagList itemList = new NBTTagList(), enabledList = new NBTTagList();
 
         for (int i = 0; i < stacks.length; i++) {
             if (stacks[i] != null) {
@@ -182,8 +210,15 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory {
                 itemList.appendTag(tag);
             }
         }
+        
+        for(ItemStack stack : enabled()) {
+        	NBTTagCompound tag = new NBTTagCompound();
+        	stack.writeToNBT(tag);
+        	enabledList.appendTag(tag);
+        }
 
         tagList.setTag("Items", itemList);
+        tagList.setTag("Enabled",enabledList);
     }
 
 	@Override public int[] getAccessibleSlotsFromSide(int side) {
@@ -201,6 +236,17 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory {
 	@Override
 	public boolean canExtractItem(int slot, ItemStack item, int side) {
 		if(side==Metas.PLUS_Y) return false;
-		return !compactables.containsKey(item) && INVFIRST<=slot && slot<= INVLAST;
+		return !CompactorRecipes.isEnabledIngredient(enabled, item) && INVFIRST<=slot && slot<= INVLAST;
+	}
+	
+	@Override
+	public Packet getDescriptionPacket() {
+		NBTTagCompound data = new NBTTagCompound();
+		writeToNBT(data);
+		return new Packet132TileEntityData(xCoord,yCoord,zCoord,0,data);
+	}
+	@Override
+	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
+		readFromNBT(pkt.customParam1);
 	}
 }

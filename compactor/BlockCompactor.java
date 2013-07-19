@@ -54,7 +54,7 @@ public class BlockCompactor extends BlockContainer {
 		TileEntityCompactor te = (TileEntityCompactor)world.getBlockTileEntity(x, y, z);
 		
         if (te != null) {
-            for (int i = 0; i < te.getSizeInventory(); i++) {
+            for (int i = te.INVFIRST; i <= te.INVLAST; i++) {
                 ItemStack stack = te.getStackInSlot(i);
 
                 if (stack != null) {

@@ -40,4 +40,18 @@ public final class Metas {
 		MINUS_Z		= 2,
 		PLUS_Y		= 1,
 		MINUS_Y		= 0;
+	
+	public static final int
+		CB_IMPURE	= 0,
+		CB_PURE		= 1,
+		CB_DENSE	= 2,
+		CB_COMPRESS	= 3,
+		CB_META		= 4,
+		CB_FIBER	= 5,
+		CB_WOVEN	= 6;
+	
+	public static final String
+		CH_COMPCRAFT="cs_comp_craft",
+		CH_COMPOUT	="cs_comp_output",
+		CH_COMPMAKE	="cs_comp_make";
 }

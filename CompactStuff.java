@@ -53,7 +53,7 @@ import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid="robertwan_compactstuff", name="CompactStuff", version="1.5.2")
-@NetworkMod(clientSideRequired=true, serverSideRequired=false)
+@NetworkMod(clientSideRequired=true, serverSideRequired=false, packetHandler=PacketHandler.class, channels={Metas.CH_COMPCRAFT, Metas.CH_COMPOUT, Metas.CH_COMPMAKE})
 public class CompactStuff {
 		@Instance("robertwan_compactstuff")
 		public static CompactStuff instance;
@@ -98,7 +98,7 @@ public class CompactStuff {
 		@PreInit
 		public void preInit(FMLPreInitializationEvent e) {
 			proxy.registerRenderers();
-			NetworkRegistry.instance().registerChannel(new PacketHandler(), "compactorClick");
+//			NetworkRegistry.instance().registerChannel(new PacketHandler(), "compactorClick");
 			
 			compactTab = new CreativeTabs("compactTab") {
 				@Override public ItemStack getIconItemStack() {
@@ -373,13 +373,12 @@ public class CompactStuff {
 				p = new ItemStack(itemStuff,1,ItemStuff.DIAMOND_PLATE),
 				d = new ItemStack(itemStuff,1,ItemStuff.ALLOY_PLATE),
 				h = new ItemStack(carbon,1,4); //met carbon
-			GameRegistry.addRecipe(armor[0],"sos","cpc",
-				's',new ItemStack(itemStuff,1,ItemStuff.STEEL_PLATE),
-				'o',new ItemStack(wovnHelmt),
-				'c',c,'p',p);
-			GameRegistry.addRecipe(armor[1],"d d","coc","cdc",
-				'd',d,'c',c,
-				'o',new ItemStack(wovnPlate));
+			GameRegistry.addRecipe(armor[0],"dod","cgc",
+				'd',d,'o',new ItemStack(wovnHelmt),
+				'c',c,'g',new ItemStack(comGlass));
+			GameRegistry.addRecipe(armor[1],"dod","cic","ccc",
+				'd',d,'o',new ItemStack(wovnPlate),
+				'c',c,'i',ItemStuff.stack(ItemStuff.GOLD_ALLOYED));
 			GameRegistry.addRecipe(armor[2],"dod","c c","c c",
 				'd',d,'c',c,
 				'o',new ItemStack(wovnPants));

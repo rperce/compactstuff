@@ -100,25 +100,18 @@ public class CompactRecipes {
 	}
 	public static void setUpCarbon() {
 		ItemStack wafe = new ItemStack(carbon,1,0),
-			carb = new ItemStack(carbon,1,1),
-			dens = new ItemStack(carbon,1,2),
-			comp = new ItemStack(carbon,1,3),
 			heat = new ItemStack(carbon,1,4),
-			fibr = new ItemStack(carbon,1,5),
-			fibr2= new ItemStack(carbon,2,5),
 			wovn = new ItemStack(carbon,1,6);
 		
 		for(int i=0; i<7; i++) LanguageRegistry.addName(new ItemStack(carbon,1,i), ItemCarbon.names[i]);
 		
-		addHomogeneousRecipe(wafe,new ItemStack(Item.coal),4);
-		FurnaceRecipes.smelting().addSmelting(wafe.itemID,0,carb,3.0f);
+		//dense, compressed, metamorphic, fiber are Compactor-only, see CompactorRecipes
 		
-		addHomogeneousRecipe(dens, carb, 8);
-		GameRegistry.addRecipe(comp," x ","xyx"," x ",'x',new ItemStack(comBlock,1,Metas.COMCOBBLE),'y',dens);
-		GameRegistry.addRecipe(heat," x ","xyx"," x ",'x',new ItemStack(comBlock,1,Metas.COMRACK),'y',comp);
-		addFilledRecipe(heat, new ItemStack(Block.netherBrick), comp);
-		addBothAlternatingRecipes(fibr2, ItemStuff.stack(ItemStuff.GLASS_FIBER), carb, new ItemStack(Item.slimeBall));
-		GameRegistry.addRecipe(wovn,"xx","xx",'x',fibr);
+		addHomogeneousRecipe(wafe,new ItemStack(Item.coal),4);
+		FurnaceRecipes.smelting().addSmelting(wafe.itemID,0, ItemCarbon.stack(Metas.CB_PURE) ,3.0f);
+		
+		addFilledRecipe(heat, new ItemStack(Block.netherBrick), ItemCarbon.stack(Metas.CB_COMPRESS));
+		GameRegistry.addRecipe(wovn,"xx","xx",'x',ItemCarbon.stack(Metas.CB_FIBER));
 		FurnaceRecipes.smelting().addSmelting(heat.itemID,4,new ItemStack(Item.diamond),15.0f);
 	}
 	public static void setUpCompactors() {
@@ -153,12 +146,7 @@ public class CompactRecipes {
 				't', ItemStuff.stack(ItemStuff.TMOG_CRYSTAL),
 				'e', new ItemStack(comBlock, 1, Metas.COMSTEEL),
 				'c', new ItemStack(compactor));
-		GameRegistry.addRecipe(tmogShield, "ggg", "oao", "iri",
-				'g', new ItemStack(comGlass),
-				'o', new ItemStack(Block.obsidian),
-				'a', ItemStuff.stack(ItemStuff.GOLD_ALLOYED),
-				'i', new ItemStack(comBlock, 1, Metas.DIORITE),
-				'r', new ItemStack(Block.blockRedstone));
+		//shield is Compactor-only, see CompactorRecipes.
 				
 	}
 	private static void setUpGlassAndStuff() {
@@ -169,22 +157,11 @@ public class CompactRecipes {
 			LanguageRegistry.addName(stack, stack.getItem().getUnlocalizedName(stack));
 		}			
 		
-		addBothAlternatingRecipes(ItemStuff.stack(ItemStuff.ALLOY_PLATE),
-				ItemStuff.stack(ItemStuff.STEEL_PLATE), ItemStuff.stack(ItemStuff.DIAMOND_PLATE),
-				new ItemStack(carbon,1,4));
-		addBothAlternatingRecipes(ItemStuff.stack(ItemStuff.GOLD_ALLOYED),
-				ItemStuff.stack(ItemStuff.GOLD_PLATE), new ItemStack(Item.lightStoneDust),
-				ItemStuff.stack(ItemStuff.ALLOY_PLATE)); 
 		addBothAlternatingRecipes(ItemStuff.stack(ItemStuff.BLAZE_EMERALD),
 				new ItemStack(Item.ingotGold), new ItemStack(Item.blazePowder),
 				new ItemStack(Item.emerald));
 		GameRegistry.addRecipe(ItemStuff.stack(ItemStuff.GLASS_FIBER),"xxx",'x',slag);
-		GameRegistry.addRecipe(ItemStuff.stack(ItemStuff.TMOG_CRYSTAL),"mhm","gzg","mnm",
-				'm',new ItemStack(carbon,1,4),
-				'g',new ItemStack(Item.netherQuartz),
-				'z',ItemStuff.stack(ItemStuff.BLAZE_EMERALD),
-				'n',new ItemStack(Item.enderPearl),
-				'h',new ItemStack(Item.ghastTear));
+		//Transmogrifier Crystal, CA Plate, Gilded CA Plate are compactor-only, see CompactorRecipes in mods.CompactStuff.compactor
 		
 		addPlateRecipe(ItemStuff.DIAMOND_PLATE, Metas.COMDIAMOND, new ItemStack(Item.diamond));
 		addPlateRecipe(ItemStuff.IRON_PLATE, Metas.COMIRON, new ItemStack(Item.ingotIron));
@@ -241,10 +218,8 @@ public class CompactRecipes {
 			compGlass = new ItemStack(comGlass,5),
 			vanlGlass = new ItemStack(Block.glass);
 		
-		
-		addHomogeneousRecipe(new ItemStack(comBlock, 1, Metas.COMSTEEL), blckSteel, 9);
-		addHomogeneousRecipe(new ItemStack(comBlock,1,Metas.COMDIAMOND), new ItemStack(Block.blockDiamond), 9);
-		addHomogeneousRecipe(new ItemStack(comBlock, 1, Metas.COMGOLD), new ItemStack(Block.blockGold), 9);
+		//compressed iron, steel, diamond, gold, diorite creation all in CompactorRecipes
+		GameRegistry.addShapelessRecipe(BlockCompressed.stack(Metas.COMCOBBLE, 9), BlockCompressed.stack(Metas.DIORITE));
 		
 		addReversableRecipe(blckSteel, new ItemStack(itemStuff,1,ItemStuff.STEEL_INGOT), 9);
 		addReversableRecipe(new ItemStack(comBlock,1,Metas.COMCOAL), new ItemStack(Item.coal), 8);
@@ -253,8 +228,6 @@ public class CompactRecipes {
 				
 		for(ItemStack a : fullHomogen.keySet()) addReversableRecipe(a, new ItemStack(fullHomogen.get(a)), 9);
 		
-		addReversableRecipe(new ItemStack(comBlock,1,Metas.DIORITE), comCobble, 9);
-
 		GameRegistry.addRecipe(compGlass,"gcg","igi","gcg",'g',vanlGlass,'c',comCobble,'i',ingotIron);
 		GameRegistry.addRecipe(compGlass,"gig","cgc","gig",'g',vanlGlass,'c',comCobble,'i',ingotIron);
 	}
@@ -270,8 +243,8 @@ public class CompactRecipes {
 	}
 	static java.util.HashMap<ItemStack, Block> fullHomogen = new java.util.HashMap<ItemStack, Block>();
 	static {
-		Integer[] a = {Metas.COMIRON, Metas.COMDIRT, Metas.COMSAND, Metas.COMGRAVEL};
-		Block[] b = {Block.blockIron, Block.dirt, Block.sand, Block.gravel};
+		Integer[] a = {Metas.COMDIRT, Metas.COMSAND, Metas.COMGRAVEL};
+		Block[] b = {Block.dirt, Block.sand, Block.gravel};
 		for(int i=0; i<a.length; i++) fullHomogen.put(new ItemStack(comBlock, 1, a[i]), b[i]);
 	}
 }

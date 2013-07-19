@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -35,6 +36,11 @@ public class BlockCompressed extends Block {
 		super(id, Material.rock);
 		setStepSound(Block.soundStoneFootstep);
 		setCreativeTab(CompactStuff.compactTab);
+	}
+	public static ItemStack stack(int meta) {
+		return stack(meta,1);
+	} public static ItemStack stack(int meta, int amt) {
+		return new ItemStack(CompactStuff.comBlock, amt, meta);
 	}
 
 	public BlockCompressed(int id, Material m) { super(id, m); }
