@@ -110,7 +110,6 @@ public class CompactRecipes {
 		addHomogeneousRecipe(wafe,new ItemStack(Item.coal),4);
 		FurnaceRecipes.smelting().addSmelting(wafe.itemID,0, ItemCarbon.stack(Metas.CB_PURE) ,3.0f);
 		
-		addFilledRecipe(heat, new ItemStack(Block.netherBrick), ItemCarbon.stack(Metas.CB_COMPRESS));
 		GameRegistry.addRecipe(wovn,"xx","xx",'x',ItemCarbon.stack(Metas.CB_FIBER));
 		FurnaceRecipes.smelting().addSmelting(heat.itemID,4,new ItemStack(Item.diamond),15.0f);
 	}

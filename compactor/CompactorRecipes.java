@@ -93,7 +93,9 @@ public class CompactorRecipes {
 				'a', ItemStuff.stack(ItemStuff.GOLD_ALLOYED),
 				'i', new ItemStack(comBlock, 1, Metas.DIORITE),
 				'r', new ItemStack(Block.blockRedstone));
-
+		addRecipe(ItemCarbon.stack(Metas.CB_META), "xxx","xax","xxx",
+				'x',new ItemStack(Block.netherBrick),
+				'a',ItemCarbon.stack(Metas.CB_COMPRESS));
     }
     public static void addBothAlternatingRecipes(ItemStack a, ItemStack b, ItemStack c, ItemStack d) {
 		addRecipe(a,"bcb","cdc","bcb",'b',b,'c',c,'d',d);
@@ -293,6 +295,7 @@ public class CompactorRecipes {
     	if(r instanceof ShapedRecipes) flat.addAll(Arrays.asList(((ShapedRecipes)r).recipeItems));
     	else flat.addAll(((ShapelessRecipes)r).recipeItems);
     	for(ItemStack a : flat) {
+    		if(a==null) continue;
     		boolean dupe = false;
     		for(ItemStack b : out) {
     			if(areShallowEqual(a,b)) {

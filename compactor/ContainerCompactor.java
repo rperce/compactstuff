@@ -2,6 +2,7 @@ package mods.CompactStuff.compactor;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
@@ -34,6 +35,7 @@ public class ContainerCompactor extends Container {
 		//output slot
 		this.addSlotToContainer(new Slot(te,36,89,37) {
 			@Override public boolean getHasStack() { return false; }
+			@Override public boolean canTakeStack(EntityPlayer e) { return false; }
 		});
 		
 		//compression slots
@@ -41,6 +43,7 @@ public class ContainerCompactor extends Container {
 			for(int c=0; c<2; c++)
 				this.addSlotToContainer(new Slot(te,37+r*2+c, 134+18*c,19+18*r) {
 					@Override public boolean getHasStack() { return false; }
+					@Override public boolean canTakeStack(EntityPlayer e) { return false; }
 				});
 		
 		//player inventory
@@ -64,9 +67,26 @@ public class ContainerCompactor extends Container {
 		tec.setInventorySlotContents(tec.OUTPUT, out);
 	}
 	
-	@Override
-	public ItemStack transferStackInSlot(EntityPlayer player, int slot) {
-		return null;
+	@Override public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) { //try {
+		int PLAYERFIRST=3*3+1+2*3+3*9, PLAYERLAST=PLAYERFIRST+4*9-1;
+		if(slotIndex>TileEntityCompactor.INVLAST && slotIndex<PLAYERFIRST || slotIndex<0 || slotIndex>PLAYERLAST)
+			return null;
+		Slot slot = (Slot)inventorySlots.get(slotIndex);
+		ItemStack original = null;
+		if(slot!=null && slot.getHasStack()) {
+			ItemStack stack = slot.getStack();
+			original = stack.copy();
+			if(slotIndex<=TileEntityCompactor.INVLAST) {
+				if(!mergeItemStack(stack, PLAYERFIRST, PLAYERLAST+1, false)) return null;
+			}
+			else {
+				if(!mergeItemStack(stack, TileEntityCompactor.INVFIRST, TileEntityCompactor.INVLAST+1, false)) return null;
+			}
+			
+			if(stack.stackSize<1) slot.putStack(null);
+			else slot.onSlotChanged();
+		}
+		return original;
 	}
 	
 }

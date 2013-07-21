@@ -38,7 +38,9 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory {
 			public int compare(Object a, Object b) {
 				if(b==null) return -1;
 				if(a==null || !(a instanceof ItemStack && b instanceof ItemStack) ) return 1;
-				return ((ItemStack)a).itemID - ((ItemStack)b).itemID;
+				ItemStack aa = (ItemStack)a, bb=(ItemStack)b;
+				int z = aa.itemID - bb.itemID;
+				return z!=0? z : aa.getItemDamage() - bb.getItemDamage();
 			}
 		};
 		enabled = new HashSet<ItemStack>();
@@ -46,6 +48,7 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory {
 	}
 		
 	@Override public void onInventoryChanged() {
+		if(worldObj.isRemote) return;
 		ArrayList<ItemStack> tStacks = new ArrayList<ItemStack>();
 		for(int i=INVFIRST; i<=INVLAST; i++) if(getStackInSlot(i)!=null) tStacks.add(getStackInSlot(i));
 		Collections.sort(tStacks, sorter);
@@ -64,6 +67,7 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory {
 			if(i-INVFIRST>=tStacks.size()) stacks[i]=null;
 			else stacks[i] = tStacks.get(i-INVFIRST);
 		}
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 	@Override public void updateEntity() {
 		if(worldObj.isRemote) return;
@@ -89,7 +93,7 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory {
 					break;
 				}
 			}
-			if(getStackInSlot(i)==null) {
+			if(indices[o]==-1) {
 				i = -1;
 				break;
 			}
@@ -101,14 +105,16 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory {
 				if(getStackInSlot(indices[j]).stackSize<1) setInventorySlotContents(indices[j],null);
 			}
 			ItemStack out = r.getRecipeOutput().copy();
-			for(int j=INVFIRST; j<INVLAST; j++) {
+			for(int j=INVFIRST; j<=INVLAST; j++) {
 				ItemStack cur = getStackInSlot(j);
 				if(getStackInSlot(j)==null) {
 					setInventorySlotContents(j,out);
 					break;
 				} else if(CompactorRecipes.areShallowEqual(cur,out) && cur.getMaxStackSize()-cur.stackSize >= out.stackSize) {
 					getStackInSlot(j).stackSize+=out.stackSize;
+					break;
 				}
+
 			}
 			onInventoryChanged();
 			return 0;
