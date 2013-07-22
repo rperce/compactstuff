@@ -67,11 +67,9 @@ public class PacketHandler implements IPacketHandler {
 					tec.tryToMake(CompactorRecipes.getRecipeWithOutput(s));
 				}
 			} else if(is[4]==1) { //right click
-				synchronized(tec.enabled) {
-					if(CompactorRecipes.isEnabled(tec.enabled(), s))
-						CompactorRecipes.disableRecipe(tec.enabled(), s);
-					else CompactorRecipes.enableRecipe(tec.enabled(), s);
-				}
+				if(CompactorRecipes.isEnabled(tec.enabled(), s))
+					CompactorRecipes.disableRecipe(tec.enabled(), s);
+				else CompactorRecipes.enableRecipe(tec.enabled(), s);
 			}
 			((EntityPlayer)player).worldObj.markBlockForUpdate(is[0], is[1], is[2]);
 		}

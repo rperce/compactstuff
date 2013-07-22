@@ -168,7 +168,8 @@ public class CompactRecipes {
 		addPlateRecipe(ItemStuff.GOLD_PLATE, Metas.COMGOLD, new ItemStack(Item.ingotGold));
 		
 		GameRegistry.addShapelessRecipe(ItemStuff.stack(ItemStuff.STEEL_INGOT,2),
-				new ItemStack(Item.ingotIron,3), new ItemStack(carbon,3,1));
+				new ItemStack(Item.ingotIron),new ItemStack(Item.ingotIron),new ItemStack(Item.ingotIron),
+				ItemCarbon.stack(Metas.CB_PURE),ItemCarbon.stack(Metas.CB_PURE),ItemCarbon.stack(Metas.CB_PURE));
 		
 		FurnaceRecipes.smelting().addSmelting(slag.itemID,ItemStuff.GLASS_SLAG,new ItemStack(Block.thinGlass),0f);
 	}

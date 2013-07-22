@@ -1,21 +1,19 @@
 package mods.CompactStuff.compactor;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-
-import mods.CompactStuff.BlockCompressed;
 import mods.CompactStuff.Metas;
 import mods.CompactStuff.client.CompactPacket;
 import mods.CompactStuff.client.ImageFiles;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class CompactorGUI extends GuiContainer {
 	TileEntityCompactor tec;
 	public CompactorGUI(IInventory play, TileEntityCompactor tile) {
