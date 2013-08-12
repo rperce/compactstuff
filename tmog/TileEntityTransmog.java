@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Stack;
 
 import mods.CompactStuff.CompactStuff;
+import mods.CompactStuff.Lawn;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -18,12 +19,12 @@ public class TileEntityTransmog extends TileEntity implements IInventory {
 	private Stack<String> worldActions;
 	public TileEntityTransmog core;
 	
-	private ItemStack[] inventory;
+	private ItemStack[] stacks;
 	public TileEntityTransmog() {
 		valid = false;
 		core = null;
 		worldActions = new Stack<String>();
-		inventory = new ItemStack[3*9];
+		stacks = new ItemStack[3*9];
 	}
 	
 	@Override public void updateEntity() {
@@ -133,13 +134,7 @@ public class TileEntityTransmog extends TileEntity implements IInventory {
 		if(type==CORE) worldActions.push("CORE");
         else worldActions.push("EDGE");
 		
-		NBTTagList items = new NBTTagList("items");
-		for(int i=0; i<items.tagCount(); i++) {
-			NBTTagCompound ntc = (NBTTagCompound)items.tagAt(i);
-			int slot = ntc.getByte("slot") & 255;
-			if(slot>=0 && slot<getSizeInventory())
-				setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(ntc));
-		}
+		stacks = Lawn.readStacksFromNBT(tagList);
     }
 	
 	@Override public void writeToNBT(NBTTagCompound tagList) {
@@ -148,16 +143,7 @@ public class TileEntityTransmog extends TileEntity implements IInventory {
         tagList.setBoolean("tetValid", valid);
         tagList.setInteger("tetType", this.type);
         
-        NBTTagList items = new NBTTagList();
-        for(int i=0; i<getSizeInventory(); i++) {
-        	if(getStackInSlot(i)==null) continue;
-        	NBTTagCompound j = new NBTTagCompound();
-        	j.setByte("slot", (byte)i);
-        	getStackInSlot(i).writeToNBT(j);
-        	items.appendTag(j);
-        }
-        
-        tagList.setTag("items", items);
+        Lawn.writeStacksToNBT(tagList, stacks);
 	}
 
 	@Override
@@ -184,11 +170,11 @@ public class TileEntityTransmog extends TileEntity implements IInventory {
 		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord)==this && player.getDistance(xCoord, yCoord, zCoord)<=8d;
 	}
 	
-	@Override public void setInventorySlotContents(int i, ItemStack s) { inventory[i]=s; }
+	@Override public void setInventorySlotContents(int i, ItemStack s) { stacks[i]=s; }
 	@Override public boolean isStackValidForSlot(int i, ItemStack s) { return true; }
 	@Override public String getInvName() { return "compactstuff.transmogrifier"; }
- 	@Override public ItemStack getStackInSlot(int i) { return inventory[i]; }
-	@Override public int getSizeInventory() { return inventory.length; }
+ 	@Override public ItemStack getStackInSlot(int i) { return stacks[i]; }
+	@Override public int getSizeInventory() { return stacks.length; }
 	@Override public boolean isInvNameLocalized() { return false; }
 	@Override public int getInventoryStackLimit() { return 64; }
 	@Override public void closeChest() {}

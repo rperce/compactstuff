@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
+import mods.CompactStuff.Lawn;
 import mods.CompactStuff.Metas;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -55,7 +56,7 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory {
 		for(int i=0; i<tStacks.size()-1; i++) {
 			ItemStack cur = tStacks.get(i);
 			if(cur.stackSize==cur.getMaxStackSize()) continue;
-			if(CompactorRecipes.areShallowEqual(cur,tStacks.get(i+1))) {
+			if(Lawn.areShallowEqual(cur,tStacks.get(i+1))) {
 				int transfer = Math.min(cur.getMaxStackSize()-cur.stackSize, tStacks.get(i+1).stackSize);
 				tStacks.get(i+1).stackSize-=transfer;
 				tStacks.get(i).stackSize+=transfer;
@@ -88,7 +89,7 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory {
 			for(; i<=INVLAST; i++) {
 				ItemStack stack = getStackInSlot(i);
 				if(stack==null) break;
-				if(CompactorRecipes.areShallowEqual(stack, req) && stack.stackSize>=req.stackSize) {
+				if(Lawn.areShallowEqual(stack, req) && stack.stackSize>=req.stackSize) {
 					indices[o] = i;
 					break;
 				}
@@ -110,7 +111,7 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory {
 				if(getStackInSlot(j)==null) {
 					setInventorySlotContents(j,out);
 					break;
-				} else if(CompactorRecipes.areShallowEqual(cur,out) && cur.getMaxStackSize()-cur.stackSize >= out.stackSize) {
+				} else if(Lawn.areShallowEqual(cur,out) && cur.getMaxStackSize()-cur.stackSize >= out.stackSize) {
 					getStackInSlot(j).stackSize+=out.stackSize;
 					break;
 				}
@@ -187,16 +188,7 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory {
 	@Override public void readFromNBT(NBTTagCompound tagList) {
         super.readFromNBT(tagList);
         NBTTagList itemList = tagList.getTagList("Items"), enabledList = tagList.getTagList("Enabled");
-        stacks = new ItemStack[this.getSizeInventory()];
-
-        for (int i = 0; i < itemList.tagCount(); i++) {
-            NBTTagCompound tags = (NBTTagCompound)itemList.tagAt(i);
-            byte slot = tags.getByte("Slot");
-
-            if (slot >= 0 && slot < this.stacks.length)
-            	stacks[slot] = ItemStack.loadItemStackFromNBT(tags);
-        }
-        
+        stacks = Lawn.readStacksFromNBT(tagList);        
         enabled = new HashSet<ItemStack>();
         for(int i=0; i<enabledList.tagCount(); i++) {
         	NBTTagCompound tags = (NBTTagCompound)enabledList.tagAt(i);
@@ -206,24 +198,14 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory {
 	
 	@Override public void writeToNBT(NBTTagCompound tagList) {
         super.writeToNBT(tagList);
-        NBTTagList itemList = new NBTTagList(), enabledList = new NBTTagList();
-
-        for (int i = 0; i < stacks.length; i++) {
-            if (stacks[i] != null) {
-                NBTTagCompound tag = new NBTTagCompound();
-                tag.setByte("Slot", (byte)i);
-                stacks[i].writeToNBT(tag);
-                itemList.appendTag(tag);
-            }
-        }
+        NBTTagList enabledList = new NBTTagList();
+        Lawn.writeStacksToNBT(tagList, stacks);
         
         for(ItemStack stack : enabled()) {
         	NBTTagCompound tag = new NBTTagCompound();
         	stack.writeToNBT(tag);
         	enabledList.appendTag(tag);
         }
-
-        tagList.setTag("Items", itemList);
         tagList.setTag("Enabled",enabledList);
     }
 

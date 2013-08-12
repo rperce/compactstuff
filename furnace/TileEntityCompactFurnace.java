@@ -3,6 +3,7 @@ package mods.CompactStuff.furnace;
 
 import java.util.HashMap;
 
+import mods.CompactStuff.Lawn;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -100,40 +101,18 @@ public abstract class TileEntityCompactFurnace extends TileEntity implements ISi
             return GameRegistry.getFuelValue(stack);
         }
     }
-	@Override public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
-        super.readFromNBT(par1NBTTagCompound);
-        NBTTagList var2 = par1NBTTagCompound.getTagList("Items");
-        setFurnaceItemStacks(new ItemStack[this.getSizeInventory()]);
-
-        for (int var3 = 0; var3 < var2.tagCount(); ++var3) {
-            NBTTagCompound var4 = (NBTTagCompound)var2.tagAt(var3);
-            byte var5 = var4.getByte("Slot");
-
-            if (var5 >= 0 && var5 < this.getFurnaceItemStacks().length)
-            	this.getFurnaceItemStacks()[var5] = ItemStack.loadItemStackFromNBT(var4);
-        }
-
-        setFurnaceBurnTime(par1NBTTagCompound.getShort("BurnTime"));
-        setFurnaceCookTime(par1NBTTagCompound.getShort("CookTime"));
+	@Override public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        setFurnaceItemStacks(Lawn.readStacksFromNBT(data));
+        setFurnaceBurnTime(data.getShort("BurnTime"));
+        setFurnaceCookTime(data.getShort("CookTime"));
         setCurrentItemBurnTime(getItemBurnTime(this.getFurnaceItemStacks()[1]));
     }
-	
-	@Override public void writeToNBT(NBTTagCompound par1NBTTagCompound) {
-        super.writeToNBT(par1NBTTagCompound);
-        par1NBTTagCompound.setShort("BurnTime", (short)getFurnaceBurnTime());
-        par1NBTTagCompound.setShort("CookTime", (short)getFurnaceCookTime());
-        NBTTagList var2 = new NBTTagList();
-
-        for (int var3 = 0; var3 < getFurnaceItemStacks().length; ++var3) {
-            if (getFurnaceItemStacks()[var3] != null) {
-                NBTTagCompound var4 = new NBTTagCompound();
-                var4.setByte("Slot", (byte)var3);
-                getFurnaceItemStacks()[var3].writeToNBT(var4);
-                var2.appendTag(var4);
-            }
-        }
-
-        par1NBTTagCompound.setTag("Items", var2);
+	@Override public void writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setShort("BurnTime", (short)getFurnaceBurnTime());
+        data.setShort("CookTime", (short)getFurnaceCookTime());
+        data = Lawn.writeStacksToNBT(data, getFurnaceItemStacks());
     }
 	@Override public void setInventorySlotContents(int par1, ItemStack par2ItemStack) {
         getFurnaceItemStacks()[par1] = par2ItemStack;

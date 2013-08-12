@@ -2,6 +2,7 @@ package mods.CompactStuff.furnace;
 
 import java.util.HashMap;
 
+import mods.CompactStuff.BlockCompressed;
 import mods.CompactStuff.CompactStuff;
 import mods.CompactStuff.ItemStuff;
 import mods.CompactStuff.Metas;
@@ -42,7 +43,7 @@ public class TileEntityCarbonFurnace extends TileEntityCompactFurnace {
 	};
 	static {
 		custom.put(new ItemStack(Block.thinGlass), new ItemStack(CompactStuff.itemStuff,1,ItemStuff.GLASS_SLAG));
-		custom.put(new ItemStack(CompactStuff.comBlock, 1, Metas.COMSAND), new ItemStack(CompactStuff.comGlass,3));
+		custom.put(BlockCompressed.stack(Metas.COMSAND), new ItemStack(CompactStuff.comGlass,3));
 		custom.put(new ItemStack(Block.cactus), new ItemStack(Item.dyePowder, 2, 2));
 	}
 	

@@ -16,12 +16,12 @@ import mods.CompactStuff.BlockCompressed;
 import mods.CompactStuff.CompactStuff;
 import mods.CompactStuff.ItemCarbon;
 import mods.CompactStuff.ItemStuff;
+import mods.CompactStuff.Lawn;
 import mods.CompactStuff.Metas;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
@@ -218,7 +218,7 @@ public class CompactorRecipes {
     }
     public synchronized static void enableRecipe(HashSet<ItemStack> enabled, ItemStack output) {
     	for(ItemStack stack : enabled)
-    		if(areShallowEqual(stack,output)) return;
+    		if(Lawn.areShallowEqual(stack,output)) return;
     	ItemStack add = output.copy(); add.stackSize = 1;
     	enabled.add(add);
     }
@@ -226,7 +226,7 @@ public class CompactorRecipes {
     public synchronized static void disableRecipe(HashSet<ItemStack> enabled, ItemStack output) {
     	for(Iterator<ItemStack> i=enabled.iterator(); i.hasNext();) {
     		ItemStack stack = i.next();
-    		if(areShallowEqual(stack,output)) {
+    		if(Lawn.areShallowEqual(stack,output)) {
     			enabled.remove(stack);
     			return;
     		}
@@ -235,7 +235,7 @@ public class CompactorRecipes {
     
     public static boolean isEnabled(HashSet<ItemStack> enabled, ItemStack output) {
     	for(ItemStack stack : enabled)
-    		if(areShallowEqual(stack,output)) return true;
+    		if(Lawn.areShallowEqual(stack,output)) return true;
 		return false;
     }
     
@@ -244,10 +244,10 @@ public class CompactorRecipes {
     		if(enabled.contains(recipe.getRecipeOutput())) {
     			if(recipe instanceof ShapedRecipes) {
     				ShapedRecipes sr = (ShapedRecipes)recipe;
-    				for(ItemStack stack: sr.recipeItems) if(areShallowEqual(stack,input)) return true;
+    				for(ItemStack stack: sr.recipeItems) if(Lawn.areShallowEqual(stack,input)) return true;
     			} else {
     				ShapelessRecipes sr = (ShapelessRecipes)recipe;
-    				for(ItemStack stack : (List<ItemStack>)sr.recipeItems) if(areShallowEqual(stack,input)) return true;
+    				for(ItemStack stack : (List<ItemStack>)sr.recipeItems) if(Lawn.areShallowEqual(stack,input)) return true;
     			}
     		}
     	} return false;
@@ -256,7 +256,7 @@ public class CompactorRecipes {
     	HashSet<IRecipe> out = new HashSet<IRecipe>();
     	for(IRecipe recipe : recipes) {
     		for(ItemStack result : hashSet) {
-    			if(areShallowEqual(result,recipe.getRecipeOutput())) out.add(recipe);
+    			if(Lawn.areShallowEqual(result,recipe.getRecipeOutput())) out.add(recipe);
     		}
     	}
     	return out;
@@ -266,13 +266,13 @@ public class CompactorRecipes {
     	for(IRecipe recipe : getEnabledRecipes(enabled)) {
 			if(recipe instanceof ShapedRecipes) {
 				ShapedRecipes sr = (ShapedRecipes)recipe;
-				for(ItemStack stack: sr.recipeItems) if(areShallowEqual(stack,input)) {
+				for(ItemStack stack: sr.recipeItems) if(Lawn.areShallowEqual(stack,input)) {
 					goodOnes.add(recipe);
 					break;
 				}
 			} else {
 				ShapelessRecipes sr = (ShapelessRecipes)recipe;
-				for(ItemStack stack : (List<ItemStack>)sr.recipeItems) if(areShallowEqual(stack,input)) {
+				for(ItemStack stack : (List<ItemStack>)sr.recipeItems) if(Lawn.areShallowEqual(stack,input)) {
 					goodOnes.add(recipe);
 					break;
 				}
@@ -280,13 +280,8 @@ public class CompactorRecipes {
     	} return goodOnes;
     }
     
-    public static boolean areShallowEqual(ItemStack a, ItemStack b) {
-    	if(a==null) return b==null;
-    	if(b==null) return a==null;
-    	return a.itemID==b.itemID && a.getItemDamage()==b.getItemDamage();
-    }
     public static IRecipe getRecipeWithOutput(ItemStack out) {
-    	for(IRecipe r : recipes) if(areShallowEqual(r.getRecipeOutput(),out)) return r;
+    	for(IRecipe r : recipes) if(Lawn.areShallowEqual(r.getRecipeOutput(),out)) return r;
     	return null;
     }
     public static List<ItemStack> getRequirements(IRecipe r) {
@@ -298,7 +293,7 @@ public class CompactorRecipes {
     		if(a==null) continue;
     		boolean dupe = false;
     		for(ItemStack b : out) {
-    			if(areShallowEqual(a,b)) {
+    			if(Lawn.areShallowEqual(a,b)) {
     				dupe=true;
     				b.stackSize+=a.stackSize;
     			}
