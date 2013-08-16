@@ -1,18 +1,13 @@
 package mods.CompactStuff;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Random;
 
 import mods.CompactStuff.boh.ItemBagOfHolding;
 import mods.CompactStuff.compactor.BlockCompactor;
-import mods.CompactStuff.compactor.TileEntityCompactor;
 import mods.CompactStuff.furnace.BlockCompactFurnace;
-import mods.CompactStuff.furnace.ItemCompactFurnace;
-import mods.CompactStuff.furnace.TileEntityCarbonFurnace;
-import mods.CompactStuff.furnace.TileEntityCobbleFurnace;
 import mods.CompactStuff.tmog.BlockTmog;
-import mods.CompactStuff.tmog.ItemBlockTmog;
-import mods.CompactStuff.tmog.TileEntityTransmog;
 import mods.CompactStuff.tools.CompactAxe;
 import mods.CompactStuff.tools.CompactHoe;
 import mods.CompactStuff.tools.CompactPick;
@@ -28,7 +23,7 @@ import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.EnumHelper;

@@ -26,13 +26,17 @@ public class ItemStuff extends Item {
 		TMOG_CRYSTAL= 8,
 		BLAZE_EMERALD=9,
 		GOLD_ALLOYED= 10,
-		MAXDMG		= 10;
+		BUTTER		= 11,
+		BUTTERBREAD	= 12,
+		LEMBAS		= 12,
+		MAXDMG		= 13;
 	
 	public static final String[] names =
 		{"Glass Slag", "Glass Fiber","Diamond Plate",
 		 "Carbon Alloy Plate","Iron Plate","CS Steel Plate",
 		 "CS Steel Ingot", "Gold Plate", "Transmogrifier Crystal",
-		 "Blaze Emerald", "Gilded Carbon Alloy Plate"};
+		 "Blaze Emerald", "Gilded Carbon Alloy Plate", "CS Butter",
+		 "CS Buttered Bread","Lembas"};
 	
 	public static ItemStack stack(int i) {
 		return stack(i, 1);

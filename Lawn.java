@@ -15,10 +15,17 @@ public class Lawn { //"Commons", if you will
     }
 	
 	public static NBTTagCompound writeStacksToNBT(NBTTagCompound data, ItemStack... stacks) {
+		return writeStacksToNBT(data,"itemsList",stacks);
+	}
+
+	public static NBTTagCompound writeStacksToNBT(NBTTagCompound data, String string, ItemStack... stacks) {
+		if(stacks==null) {
+			System.err.println("That's not a good idea, broseph.  Dem stacks null");
+			return data;
+		}
 		NBTTagList itemsList = new NBTTagList();
-		ItemStack stack=stacks[0];
 		for(int i=0; i<stacks.length; i++) {
-			stack=stacks[i];
+			ItemStack stack=stacks[i];
 			if(stack!=null) {
 				NBTTagCompound item = new NBTTagCompound();
 				stack.writeToNBT(item);
@@ -26,24 +33,31 @@ public class Lawn { //"Commons", if you will
 				itemsList.appendTag(item);
 			}
 		}
-		data.setTag("itemsList", itemsList);
-		data.setShort("itemsListLength", (short)stacks.length);
+		data.setTag(string, itemsList);
+		data.setShort(string+"Length", (short)stacks.length);
 		return data;
 	}
 	
 	public static ItemStack[] readStacksFromNBT(NBTTagCompound data) {
-		if(!data.hasKey("itemsListLength") || !data.hasKey("itemsList")) {
+		return readStacksFromNBT(data,"itemsList");
+	}
+	public static ItemStack[] readStacksFromNBT(NBTTagCompound data, String string) {
+		if(!data.hasKey(string+"Length") || !data.hasKey(string)) {
 			System.err.println("Tried to read stacks from an NBTTagCompound that doesn't have stacks");
 			return null;
 		}
-		ItemStack[] stacks = new ItemStack[data.getShort("itemsListLength")];
+		ItemStack[] stacks = new ItemStack[data.getShort(string+"Length")];
 		Arrays.fill(stacks, null);
-		NBTTagList itemsList = data.getTagList("itemsList");
+		NBTTagList itemsList = data.getTagList(string);
 		for(int i=0; i<stacks.length; i++) {
 			NBTTagCompound item = (NBTTagCompound)itemsList.tagAt(i);
 			ItemStack stack = ItemStack.loadItemStackFromNBT(item);
-			stacks[item.getByte("Slot")] = stack;
+			int slot = item.getByte("Slot") & 255;
+			if(slot>=0 && slot<stacks.length) 
+				stacks[slot] = stack;
 		}
 		return stacks;
 	}
+
+	
 }

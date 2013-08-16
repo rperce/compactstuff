@@ -5,6 +5,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.relauncher.Side;
@@ -19,17 +20,7 @@ public class TransmogGUI extends GuiContainer {
 		tet = te;
 		playerInv = inventory;
 		ySize = 181;
-		this.buttonList.add(new GuiButton(0, 46, 18, 66, 18, "Transmogrify"));
 	}
-	
-	/*@Override public void initGui() {
-		this.buttonList.clear();
-		this.buttonList.add(new GuiButton(0, 46, 18, 66, 18, "Transmogrify"));
-	}*/
-	
-	/*@Override public void actionPerformed(GuiButton button) {
-		if(button.id!=0) return;
-	}*/
 	
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
@@ -42,5 +33,16 @@ public class TransmogGUI extends GuiContainer {
 	
 	@Override protected void drawGuiContainerForegroundLayer(int a, int b) {
 		this.fontRenderer.drawString("Transmogrifier",8,6,0x404040);
+		if(tet.isLeftButtonEnabled()) {
+			if(Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
+				drawTexturedModalRect(/*(width-xSize)/2+*/13, /*(height-ySize)/2+*/18, 16, 181, 8, 16);
+			} else if(tet.areCoordsOverLeftButton(Mouse.getX(),Mouse.getY())) {
+				drawTexturedModalRect(/*(width-xSize)/2+*/13, /*(height-ySize)/2+*/18, 32, 181, 8, 16);
+			} else {
+				drawTexturedModalRect(/*(width-xSize)/2+*/13, /*(height-ySize)/2+*/18, 0, 181, 8, 16);
+			}
+		} else {
+			drawTexturedModalRect(/*(width-xSize)/2+*/13, /*(height-ySize)/2+*/18, 48, 181, 8, 16);
+		}
 	}
 }

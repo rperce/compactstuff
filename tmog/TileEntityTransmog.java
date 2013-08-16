@@ -1,5 +1,7 @@
 package mods.CompactStuff.tmog;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Stack;
 
@@ -9,7 +11,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 
 public class TileEntityTransmog extends TileEntity implements IInventory {
@@ -18,19 +19,29 @@ public class TileEntityTransmog extends TileEntity implements IInventory {
 	private boolean valid;
 	private Stack<String> worldActions;
 	public TileEntityTransmog core;
+	private int enabledIndex=0;
+	private ArrayList<ItemStack> enabled;
 	
-	private ItemStack[] stacks;
+	private ItemStack[] inventory;
 	public TileEntityTransmog() {
 		valid = false;
 		core = null;
+		enabled = new ArrayList<ItemStack>();
 		worldActions = new Stack<String>();
-		stacks = new ItemStack[3*9];
+		inventory = new ItemStack[3*9];
+	}
+	public boolean isLeftButtonEnabled() { return enabledIndex>0; }
+	public boolean isRightButtonEnabled() { return enabledIndex+7<enabled.size(); }
+	public static boolean areCoordsOverLeftButton(int x, int y) {
+		if(y>33 || y<18) return false;
+		if(x>12-Math.abs(26-y) && x<21) return true;
+		return false;
 	}
 	
 	@Override public void updateEntity() {
 		if(worldActions.isEmpty() || worldObj==null) return;
 		if(worldActions.pop().equals("CORE")) checkCoreValidity();
-		else checkEdgeValidity(new HashSet<Integer>());
+		else checkValidity();
 	}
 	public void clicked(EntityPlayer player) {
 		if(!valid) return;
@@ -134,7 +145,8 @@ public class TileEntityTransmog extends TileEntity implements IInventory {
 		if(type==CORE) worldActions.push("CORE");
         else worldActions.push("EDGE");
 		
-		stacks = Lawn.readStacksFromNBT(tagList);
+		inventory = Lawn.readStacksFromNBT(tagList);
+		enabled = (ArrayList<ItemStack>)Arrays.asList(Lawn.readStacksFromNBT(tagList,"enabledList"));
     }
 	
 	@Override public void writeToNBT(NBTTagCompound tagList) {
@@ -142,12 +154,12 @@ public class TileEntityTransmog extends TileEntity implements IInventory {
         
         tagList.setBoolean("tetValid", valid);
         tagList.setInteger("tetType", this.type);
-        
-        Lawn.writeStacksToNBT(tagList, stacks);
+                
+        Lawn.writeStacksToNBT(tagList, inventory);
+        Lawn.writeStacksToNBT(tagList, "enabledList", enabled.toArray(new ItemStack[enabled.size()]));
 	}
 
-	@Override
-	public ItemStack decrStackSize(int slot, int amt) {
+	@Override public ItemStack decrStackSize(int slot, int amt) {
 		ItemStack out = getStackInSlot(slot).copy();
 		if(out==null || amt==0) return null;
 		if(getStackInSlot(slot).stackSize<=amt) {
@@ -158,8 +170,7 @@ public class TileEntityTransmog extends TileEntity implements IInventory {
 		return out.splitStack(amt);
 	}
 
-	@Override
-	public ItemStack getStackInSlotOnClosing(int i) {
+	@Override public ItemStack getStackInSlotOnClosing(int i) {
 		ItemStack out = getStackInSlot(i);
 		setInventorySlotContents(i, null);
 		return out;
@@ -170,11 +181,11 @@ public class TileEntityTransmog extends TileEntity implements IInventory {
 		return worldObj.getBlockTileEntity(xCoord, yCoord, zCoord)==this && player.getDistance(xCoord, yCoord, zCoord)<=8d;
 	}
 	
-	@Override public void setInventorySlotContents(int i, ItemStack s) { stacks[i]=s; }
+	@Override public void setInventorySlotContents(int i, ItemStack s) { inventory[i]=s; }
 	@Override public boolean isStackValidForSlot(int i, ItemStack s) { return true; }
 	@Override public String getInvName() { return "compactstuff.transmogrifier"; }
- 	@Override public ItemStack getStackInSlot(int i) { return stacks[i]; }
-	@Override public int getSizeInventory() { return stacks.length; }
+ 	@Override public ItemStack getStackInSlot(int i) { return inventory[i]; }
+	@Override public int getSizeInventory() { return inventory.length; }
 	@Override public boolean isInvNameLocalized() { return false; }
 	@Override public int getInventoryStackLimit() { return 64; }
 	@Override public void closeChest() {}
