@@ -33,19 +33,18 @@ public class CompactorRecipes {
     public static HashSet<ItemStack> defaultEnabled = new HashSet<ItemStack>();
     
     static {
-    	System.out.println(BlockCompressed.stack(Metas.COMCOBBLE));
     	addHomogeneousRecipe(new ItemStack(CompactStuff.plantBall, 1, 0), 	new ItemStack(Block.sapling,1,0), 8);
     	addHomogeneousRecipe(new ItemStack(CompactStuff.plantBall, 1, 1), 	new ItemStack(Block.sapling,1,1), 8);
     	addHomogeneousRecipe(new ItemStack(CompactStuff.plantBall, 1, 2), 	new ItemStack(Block.sapling,1,2), 8);
     	addHomogeneousRecipe(new ItemStack(CompactStuff.plantBall, 1, 3), 	new ItemStack(Block.sapling,1,3), 8);
     	addHomogeneousRecipe(new ItemStack(CompactStuff.plantBall, 1, 4), 	new ItemStack(Item.seeds), 8);
-    	addHomogeneousRecipe(BlockCompressed.stack(Metas.COMCOAL), 		 	new ItemStack(Item.coal), 8);
     	addHomogeneousRecipe(BlockCompressed.stack(Metas.COMCOBBLE), 		new ItemStack(Block.cobblestone), 9);
     	addHomogeneousRecipe(BlockCompressed.stack(Metas.COMDIRT),			new ItemStack(Block.dirt), 9);
     	addHomogeneousRecipe(BlockCompressed.stack(Metas.COMGRAVEL),		new ItemStack(Block.gravel), 9);
     	addHomogeneousRecipe(BlockCompressed.stack(Metas.COMRACK),			new ItemStack(Block.netherrack), 9);
     	addHomogeneousRecipe(BlockCompressed.stack(Metas.COMSAND),			new ItemStack(Block.sand), 9);
     	addHomogeneousRecipe(BlockCompressed.stack(Metas.STEELBLOCK),		ItemStuff.stack(ItemStuff.STEEL_INGOT), 9);
+    	addHomogeneousRecipe(new ItemStack(Block.coalBlock), 		 		new ItemStack(Item.coal), 9);
     	addHomogeneousRecipe(new ItemStack(Block.blockDiamond),				new ItemStack(Item.diamond), 9);
     	addHomogeneousRecipe(new ItemStack(Block.blockEmerald),				new ItemStack(Item.emerald), 9);
     	addHomogeneousRecipe(new ItemStack(Block.blockGold),				new ItemStack(Item.ingotGold), 9);

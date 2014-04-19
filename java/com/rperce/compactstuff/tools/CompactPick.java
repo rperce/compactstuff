@@ -15,6 +15,7 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.world.World;
 
 import com.rperce.compactstuff.CompactStuff;
+import com.rperce.compactstuff.Ref;
 import com.rperce.compactstuff.client.CSIcons;
 
 import cpw.mods.fml.relauncher.Side;
@@ -34,7 +35,7 @@ public class CompactPick extends ItemPickaxe {
         return CompactTool.getIsRepairable(thisOne,otherOne,"Pick");
     }
 	@Override public boolean onBlockDestroyed(ItemStack thisStack, World world, int blockSlot, int x, int y, int z, EntityLivingBase holder) {
-		if(thisStack.itemID!=CompactStuff.heatPick.itemID || !(holder instanceof EntityPlayer) || world.isAirBlock(x, y, z) || world.isRemote)
+		if(thisStack.itemID!=Ref.METCARB_PICK.id() || !(holder instanceof EntityPlayer) || world.isAirBlock(x, y, z) || world.isRemote)
 			return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z, holder);
 		Block block = Block.blocksList[blockSlot];
 		if(Arrays.asList(Block.oreIron.blockID, Block.oreGold.blockID, Block.stone.blockID, Block.netherrack.blockID, Block.cobblestone.blockID)
@@ -54,7 +55,7 @@ public class CompactPick extends ItemPickaxe {
 	}
 	@SideOnly(Side.CLIENT)
 	@Override public void addInformation(ItemStack thisStack, EntityPlayer player, List list, boolean boo) {
-		if(thisStack.itemID!=CompactStuff.heatPick.itemID) return;
+		if(thisStack.itemID!=Ref.METCARB_PICK.id()) return;
 		list.add("Smelts iron, gold, stone, and netherrack");
 	}
 }

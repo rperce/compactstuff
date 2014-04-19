@@ -27,15 +27,17 @@ public class Paxel extends ItemTool {
     public static Block[] gravel = {Block.gravel};
     public static Block[][] allTheThingsToBreak = {ores, glow, tree, gravel};
     public static Random rand = new Random();  
-    
-    public Paxel(int id, EnumToolMaterial toolMaterial) {
+
+    private String path;
+    public Paxel(int id, EnumToolMaterial toolMaterial, String path) {
 		super(id, 3, toolMaterial, blocksEffectiveAgainst);
 		this.setCreativeTab(CompactStuff.compactTab);
+		this.path = path;
 		setMaxStackSize(1);
     }
     
     @Override public void registerIcons(IconRegister i) {
-    	itemIcon = i.registerIcon(CSIcons.PREFIX + CSIcons.PAXEL);
+    	itemIcon = i.registerIcon(CSIcons.PREFIX + path);
     }
     @Override public boolean canHarvestBlock(Block block) { return true; }
     

@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import com.rperce.compactstuff.CompactStuff;
+import com.rperce.compactstuff.Ref;
 import com.rperce.compactstuff.client.CSIcons;
 
 public class CompactAxe extends ItemAxe {
@@ -31,7 +32,7 @@ public class CompactAxe extends ItemAxe {
     }
 	@Override public boolean onBlockDestroyed(ItemStack thisStack, World world, int blockSlot, int x, int y, int z, EntityLivingBase holder) {
 		if(world.isRemote) return false;
-		if(thisStack.itemID!=CompactStuff.heatAxe.itemID || !(holder instanceof EntityPlayer) || world.isAirBlock(x, y, z))
+		if(thisStack.itemID!=Ref.METCARB_AXE.id() || !(holder instanceof EntityPlayer) || world.isAirBlock(x, y, z))
 			return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z, holder);
 		if(blockSlot==Block.wood.blockID) {
 			int n = (world.rand.nextInt(10)<4?2:1);
@@ -54,7 +55,7 @@ public class CompactAxe extends ItemAxe {
 		} return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z, holder);
 	}
 	@Override public void addInformation(ItemStack thisStack, EntityPlayer player, List list, boolean boo) {
-		if(thisStack.itemID!=CompactStuff.heatAxe.itemID) return;
+		if(thisStack.itemID!=Ref.METCARB_AXE.id()) return;
 		list.add("Drops charcoal from logs");
 		list.add("40% double charcoal");
 	}

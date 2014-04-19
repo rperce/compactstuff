@@ -19,7 +19,6 @@ public class BlockCompressed extends Block {
 	private final static int tickRate = 5;
 	static {
 		names.put(Metas.COMCOBBLE, "Compressed Cobblestone");
-		names.put(Metas.COMCOAL, "Coal Block");
 		names.put(Metas.COMRACK, "Compressed Netherrack");
 		names.put(Metas.COMDIAMOND, "Compressed Diamond Block");
 		names.put(Metas.COMIRON, "Compressed Iron Block");
@@ -74,7 +73,6 @@ public class BlockCompressed extends Block {
 			return 16f;
 		case Metas.DIORITE:
 			return 20f;
-		case Metas.COMCOAL:
 		case Metas.STEELBLOCK:
 			return 5f;
 		case Metas.COMRACK:
@@ -87,7 +85,7 @@ public class BlockCompressed extends Block {
 	@Override
 	public boolean isFireSource(World world, int x, int y, int z, int metadata,
 			ForgeDirection side) {
-		if (metadata == Metas.COMCOAL || metadata == Metas.COMRACK)
+		if (metadata == Metas.COMRACK)
 			return true;
 		return super.isFireSource(world, x, y, z, metadata, side);
 	}

@@ -49,10 +49,10 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
-@Mod(modid="robertwan_compactstuff", name="CompactStuff", version="1.5.2")
+@Mod(modid="compactstuff", name="CompactStuff", version="1.5.2")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false, packetHandler=PacketHandler.class, channels={Metas.CH_COMPCRAFT, Metas.CH_COMPOUT, Metas.CH_COMPMAKE})
 public class CompactStuff {
-		@Instance("robertwan_compactstuff")
+		@Instance("compactstuff")
 		public static CompactStuff instance;
 		
 		@SidedProxy(clientSide="com.rperce.compactstuff.client.ClientProxy", serverSide="com.rperce.compactstuff.CommonProxy")
@@ -61,26 +61,21 @@ public class CompactStuff {
 		public static Random rand = new Random();
 		
 		public static EnumToolMaterial 
-			comCobToolMaterial 		= 	EnumHelper.addToolMaterial("comCobbleTool",	2,	512,	6.5f,	3,	15),
+			dioriteToolMaterial 	= 	EnumHelper.addToolMaterial("dioriteTool",	2,	512,	6.5f,	3,	15),
 			steelToolMaterial		=	EnumHelper.addToolMaterial("csSteelTool",	2,	1024,	7.5f,	4,	17),
-			heatCarbToolMaterial	=	EnumHelper.addToolMaterial("heatCarbTool",	3,	2048,	8.5f,	5,	20),
+			metCarbToolMaterial	=	EnumHelper.addToolMaterial("heatCarbTool",	3,	2048,	8.5f,	5,	20),
 			paxelMaterial			=	EnumHelper.addToolMaterial("compactPaxelTool", 3, 4096, 10.5f,  9, 	0);
 
 		public static EnumArmorMaterial 
-			comCobArmorMaterial 	=	EnumHelper.addArmorMaterial("comCobArmor", 	16, new int[] {2, 6,5,2},10),
+			comCobArmorMaterial 	=	EnumHelper.addArmorMaterial("Diorite Armor", 	16, new int[] {2, 6,5,2},10),
 			heatCarbArmorMaterial	=	EnumHelper.addArmorMaterial("heatCarbArmor",35,	new int[] {4, 8,7,4},25),
 			wovnCarbArmorMaterial	=	EnumHelper.addArmorMaterial("wovnCarbArmor",40, new int[] {6,10,9,6}, 0),
 			pureCarbArmorMaterial	=	EnumHelper.addArmorMaterial("pureCarbArmor",50, new int[] {10,10,10,10},0);
 
 		public static Item 
-			plantBall, carbon, paxel, bagOfHolding,
-			comCobSword, comCobPick, comCobHoe, comCobAxe, 	comCobSpade,
-			heatSword, 	 heatPick, 	 heatHoe, 	heatAxe, 	heatSpade,
-			steelSword,	steelPick,	steelHoe,	steelAxe,	steelSpade,
-			cobHelmt, cobPlate, cobPants, cobBoots,
-			carbHelmt, carbPlate, carbPants, carbBoots,
-			wovnHelmt, wovnPlate, wovnPants, wovnBoots,
-			pureHelmt, purePlate, purePants, pureBoots,
+			plantBall, carbon,
+			//paxel, 
+			bagOfHolding,
 			itemStuff,
 			smeltOnAStick;
 
@@ -95,11 +90,6 @@ public class CompactStuff {
 		@EventHandler
 		public void preInit(FMLPreInitializationEvent e) {
 			proxy.registerRenderers();
-			NBTTagCompound testList = new NBTTagCompound();
-			Commons.writeStacksToNBT(testList, new ItemStack[] { null, new ItemStack(Block.dirt),
-				null, new ItemStack(Block.stone), null, null, new ItemStack(Block.grass), null
-			});
-			System.out.printf("IMPORTANT: %s%n", Arrays.toString(Commons.readStacksFromNBT(testList)));
 			
 			compactTab = new CreativeTabs("compactTab") {
 				@Override public ItemStack getIconItemStack() {
@@ -122,28 +112,6 @@ public class CompactStuff {
 								
 				idPlantBall = c.getItem("plantBall", 		9337).getInt(),
 				idCarbon	= c.getItem("carbon",			9338).getInt(),
-				idCobSword	= c.getItem("comCobbleSword", 	9339).getInt(),
-				idCobPick	= c.getItem("comCobblePick",	9340).getInt(),
-				idCobHoe	= c.getItem("comCobbleHoe",		9341).getInt(),
-				idCobAxe	= c.getItem("comCobbleAxe",		9342).getInt(),
-				idCobSpade	= c.getItem("comCobbleSpade", 	9343).getInt(),
-				idHeatSword	= c.getItem("heatCarbSword",	9344).getInt(),
-				idHeatPick	= c.getItem("heatCarbPick",		9345).getInt(),
-				idHeatHoe	= c.getItem("heatCarbHoe",		9346).getInt(),
-				idHeatAxe	= c.getItem("heatCarbAxe",		9347).getInt(),
-				idHeatSpade	= c.getItem("heatCarbSpade",	9348).getInt(),
-				idCobHelmt	= c.getItem("comCobbleHelmet",	9349).getInt(),
-				idCobPlate	= c.getItem("comCobblePlate",	9350).getInt(),
-				idCobPants	= c.getItem("comCobblePants",	9351).getInt(),
-				idCobBoots	= c.getItem("comCobbleBoots",	9352).getInt(),
-				idCarbHelmt	= c.getItem("heatCarbonHelmet",	9353).getInt(),
-				idCarbPlate	= c.getItem("heatCarbonPlate",	9354).getInt(),
-				idCarbPants	= c.getItem("heatCarbonPants",	9355).getInt(),
-				idCarbBoots	= c.getItem("heatCarbonBoots",	9356).getInt(),
-				idWovnHelmt = c.getItem("wovenCarbonHelmet",9357).getInt(),
-				idWovnPlate = c.getItem("wovenCarbonPlate",	9358).getInt(),
-				idWovnPants	= c.getItem("wovenCarbonPants",	9359).getInt(),
-				idWovnBoots	= c.getItem("wovenCarbonBoots",	9360).getInt(),
 				idPureHelmt	= c.getItem("pureCarbonHelmet",	9361).getInt(),
 				idPurePlate	= c.getItem("pureCarbonPlate",	9362).getInt(),
 				idPurePants	= c.getItem("pureCarbonPants",	9363).getInt(),
@@ -151,11 +119,6 @@ public class CompactStuff {
 				idPaxel		= c.getItem("paxel",			9365).getInt(),
 				idBoH		= c.getItem("bagOfHolding",		9366).getInt(),
 				idCompact	= c.getItem("assortedItems",	9367).getInt(),
-				idSteelSword= c.getItem("steelSword",		9368).getInt(),
-				idSteelPick	= c.getItem("steelPick",		9369).getInt(),
-				idSteelHoe	= c.getItem("steelHoe",			9370).getInt(),
-				idSteelAxe	= c.getItem("steelAxe",			9371).getInt(),
-				idSteelSpade= c.getItem("steelSpade",		9372).getInt(),
 				idSmeltStick= c.getItem("smeltOnAStick", 	9373).getInt(),
 								
 				cobRender 	= proxy.addArmor("Compressed Cobblestone"),
@@ -167,7 +130,7 @@ public class CompactStuff {
 			itemStuff = new ItemStuff(idCompact);
 			
 			furnace 	= new BlockCompactFurnace(	idFurnaces);
-			blazeFurn	 = new BlockBlazeFurnace(	idBlazeFurn);
+			blazeFurn	= new BlockBlazeFurnace(	idBlazeFurn);
 			comBlock 	= new BlockCompressed(		idCompressed);
 			comGlass 	= new BlockComGlass(		idComGlass, fancyglass);			
 			compactor 	= new BlockCompactor(		idCompactor);
@@ -176,47 +139,13 @@ public class CompactStuff {
 			plantBall	= new ItemPlantBall(idPlantBall);
 			carbon 		= new ItemCarbon(	idCarbon);
 			
-		 	comCobSword = new CompactSword(	idCobSword,	comCobToolMaterial, "dioritesword").setUnlocalizedName("comCobSword");
-			comCobPick  = new CompactPick(	idCobPick,	comCobToolMaterial, "dioritepick").setUnlocalizedName("comCobPick");
-			comCobHoe	= new CompactHoe(	idCobHoe,	comCobToolMaterial, "dioritehoe").setUnlocalizedName("comCobHoe");
-			comCobAxe	= new CompactAxe(	idCobAxe,	comCobToolMaterial, "dioriteaxe").setUnlocalizedName("comCobAxe");
-			comCobSpade	= new CompactSpade(	idCobSpade,	comCobToolMaterial, "dioritespade").setUnlocalizedName("comCobSpade");
+			for(Ref r : Ref.values())
+				r.resolve(c);
 			
-			heatSword	= new CompactSword(	idHeatSword,heatCarbToolMaterial, "heatcarbsword").setUnlocalizedName("heatSword");
-			heatPick	= new CompactPick(	idHeatPick,	heatCarbToolMaterial, "heatcarbpick").setUnlocalizedName("heatPick");
-			heatHoe		= new CompactHoe(	idHeatHoe,	heatCarbToolMaterial, "heatcarbhoe").setUnlocalizedName("heatHoe");
-			heatAxe		= new CompactAxe(	idHeatAxe,	heatCarbToolMaterial, "heatcarbaxe").setUnlocalizedName("heatAxe");
-			heatSpade	= new CompactSpade(	idHeatSpade,heatCarbToolMaterial, "heatcarbspade").setUnlocalizedName("heatSpade");
-			
-			steelSword	= new CompactSword(	idSteelSword,	steelToolMaterial, "steelsword").setUnlocalizedName("csSteelSword");
-			steelPick	= new CompactPick(	idSteelPick,	steelToolMaterial, "steelpick").setUnlocalizedName("csSteelPick");
-			steelHoe	= new CompactHoe(	idSteelHoe,		steelToolMaterial, "steelhoe").setUnlocalizedName("csSteelHoe");
-			steelAxe	= new CompactAxe(	idSteelAxe,		steelToolMaterial, "steelaxe").setUnlocalizedName("csSteelAxe");
-			steelSpade	= new CompactSpade(	idSteelSpade,	steelToolMaterial, "steelspade").setUnlocalizedName("csSteelSpade");
-			
-			paxel		= new Paxel( idPaxel, paxelMaterial).setUnlocalizedName("compactPaxel");
+			//paxel		= new Paxel( idPaxel, paxelMaterial).setUnlocalizedName("compactPaxel");
 			bagOfHolding= new ItemBagOfHolding(idBoH);
 			smeltOnAStick=new SmeltOnAStick(idSmeltStick);
 			
-			cobHelmt = new ItemCompactArmor(idCobHelmt,comCobArmorMaterial,cobRender,0,"dioritehelm").setUnlocalizedName("helmtComCobble");
-			cobPlate = new ItemCompactArmor(idCobPlate,comCobArmorMaterial,cobRender,1,"dioriteplate").setUnlocalizedName("plateComCobble");
-			cobPants = new ItemCompactArmor(idCobPants,comCobArmorMaterial,cobRender,2,"dioritepants").setUnlocalizedName("pantsComCobble");
-			cobBoots = new ItemCompactArmor(idCobBoots,comCobArmorMaterial,cobRender,3,"dioriteboots").setUnlocalizedName("bootsComCobble");
-		
-			carbHelmt = new ItemCompactArmor(idCarbHelmt,heatCarbArmorMaterial,carbRender,0,"heatcarbhelm").setUnlocalizedName("helmtHeatCarb");
-			carbPlate = new ItemCompactArmor(idCarbPlate,heatCarbArmorMaterial,carbRender,1,"heatcarbplate").setUnlocalizedName("plateHeatCarb");
-			carbPants = new ItemCompactArmor(idCarbPants,heatCarbArmorMaterial,carbRender,2,"heatcarbpants").setUnlocalizedName("pantsHeatCarb");
-			carbBoots = new ItemCompactArmor(idCarbBoots,heatCarbArmorMaterial,carbRender,3,"heatcarbboots").setUnlocalizedName("bootsHeatCarb");
-		
-			wovnHelmt = new ItemCompactArmor(idWovnHelmt,wovnCarbArmorMaterial,wovnRender,0,"fiberhelm").setUnlocalizedName("helmtWovnCarb");
-			wovnPlate = new ItemCompactArmor(idWovnPlate,wovnCarbArmorMaterial,wovnRender,1,"fiberplate").setUnlocalizedName("plateWovnCarb");
-			wovnPants = new ItemCompactArmor(idWovnPants,wovnCarbArmorMaterial,wovnRender,2,"fiberpants").setUnlocalizedName("pantsWovnCarb");
-			wovnBoots = new ItemCompactArmor(idWovnBoots,wovnCarbArmorMaterial,wovnRender,3,"fiberboots").setUnlocalizedName("bootsWovnCarb");
-			
-			pureHelmt = new ItemCompactArmor(idPureHelmt,pureCarbArmorMaterial,pureRender,0,"advancedhelm").setUnlocalizedName("helmtPureCarb");
-			purePlate = new ItemCompactArmor(idPurePlate,pureCarbArmorMaterial,pureRender,1,"advancedplate").setUnlocalizedName("platePureCarb");
-			purePants = new ItemCompactArmor(idPurePants,pureCarbArmorMaterial,pureRender,2,"advancedpants").setUnlocalizedName("pantsPureCarb");
-			pureBoots = new ItemCompactArmor(idPureBoots,pureCarbArmorMaterial,pureRender,3,"advancedboots").setUnlocalizedName("bootsPureCarb");
 			c.save();
 		}
 		
@@ -237,18 +166,26 @@ public class CompactStuff {
 		
 		public void setUpTools() {
 			setUpAToolSet(new Item[] {
-				comCobSword,comCobPick,comCobAxe,comCobHoe,comCobSpade},
+				Ref.DIORITE_SWORD.item, Ref.DIORITE_PICK.item,
+				Ref.DIORITE_AXE.item, Ref.DIORITE_HOE.item,
+				Ref.DIORITE_SPADE.item},
 				new ItemStack(comBlock,1,Metas.DIORITE),"Diorite",2,null,null);
 			setUpAToolSet(new Item[] {
-				heatSword,heatPick,heatAxe,heatHoe,heatSpade},
+				Ref.METCARB_SWORD.item, Ref.METCARB_PICK.item,
+				Ref.METCARB_AXE.item, Ref.METCARB_HOE.item,
+				Ref.METCARB_SPADE.item},
+				//heatSword,heatPick,heatAxe,heatHoe,heatSpade},
 				new ItemStack(carbon,1,4),"Metamorphic Carbon",3,Enchantment.fireAspect,Enchantment.fortune,new ItemStack(Item.blazeRod));
 			setUpAToolSet(new Item[] {
-				steelSword,steelPick,steelAxe,steelHoe,steelSpade},
+				Ref.STEEL_SWORD.item, Ref.STEEL_PICK.item,
+				Ref.STEEL_AXE.item, Ref.STEEL_HOE.item,
+				Ref.STEEL_SPADE.item},
+				//steelSword,steelPick,steelAxe,steelHoe,steelSpade},
 				new ItemStack(itemStuff,1,ItemStuff.STEEL_INGOT),"CS Steel",2,null,null);
 						
 			//set up paxel, below:
 			
-			ItemStack paxel = new ItemStack(this.paxel);
+			ItemStack paxel = Ref.PAXEL.stack();
 			LanguageRegistry.addName(paxel, "CompactStuff Paxel");
 			
 			GameRegistry.addRecipe(paxel,"asp","cbc","cbc",
@@ -316,10 +253,10 @@ public class CompactStuff {
 			GameRegistry.addRecipe(e, " c "," s "," s ",'c',m,'s',s);
 		}
 		public void setUpArmor() { 
-			addEnchantedArmor(cobHelmt,cobPlate,cobPants,cobBoots,
+			addEnchantedArmor(Ref.DIORITE_HELM.item, Ref.DIORITE_PLATE.item,Ref.DIORITE_PANTS.item,Ref.DIORITE_BOOTS.item,
 				new ItemStack(comBlock,1,Metas.DIORITE), "Diorite",
 				Enchantment.blastProtection);
-			addEnchantedArmor(carbHelmt,carbPlate,carbPants,carbBoots,
+			addEnchantedArmor(Ref.METCARB_HELM.item, Ref.METCARB_PLATE.item, Ref.METCARB_PANTS.item, Ref.METCARB_BOOTS.item,
 				new ItemStack(carbon,1,4), "Metamorphic Carbon",
 				Enchantment.fireProtection);
 			setUpFibrArmor(); setUpAdvnArmor();
@@ -347,10 +284,10 @@ public class CompactStuff {
 		
 		public void setUpFibrArmor() {
 			ItemStack[] armor = {
-				new ItemStack(wovnHelmt),
-				new ItemStack(wovnPlate),
-				new ItemStack(wovnPants),
-				new ItemStack(wovnBoots)
+				Ref.WOVEN_HELM.stack(),
+				Ref.WOVEN_PLATE.stack(),
+				Ref.WOVEN_PANTS.stack(),
+				Ref.WOVEN_BOOTS.stack()
 			};
 			
 			for(int i=0; i<armor.length; i++) 
@@ -364,10 +301,12 @@ public class CompactStuff {
 			GameRegistry.addRecipe(armor[3],"c c","c c",		'c',c);
 		}
 		public void setUpAdvnArmor() {
-			ItemStack[] armor = { new ItemStack(pureHelmt),
-				new ItemStack(purePlate),
-				new ItemStack(purePants),
-				new ItemStack(pureBoots) };
+			ItemStack[] armor = { 
+				Ref.ADV_HELM.stack(),
+				Ref.ADV_PLATE.stack(),
+				Ref.ADV_PANTS.stack(),
+				Ref.ADV_BOOTS.stack()
+			};
 			
 			for(int i=0; i<armor.length; i++)
 				LanguageRegistry.addName(armor[i], "Carbon Alloy "+armornames[i]);
@@ -377,17 +316,17 @@ public class CompactStuff {
 				d = new ItemStack(itemStuff,1,ItemStuff.ALLOY_PLATE),
 				h = new ItemStack(carbon,1,4); //met carbon
 			GameRegistry.addRecipe(armor[0],"dod","cgc",
-				'd',d,'o',new ItemStack(wovnHelmt),
+				'd',d,'o',Ref.WOVEN_HELM.stack(),
 				'c',c,'g',new ItemStack(comGlass));
 			GameRegistry.addRecipe(armor[1],"dod","cic","ccc",
-				'd',d,'o',new ItemStack(wovnPlate),
+				'd',d,'o',Ref.WOVEN_PLATE.stack(),
 				'c',c,'i',ItemStuff.stack(ItemStuff.GOLD_ALLOYED));
 			GameRegistry.addRecipe(armor[2],"dod","c c","c c",
 				'd',d,'c',c,
-				'o',new ItemStack(wovnPants));
+				'o',Ref.WOVEN_PANTS.stack());
 			GameRegistry.addRecipe(armor[3],"c c","dod",
 				'd',d,'c',c,
-				'o',new ItemStack(wovnBoots));
+				'o',Ref.WOVEN_BOOTS.stack());
 		}
 		@ForgeSubscribe public void onEntityLivingFallEvent(LivingFallEvent evt) {
 			ItemCompactArmor.onEntityLivingFallEvent(evt);
@@ -397,7 +336,8 @@ public class CompactStuff {
 			EntityPlayer player = (EntityPlayer)evt.entity;
 			ItemStack boots = player.inventory.armorItemInSlot(0);
 			if(boots==null) return false;
-			if(boots.itemID==wovnBoots.itemID || boots.itemID==pureBoots.itemID) {
+			
+			if(Ref.matches(boots, Ref.WOVEN_BOOTS, Ref.ADV_BOOTS)) {
 				boolean b = evt.source.equals(DamageSource.fall);
 				evt.setCanceled(b);
 				boots.damageItem(1, player);

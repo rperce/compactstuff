@@ -1,13 +1,5 @@
 package com.rperce.compactstuff;
 
-import static com.rperce.compactstuff.CompactStuff.pureBoots;
-import static com.rperce.compactstuff.CompactStuff.pureHelmt;
-import static com.rperce.compactstuff.CompactStuff.purePants;
-import static com.rperce.compactstuff.CompactStuff.purePlate;
-import static com.rperce.compactstuff.CompactStuff.wovnHelmt;
-import static com.rperce.compactstuff.CompactStuff.wovnPants;
-import static com.rperce.compactstuff.CompactStuff.wovnPlate;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -53,28 +45,28 @@ public class CompactTickHandler implements ITickHandler {
 				EntityPlayer player = (EntityPlayer)playerObject;
 				ItemStack[] armor = player.inventory.armorInventory;
 				if(armor[3]!=null) { //helmet
-					if(armor[3].itemID==wovnHelmt.itemID) {
+					if(Ref.matches(armor[3], Ref.WOVEN_HELM)) {
 						Boolean is = tickEvens.get(player);
 						is=(is==null)?false:is;
 						tickEvens.put(player,!is);
 						if(is) player.setAir(player.getAir()+1);
-					} else if(armor[3].itemID==pureHelmt.itemID) {
+					} else if(Ref.matches(armor[3], Ref.ADV_HELM)) {
 						player.setAir(300);
 						armor[3].setItemDamage(0);
 					}
 				} if(armor[2]!=null) { //chestplate
-					if(armor[2].itemID==wovnPlate.itemID) {
+					if(Ref.matches(armor[2], Ref.WOVEN_PLATE)) {
 						doThornyThings(player,.25d,6);
 						alsoCheckForSlimes(player,.3d,4);
-					} else if(armor[2].itemID==purePlate.itemID) {
+					} else if(Ref.matches(armor[2], Ref.ADV_PLATE)) {
 						doThornyThings(player, 2d,8);
 						alsoCheckForSlimes(player,2d,8);
 						armor[2].setItemDamage(0);
 					}
 				} if(armor[1]!=null) { //leggings
-					if(armor[1].itemID==wovnPants.itemID) {
+					if(Ref.matches(armor[1], Ref.WOVEN_PANTS)) {
 						if(!player.isInsideOfMaterial(Material.fire)) player.extinguish();
-					} else if(armor[1].itemID==purePants.itemID) {
+					} else if(Ref.matches(armor[1], Ref.ADV_PANTS)) {
 						if(!setPlayerIsImmuneToFire(player,true)) continue;		
 						armor[1].setItemDamage(0);
 					} else {
@@ -83,7 +75,7 @@ public class CompactTickHandler implements ITickHandler {
 				} else { 
 					if(!setPlayerIsImmuneToFire(player,false)) continue;
 				} if(armor[0]!=null) {//boots
-					if(armor[0].itemID==pureBoots.itemID) {
+					if(Ref.matches(armor[0], Ref.ADV_BOOTS)) {
 						armor[0].setItemDamage(0);
 					}
 				}

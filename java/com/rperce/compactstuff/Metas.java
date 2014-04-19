@@ -4,7 +4,6 @@ public final class Metas {
 	public static final int
 		COMCOBBLE 	= 0,
 		COMRACK		= 1,
-		COMCOAL		= 2,
 		COMIRON		= 3,
 		COMDIAMOND	= 4,
 		STEELBLOCK	= 5,

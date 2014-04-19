@@ -34,11 +34,10 @@ public class CSIcons {
 		COMPACTOR_SIDE1 = "compactor_side",
 		COMPACTOR_SIDE2 = "compactor_side2",
 		COMPACTOR_BOTTOM = "compactor_bottom",
-		PAXEL = "paxel";
+		PAXEL = "compactPaxel";
 	
 	public static String comString(int meta) {
 		switch(meta) {
-			case Metas.COMCOAL : return COALBLOCK;
 			case Metas.COMCOBBLE : return COMCOBBLE;
 			case Metas.COMDIAMOND : return COMDIA;
 			case Metas.COMDIRT : return COMDIRT;

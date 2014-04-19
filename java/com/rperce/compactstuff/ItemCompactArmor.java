@@ -1,22 +1,5 @@
 package com.rperce.compactstuff;
 
-import static com.rperce.compactstuff.CompactStuff.carbBoots;
-import static com.rperce.compactstuff.CompactStuff.carbHelmt;
-import static com.rperce.compactstuff.CompactStuff.carbPants;
-import static com.rperce.compactstuff.CompactStuff.carbPlate;
-import static com.rperce.compactstuff.CompactStuff.cobBoots;
-import static com.rperce.compactstuff.CompactStuff.cobHelmt;
-import static com.rperce.compactstuff.CompactStuff.cobPants;
-import static com.rperce.compactstuff.CompactStuff.cobPlate;
-import static com.rperce.compactstuff.CompactStuff.pureBoots;
-import static com.rperce.compactstuff.CompactStuff.pureHelmt;
-import static com.rperce.compactstuff.CompactStuff.purePants;
-import static com.rperce.compactstuff.CompactStuff.purePlate;
-import static com.rperce.compactstuff.CompactStuff.wovnBoots;
-import static com.rperce.compactstuff.CompactStuff.wovnHelmt;
-import static com.rperce.compactstuff.CompactStuff.wovnPants;
-import static com.rperce.compactstuff.CompactStuff.wovnPlate;
-
 import java.util.List;
 
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -38,6 +21,7 @@ public class ItemCompactArmor extends ItemArmor {
 	private String path;
 	public ItemCompactArmor(int id, EnumArmorMaterial material, int rend, int armorType, String path) {
 		super(id, material, rend, armorType);
+		System.out.println(path+" :: "+rend);
 		this.setCreativeTab(CompactStuff.compactTab);
 		this.path = CSIcons.PREFIX + path;
 	}
@@ -52,29 +36,28 @@ public class ItemCompactArmor extends ItemArmor {
 			EntityPlayer player = (EntityPlayer)evt.entity;
 			ItemStack boots = player.inventory.armorItemInSlot(0);
 			if(boots==null) return;
-			if(boots.itemID==CompactStuff.wovnBoots.itemID ||
-				boots.itemID==CompactStuff.pureBoots.itemID) {
+			if(Ref.matches(boots, Ref.WOVEN_BOOTS, Ref.ADV_BOOTS)) {
 				if(evt.distance>5) boots.damageItem(1, player);
 				evt.setCanceled(true);
 			}
 		}
 	}
 	@Override @SideOnly(Side.CLIENT)
-	public String getArmorTexture(ItemStack itemstack, Entity entity, int slot, String type) {
-		int id = itemstack.itemID;
-		if(id==cobHelmt.itemID || id==cobPlate.itemID || id==cobBoots.itemID)
+	public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type) {
+		int id = stack.itemID;
+		if(Ref.matches(stack, Ref.DIORITE_HELM, Ref.DIORITE_PLATE, Ref.DIORITE_BOOTS))
 			return ImageFiles.COBBLE_1.path;
-		else if(id==cobPants.itemID)
+		else if(Ref.matches(stack, Ref.DIORITE_PANTS))
 			return ImageFiles.COBBLE_2.path;
-		else if(id==carbHelmt.itemID || id==carbPlate.itemID || id==carbBoots.itemID)
+		else if(Ref.matches(stack, Ref.METCARB_HELM, Ref.METCARB_PLATE, Ref.METCARB_BOOTS))
 			return ImageFiles.CARBON_1.path;
-		else if(id==carbPants.itemID)
+		else if(Ref.matches(stack, Ref.METCARB_PANTS))
 			return ImageFiles.CARBON_2.path;
-		else if(id==wovnHelmt.itemID || id==wovnPlate.itemID || id==wovnBoots.itemID)
+		else if(Ref.matches(stack, Ref.WOVEN_HELM, Ref.WOVEN_PLATE, Ref.WOVEN_BOOTS))
 			return ImageFiles.WOVEN_1.path;
-		else if(id==wovnPants.itemID)
+		else if(Ref.matches(stack, Ref.WOVEN_PANTS))
 			return ImageFiles.WOVEN_2.path;
-		else if(id==pureHelmt.itemID || id==purePlate.itemID || id==pureBoots.itemID)
+		else if(Ref.matches(stack, Ref.ADV_HELM, Ref.ADV_PLATE, Ref.ADV_BOOTS))
 			return ImageFiles.ADVANCED_1.path;
 		else
 			return ImageFiles.ADVANCED_2.path;
@@ -82,23 +65,24 @@ public class ItemCompactArmor extends ItemArmor {
 	@SideOnly(Side.CLIENT)
 	@Override public void addInformation(ItemStack thisStack, EntityPlayer player, List list, boolean wut) {
 		int id = thisStack.itemID;
-		if(id==wovnHelmt.itemID) list.add("2x water breathing");
-		else if(id==wovnPlate.itemID) list.add("Retaliate on melee");
-		else if(id==wovnPants.itemID) list.add("Fire extinguishing");
-		else if(id==wovnBoots.itemID) list.add("No fall damage");
-		else if(id==pureHelmt.itemID) {
+		if(Ref.matches(thisStack, Ref.WOVEN_HELM)) {
+			list.add("2x water breathing");
+		} else if(Ref.matches(thisStack, Ref.WOVEN_PLATE)) {
+			list.add("Retaliate on melee");
+		} else if(Ref.matches(thisStack, Ref.WOVEN_PANTS)) {
+			list.add("Fire extinguishing");
+		} else if(Ref.matches(thisStack, Ref.WOVEN_BOOTS)) {
+			list.add("No fall damage");
+		} else if(Ref.matches(thisStack, Ref.ADV_HELM)) {
 			list.add("Infinite water breathing");
 			list.add("Infinite durability");
-		}
-		else if(id==purePlate.itemID) {
+		} else if(Ref.matches(thisStack, Ref.ADV_PLATE)) {
 			list.add("Force field to hostiles");
 			list.add("Infinite durability");
-		}
-		else if(id==purePants.itemID) {
+		} else if(Ref.matches(thisStack, Ref.ADV_PANTS)) {
 			list.add("Fire immunity");
 			list.add("Infinite durability");
-		}
-		else if(id==pureBoots.itemID) {
+		} else if(Ref.matches(thisStack, Ref.ADV_BOOTS)) {
 			list.add("No fall damage");
 			list.add("Infinite durability");
 		}

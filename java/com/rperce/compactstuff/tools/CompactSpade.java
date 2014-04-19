@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import com.rperce.compactstuff.CompactStuff;
+import com.rperce.compactstuff.Ref;
 import com.rperce.compactstuff.client.CSIcons;
 
 public class CompactSpade extends ItemSpade {
@@ -31,7 +32,7 @@ public class CompactSpade extends ItemSpade {
     }
 	
 	@Override public boolean onBlockDestroyed(ItemStack thisStack, World world, int blockSlot, int x, int y, int z, EntityLivingBase holder) {
-		if(thisStack.itemID!=CompactStuff.heatSpade.itemID || !(holder instanceof EntityPlayer) || world.isAirBlock(x, y, z) || world.isRemote)
+		if(thisStack.itemID!=Ref.METCARB_SPADE.id() || !(holder instanceof EntityPlayer) || world.isAirBlock(x, y, z) || world.isRemote)
 			return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z, holder);
 		if(blockSlot==Block.sand.blockID) {
 			EntityItem drop = new EntityItem(world, x+.5, y+.5, z+.5, new ItemStack(Block.glass, (world.rand.nextInt(10)<4?2:1)));
@@ -53,7 +54,7 @@ public class CompactSpade extends ItemSpade {
 		return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z, holder);
 	}
 	@Override public void addInformation(ItemStack thisStack, EntityPlayer player, List list, boolean boo) {
-		if(thisStack.itemID!=CompactStuff.heatSpade.itemID) return;
+		if(thisStack.itemID!=Ref.METCARB_SPADE.id()) return;
 		list.add("Drops glass from sand");
 		list.add("Drops bricks from clay blocks");
 		list.add("40% double bricks and glass");

@@ -3,14 +3,14 @@ package com.rperce.compactstuff.client;
 import net.minecraft.util.ResourceLocation;
 
 public enum ImageFiles {
-	WOVEN_1("woven_1"),
-	WOVEN_2("woven_2"),
-	COBBLE_1("cobble_1"),
-	COBBLE_2("cobble_2"),
-	CARBON_1("carbon_1"),
-	CARBON_2("carbon_2"),
-	ADVANCED_1("pure_1"),
-	ADVANCED_2("pure_2"),
+	WOVEN_1("armor", "woven_1"),
+	WOVEN_2("armor", "woven_2"),
+	COBBLE_1("armor", "cobble_1"),
+	COBBLE_2("armor", "cobble_2"),
+	CARBON_1("armor", "carbon_1"),
+	CARBON_2("armor", "carbon_2"),
+	ADVANCED_1("armor", "pure_1"),
+	ADVANCED_2("armor", "pure_2"),
 	TMOG_GUI("tmog_gui"),
 	FURNACE_GUI("furnace_gui"),
 	COMPACTOR_GUI("compactor_gui"),
@@ -23,5 +23,9 @@ public enum ImageFiles {
 	ImageFiles(String p) { 
 		path = "textures/"+p+".png"; 
 		loc = new ResourceLocation("compactstuff", path);	
+	}
+	ImageFiles(String type, String p) {
+		path = "compactstuff:textures/"+type+"/"+p+".png";
+		loc = new ResourceLocation("compactstuff", path);
 	}
 }

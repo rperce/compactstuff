@@ -3,7 +3,9 @@ package com.rperce.compactstuff.tools;
 import java.util.List;
 
 import com.rperce.compactstuff.CompactStuff;
+import com.rperce.compactstuff.Ref;
 import com.rperce.compactstuff.client.CSIcons;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.StepSound;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -41,7 +43,7 @@ public class CompactHoe extends ItemHoe {
 		return true;
 	}
 	@Override public void addInformation(ItemStack thisStack, EntityPlayer player, List list, boolean boo) {
-		if(thisStack.itemID!=CompactStuff.heatHoe.itemID) return;
+		if(thisStack.itemID!=Ref.METCARB_HOE.id()) return;
 		list.add("Tills a 9x9 area on right-click");
 	}
 }

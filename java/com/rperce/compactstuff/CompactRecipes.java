@@ -230,7 +230,6 @@ public class CompactRecipes {
 		GameRegistry.addShapelessRecipe(BlockCompressed.stack(Metas.COMCOBBLE, 9), BlockCompressed.stack(Metas.DIORITE));
 		
 		addReversableRecipe(blckSteel, new ItemStack(itemStuff,1,ItemStuff.STEEL_INGOT), 9);
-		addReversableRecipe(new ItemStack(comBlock,1,Metas.COMCOAL), new ItemStack(Item.coal), 8);
 		addReversableRecipe(new ItemStack(comBlock,1,Metas.COMRACK), new ItemStack(Block.netherrack), 8);
 		addReversableRecipe(comCobble, new ItemStack(Block.cobblestone), 9);
 				
