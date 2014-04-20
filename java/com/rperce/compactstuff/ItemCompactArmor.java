@@ -50,6 +50,7 @@ public class ItemCompactArmor extends ItemArmor {
     @SideOnly(Side.CLIENT)
     public String getArmorTexture(ItemStack stack, Entity entity, int slot,
             String type) {
+
         if (Ref.matches(stack, Ref.DIORITE_HELM, Ref.DIORITE_PLATE,
                 Ref.DIORITE_BOOTS))
             return ImageFiles.COBBLE_1.path;

@@ -30,6 +30,8 @@ import com.rperce.compactstuff.tools.Paxel;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public enum Ref {
 	DIORITE_SWORD(9339, dioriteToolMaterial, "dioriteSword",	CompactSword.class),
@@ -102,18 +104,23 @@ public enum Ref {
 			this.type = this.ARMOR;
 			this.material = armorMat;
 			this.aID = armorType;
-			if(this.rIDs.containsKey(render)) {
-				this.rID = this.rIDs.get(render);
-			} else {
-				this.rID = RenderingRegistry.addNewArmourRendererPrefix(render);
-				this.rIDs.put(render, this.rID);
-			}
+			this.rID = 0;
+			setrID(render);
 			this.ctor = type.getConstructor(Integer.TYPE, EnumArmorMaterial.class, Integer.TYPE, Integer.TYPE, String.class);
 		} catch(NoSuchMethodException nsme) {
 			System.out.println("ERROR: could not get constructor for id " + id);
 		}
 	}
 	
+	@SideOnly(Side.CLIENT)
+	private void setrID(String render) {
+        if(this.rIDs.containsKey(render)) {
+            this.rID = this.rIDs.get(render);
+        } else {
+            this.rID = RenderingRegistry.addNewArmourRendererPrefix(render);
+            this.rIDs.put(render, this.rID);
+        }
+	}
 	private void basic(int id, String ident) {
 		this.id = id;
 		this.name = ident;
