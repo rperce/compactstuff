@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
@@ -58,8 +59,8 @@ public class ItemStuff extends Item {
 		}
 	}
 	
-	@Override public boolean hasEffect(ItemStack stack) {
-		return stack.getItemDamage() == TMOG_CRYSTAL;
+	@Override public EnumRarity getRarity(ItemStack stack) {
+		return stack.getItemDamage() == TMOG_CRYSTAL ? EnumRarity.rare : EnumRarity.common;
 	}
 		
 	@Override public Icon getIconFromDamage(int dmg) {
