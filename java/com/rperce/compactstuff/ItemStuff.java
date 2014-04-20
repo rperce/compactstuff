@@ -2,14 +2,14 @@ package com.rperce.compactstuff;
 
 import java.util.List;
 
-import com.rperce.compactstuff.client.CSIcons;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemAppleGold;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
+
+import com.rperce.compactstuff.client.CSIcons;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -71,6 +71,9 @@ public class ItemStuff extends Item {
 		catch(NullPointerException e) { return "Stuff"; }
 	}
 	
+	/** Warnings suppressed due to override constraints */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(int id, CreativeTabs tab, List list) {
 		for(int i=0; i<names.length; i++) {

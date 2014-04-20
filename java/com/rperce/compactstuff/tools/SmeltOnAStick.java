@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.rperce.compactstuff.CompactStuff;
 import com.rperce.compactstuff.client.CSIcons;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.StepSound;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -35,7 +36,7 @@ public class SmeltOnAStick extends Item {
 		setFull3D();
 	}
 	@Override public void registerIcons(IconRegister ir) {
-		itemIcon = ir.registerIcon(CSIcons.PREFIX+"smeltstick");
+		this.itemIcon = ir.registerIcon(CSIcons.PREFIX+"smeltstick");
 	}
 	@Override public ItemStack onItemRightClick(ItemStack thisStack, World world, EntityPlayer player) {
 		if(!player.isSneaking() || thisStack.getItemDamage()<0 || world.isRemote) return thisStack;
@@ -99,17 +100,18 @@ public class SmeltOnAStick extends Item {
 				thisStack.damageItem(1, player);
 				world.playSoundEffect(x+.5d, y+.5d, z+.5d, sound.getPlaceSound(), (sound.getVolume()+1f)/2f, sound.getPitch()*0.8F);
                 return true;
-			} else {
-				world.setBlockToAir(x, y, z);
-				world.spawnEntityInWorld(new EntityItem(world, x+.5, y+.5, z+.5, smelt.copy()));
-				thisStack.damageItem(1, player);
-				world.playSoundEffect(x+.5d, y+.5d, z+.5d, sound.getBreakSound(), (sound.getVolume()+1f)/2f, sound.getPitch()*.8f);
-				return true;
 			}
+			world.setBlockToAir(x, y, z);
+			world.spawnEntityInWorld(new EntityItem(world, x+.5, y+.5, z+.5, smelt.copy()));
+			thisStack.damageItem(1, player);
+			world.playSoundEffect(x+.5d, y+.5d, z+.5d, sound.getBreakSound(), (sound.getVolume()+1f)/2f, sound.getPitch()*.8f);
+			return true;
 		}
 		return super.onItemUse(thisStack, player, world, x, y, z, _, __, ___, ____);
 	}
 
+	/** Warnings suppressed due to override constraints */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@SideOnly(Side.CLIENT)
 	@Override public void addInformation(ItemStack thisStack, EntityPlayer player, List list, boolean boo) {
 		list.add("Right-click on a block to smelt");

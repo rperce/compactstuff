@@ -16,26 +16,26 @@ public class BagOfHoldingGUI extends GuiContainer {
 		this.inv = inv;
 		if(stack.hasTagCompound() && stack.getTagCompound().hasKey("display")) {
 			if(stack.getTagCompound().getCompoundTag("display").hasKey("Name")) {
-				custom = ": "+stack.getTagCompound().getCompoundTag("display").getString("Name");
+				this.custom = ": "+stack.getTagCompound().getCompoundTag("display").getString("Name");
 			}
 		}
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int _, int __) {
-		fontRenderer.drawString("Bag of Holding"+custom, 8, 5, 0x404040);
+		this.fontRenderer.drawString("Bag of Holding"+this.custom, 8, 5, 0x404040);
 	}
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture(ImageFiles.HOLDINGBAG_GUI.loc);
-        int x = (width - xSize) / 2;
-        int y = (height - ySize) / 2;
-        drawTexturedModalRect(x, y, 0, 0, xSize, ySize);		
+        this.mc.renderEngine.bindTexture(ImageFiles.HOLDINGBAG_GUI.loc);
+        int x = (this.width - this.xSize) / 2;
+        int y = (this.height - this.ySize) / 2;
+        drawTexturedModalRect(x, y, 0, 0, this.xSize, this.ySize);		
 	}
 	
 	@Override protected void mouseClicked(int x, int y, int mouse) {
-		if(getSlotAtPosition(x,y)!=null && getSlotAtPosition(x,y).slotNumber-(27+27) == inv.currentItem)
+		if(getSlotAtPosition(x,y)!=null && getSlotAtPosition(x,y).slotNumber-(27+27) == this.inv.currentItem)
 				return;
 		super.mouseClicked(x, y, mouse);
 	}

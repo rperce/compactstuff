@@ -80,7 +80,6 @@ public class BlockCompactFurnace extends BlockFurnace {
 	@Override public Icon getBlockTexture(IBlockAccess ba,int x,int y,int z, int s) {
 		int blockIndex = 16*this.getFirstMetaBit(ba,x,y,z);
 		if(s==0 || s==1) return icons.get(blockIndex);
-		TileEntityCompactFurnace te = (TileEntityCompactFurnace)(ba.getBlockTileEntity(x, y, z));
 		int front = getFront(ba,x,y,z);
 		boolean isActive = isActive(ba,x,y,z);
 		return icons.get(blockIndex+(s==front? (isActive ? 3 : 2) : 1));
@@ -131,24 +130,24 @@ public class BlockCompactFurnace extends BlockFurnace {
 		if(rand==null) rand = new Random();
 		if (isActive(world,x,y,z)) {
 			int front = getFront(world,x,y,z);
-            float dx = (float)x + 0.5F;
-            float dy = (float)y + 0.0F + rand.nextFloat() * 6.0F / 16.0F;
-            float dz = (float)z + 0.5F;
+            float dx = x + 0.5F;
+            float dy = y + 0.0F + rand.nextFloat() * 6.0F / 16.0F;
+            float dz = z + 0.5F;
             float c = 0.52F;
             float r = rand.nextFloat() * 0.6F - 0.3F;
 
             if (front == 4) {
-                world.spawnParticle("smoke", (double)(dx-c), (double)dy, (double)(dz+r), 0.0D, 0.0D, 0.0D);
-                world.spawnParticle("flame", (double)(dx-c), (double)dy, (double)(dz+r), 0.0D, 0.0D, 0.0D);
+                world.spawnParticle("smoke", dx-c, dy, dz+r, 0.0D, 0.0D, 0.0D);
+                world.spawnParticle("flame", dx-c, dy, dz+r, 0.0D, 0.0D, 0.0D);
             } else if (front == 5) {
-                world.spawnParticle("smoke", (double)(dx+c), (double)dy, (double)(dz+r), 0.0D, 0.0D, 0.0D);
-                world.spawnParticle("flame", (double)(dx+c), (double)dy, (double)(dz+r), 0.0D, 0.0D, 0.0D);
+                world.spawnParticle("smoke", dx+c, dy, dz+r, 0.0D, 0.0D, 0.0D);
+                world.spawnParticle("flame", dx+c, dy, dz+r, 0.0D, 0.0D, 0.0D);
             } else if (front == 2) {
-                world.spawnParticle("smoke", (double)(dx+r), (double)dy, (double)(dz-c), 0.0D, 0.0D, 0.0D);
-                world.spawnParticle("flame", (double)(dx+r), (double)dy, (double)(dz-c), 0.0D, 0.0D, 0.0D);
+                world.spawnParticle("smoke", dx+r, dy, dz-c, 0.0D, 0.0D, 0.0D);
+                world.spawnParticle("flame", dx+r, dy, dz-c, 0.0D, 0.0D, 0.0D);
             } else if (front == 3) {
-                world.spawnParticle("smoke", (double)(dx+r), (double)dy, (double)(dz+c), 0.0D, 0.0D, 0.0D);
-                world.spawnParticle("flame", (double)(dx+r), (double)dy, (double)(dz+c), 0.0D, 0.0D, 0.0D);
+                world.spawnParticle("smoke", dx+r, dy, dz+c, 0.0D, 0.0D, 0.0D);
+                world.spawnParticle("flame", dx+r, dy, dz+c, 0.0D, 0.0D, 0.0D);
             }
         }
     }
@@ -175,8 +174,8 @@ public class BlockCompactFurnace extends BlockFurnace {
                         }
 
                         stack.stackSize -= randAmt;
-                        EntityItem drop = new EntityItem(world, (double)((float)x + dx),
-                        		(double)((float)y + dy), (double)((float)z + dz),
+                        EntityItem drop = new EntityItem(world, x + dx,
+                        		y + dy, z + dz,
                         		new ItemStack(stack.itemID, randAmt, stack.getItemDamage()));
 
                         if (stack.hasTagCompound()) {
@@ -184,9 +183,9 @@ public class BlockCompactFurnace extends BlockFurnace {
                         }
 
                         float var15 = 0.05F;
-                        drop.motionX = (double)((float)this.furnaceRand.nextGaussian() * var15);
-                        drop.motionY = (double)((float)this.furnaceRand.nextGaussian() * var15 + 0.2F);
-                        drop.motionZ = (double)((float)this.furnaceRand.nextGaussian() * var15);
+                        drop.motionX = (float)this.furnaceRand.nextGaussian() * var15;
+                        drop.motionY = (float)this.furnaceRand.nextGaussian() * var15 + 0.2F;
+                        drop.motionZ = (float)this.furnaceRand.nextGaussian() * var15;
                         world.spawnEntityInWorld(drop);
                     }
                 }
@@ -216,8 +215,8 @@ public class BlockCompactFurnace extends BlockFurnace {
 			case 1: return 5;
 			case 2: return 3;
 			case 3: return 4;
+			default: return 3;
 		}
-		return 3;
 	}
 	public static void setIsActive(World world,int x,int y,int z,boolean act) {
 		char[] metaStr = getMetaStr(world.getBlockMetadata(x,y,z));
@@ -236,13 +235,13 @@ public class BlockCompactFurnace extends BlockFurnace {
 			return;
 		}
         world.setBlockMetadataWithNotify(x, y, z, placer.getHeldItem().getItemDamage(), 0x04 | 0x02 | 0x01);
-        int dir = MathHelper.floor_double((double)(placer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        int dir = MathHelper.floor_double(placer.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
         setFront(world,x,y,z,dir);
         setIsActive(world, x, y, z, false);
         world.setBlockTileEntity(x,y,z,this.createTileEntity(world,world.getBlockMetadata(x,y,z)));
     }
 	
-	private void setDefaultDirection(World world, int x, int y, int z) {
+	private static void setDefaultDirection(World world, int x, int y, int z) {
         if (world.isRemote) return;
 
         int var5 = world.getBlockId(x, y, z - 1);

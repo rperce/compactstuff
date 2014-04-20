@@ -2,11 +2,6 @@ package com.rperce.compactstuff.furnace;
 
 import java.util.HashMap;
 
-import com.rperce.compactstuff.Commons;
-import com.rperce.compactstuff.CompactStuff;
-import com.rperce.compactstuff.ItemStuff;
-import com.rperce.compactstuff.Metas;
-import com.rperce.compactstuff.compactor.CompactorRecipes;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -19,6 +14,11 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntityFurnace;
 
+import com.rperce.compactstuff.Commons;
+import com.rperce.compactstuff.CompactStuff;
+import com.rperce.compactstuff.ItemStuff;
+import com.rperce.compactstuff.Metas;
+
 public class TileEntityBlazeFurnace extends TileEntityFurnace {
 	private ItemStack[] stacks = new ItemStack[13];
 	public int smeltingReserve = 0;
@@ -30,16 +30,16 @@ public class TileEntityBlazeFurnace extends TileEntityFurnace {
 	private int fuelChange = 0;
 	
 	public int smeltingReserveScaled(int total) {
-		return (int)(((double)smeltingReserve/(200*8*64))*total);
+		return (int)(((double)this.smeltingReserve/(200*8*64))*total);
 	}
 	public int currentFuelTimeScaled(int total) {
-		return (int)(((double)currentFuelTime/staticFuelTime)*total);
+		return (int)(((double)this.currentFuelTime/this.staticFuelTime)*total);
 	}
 	public int currentTimeLeftScaled(int total) {
-		return (int)(((double)currentTimeLeft/200)*total);
+		return (int)(((double)this.currentTimeLeft/200)*total);
 	}
-	public boolean isCooking() { return currentTimeLeft>0; }
-	public boolean isFueling() { return currentFuelTime>0; }
+	public boolean isCooking() { return this.currentTimeLeft>0; }
+	public boolean isFueling() { return this.currentFuelTime>0; }
 	
 	private static HashMap<ItemStack, ItemStack> custom = new HashMap<ItemStack, ItemStack>() {
 		@Override public boolean containsKey(Object key) {
@@ -72,15 +72,15 @@ public class TileEntityBlazeFurnace extends TileEntityFurnace {
 	
 	public HashMap<ItemStack,ItemStack> getCustom() { return custom; }
 	@Override public String getInvName() { return "cs_blazefurnace"; }
-	@Override public int getSizeInventory() { return stacks.length; }
+	@Override public int getSizeInventory() { return this.stacks.length; }
 	
 	private int getOreChange() {
-		change = (change+1)%5;
-		return change==0?1:0;
+		this.change = (this.change+1)%5;
+		return this.change==0?1:0;
 	}
 	private int getSlowChange() {
-		change = (change+1)%3;
-		return change==0?1:0;
+		this.change = (this.change+1)%3;
+		return this.change==0?1:0;
 	}
 	
 	@Override public void updateEntity() {
@@ -88,54 +88,54 @@ public class TileEntityBlazeFurnace extends TileEntityFurnace {
         boolean invChange = false;
         
 //        System.out.println("CurrentFuelTime: "+currentFuelTime+"; smeltingReserve: "+smeltingReserve);
-        if(currentFuelTime==0) {
-        	if(stacks[12] != null) { //fuel slot
-        		currentFuelTime = Math.max(0, Commons.getItemBurnTime(stacks[12]));
-        		staticFuelTime = currentFuelTime;
-        		System.out.println("Fuel for "+staticFuelTime+"!");
-        		if(currentFuelTime > 0 && smeltingReserve + staticFuelTime <= 8 * 64 * 200) {
-            		stacks[12].stackSize--;
-            		if(stacks[12].stackSize == 0) {
-            			stacks[12] = stacks[12].getItem().getContainerItemStack(stacks[12]);
+        if(this.currentFuelTime==0) {
+        	if(this.stacks[12] != null) { //fuel slot
+        		this.currentFuelTime = Math.max(0, Commons.getItemBurnTime(this.stacks[12]));
+        		this.staticFuelTime = this.currentFuelTime;
+        		System.out.println("Fuel for "+this.staticFuelTime+"!");
+        		if(this.currentFuelTime > 0 && this.smeltingReserve + this.staticFuelTime <= 8 * 64 * 200) {
+            		this.stacks[12].stackSize--;
+            		if(this.stacks[12].stackSize == 0) {
+            			this.stacks[12] = this.stacks[12].getItem().getContainerItemStack(this.stacks[12]);
             		}
-                	fuelChange = (int)Math.max(1d, currentFuelTime/100d);
-                	System.out.println("fuelChange: "+fuelChange);
+                	this.fuelChange = (int)Math.max(1d, this.currentFuelTime/100d);
+                	System.out.println("fuelChange: "+this.fuelChange);
                 	invChange=true;
             	}
         	}
         } else {
-        	if(smeltingReserve<8*64*200) {
-	        	currentFuelTime-=fuelChange;
-	        	smeltingReserve+=fuelChange;
-        	} if(currentFuelTime<0) currentFuelTime = 0;
+        	if(this.smeltingReserve<8*64*200) {
+	        	this.currentFuelTime-=this.fuelChange;
+	        	this.smeltingReserve+=this.fuelChange;
+        	} if(this.currentFuelTime<0) this.currentFuelTime = 0;
         }
 
-        if(currentlySmelting==null && this.canSmelt() && smeltingReserve>=200) {
+        if(this.currentlySmelting==null && this.canSmelt() && this.smeltingReserve>=200) {
         	for(int i=0; i<6; i++) {
-        		if(stacks[i]!=null) {
-        			currentlySmelting = stacks[i].splitStack(1);
-        			if(stacks[i].stackSize==0) stacks[i]=null;
+        		if(this.stacks[i]!=null) {
+        			this.currentlySmelting = this.stacks[i].splitStack(1);
+        			if(this.stacks[i].stackSize==0) this.stacks[i]=null;
         			break;
         		}
         	}
         	invChange = true;
-        	currentTimeLeft = 200;
+        	this.currentTimeLeft = 200;
         }
         
-    	if(currentlySmelting!=null) {
+    	if(this.currentlySmelting!=null) {
     		boolean ore = false;
 	    	for(int i : TileEntityCarbonFurnace.oreIDs) {
-	    		if(i==currentlySmelting.itemID) {
+	    		if(i==this.currentlySmelting.itemID) {
 	    			ore = true;
 	    			break;
 	    		}
 	    	}
-	    	if(ore) change = getOreChange();
-	    	else if(custom.containsKey(currentlySmelting)) change = getSlowChange();
-	    	else change = 6;
+	    	if(ore) this.change = getOreChange();
+	    	else if(custom.containsKey(this.currentlySmelting)) this.change = getSlowChange();
+	    	else this.change = 6;
 	    
 	        if (this.currentTimeLeft > 0) {
-	        	this.currentTimeLeft -= change;
+	        	this.currentTimeLeft -= this.change;
 	        	if(this.currentTimeLeft < 0) this.currentTimeLeft = 0;
 	        }
 	        
@@ -148,15 +148,15 @@ public class TileEntityBlazeFurnace extends TileEntityFurnace {
 	}
 	
 	@Override public void smeltItem() {
-    	ItemStack output = custom.get(currentlySmelting);
-    	if(output==null) output = FurnaceRecipes.smelting().getSmeltingResult(currentlySmelting);
+    	ItemStack output = custom.get(this.currentlySmelting);
+    	if(output==null) output = FurnaceRecipes.smelting().getSmeltingResult(this.currentlySmelting);
     	for(int i : TileEntityCarbonFurnace.oreIDs) {
-    		if(i==currentlySmelting.itemID) {
+    		if(i==this.currentlySmelting.itemID) {
     			output.stackSize*=3;
     		}
     	}
-    	smeltingReserve-=200;
-    	currentlySmelting = null;
+    	this.smeltingReserve-=200;
+    	this.currentlySmelting = null;
     	addToOutputSection(output);
 	}
 	
@@ -164,22 +164,22 @@ public class TileEntityBlazeFurnace extends TileEntityFurnace {
 		if(a==null) return;
 		ItemStack output = a.copy();
 		for(int i=6; i<12; i++) {
-			if(stacks[i]==null) {
-				stacks[i]=output.copy();
+			if(this.stacks[i]==null) {
+				this.stacks[i]=output.copy();
 				break;
-			} else if(Commons.areShallowEqual(stacks[i], output)) {
-				stacks[i].stackSize+=output.splitStack(Math.min(output.stackSize, 
-						stacks[i].getMaxStackSize()-stacks[i].stackSize)).stackSize;
+			} else if(Commons.areShallowEqual(this.stacks[i], output)) {
+				this.stacks[i].stackSize+=output.splitStack(Math.min(output.stackSize, 
+						this.stacks[i].getMaxStackSize()-this.stacks[i].stackSize)).stackSize;
 				if(output.stackSize==0) break;
 			}
 		}
 	}
 	
 	public boolean canSmelt() {
-		if(smeltingReserve<200) return false; //assume enough smelting reserve henceforth
+		if(this.smeltingReserve<200) return false; //assume enough smelting reserve henceforth
 		boolean good = false;
 		for(int i=0; i<6; i++) {
-			if(FurnaceRecipes.smelting().getSmeltingResult(stacks[i])!=null) {
+			if(FurnaceRecipes.smelting().getSmeltingResult(this.stacks[i])!=null) {
 				good = true;
 				break;
 			}
@@ -194,14 +194,14 @@ public class TileEntityBlazeFurnace extends TileEntityFurnace {
 	@Override public void readFromNBT(NBTTagCompound tags) {
         super.readFromNBT(tags);
         NBTTagList itemsList = tags.getTagList("Items");
-        stacks = new ItemStack[this.getSizeInventory()];
+        this.stacks = new ItemStack[this.getSizeInventory()];
 
         for (int item = 0; item < itemsList.tagCount(); item++) {
             NBTTagCompound compound = (NBTTagCompound)itemsList.tagAt(item);
             byte slot = compound.getByte("Slot");
 
-            if (slot >= 0 && slot < stacks.length)
-            	stacks[slot] = ItemStack.loadItemStackFromNBT(compound);
+            if (slot >= 0 && slot < this.stacks.length)
+            	this.stacks[slot] = ItemStack.loadItemStackFromNBT(compound);
         }
     }
 	
@@ -209,11 +209,11 @@ public class TileEntityBlazeFurnace extends TileEntityFurnace {
         super.writeToNBT(tags);
         NBTTagList itemsList = new NBTTagList();
 
-        for (int slot = 0; slot < stacks.length; ++slot) {
-            if (stacks[slot] != null) {
+        for (int slot = 0; slot < this.stacks.length; ++slot) {
+            if (this.stacks[slot] != null) {
                 NBTTagCompound item = new NBTTagCompound();
                 item.setByte("Slot", (byte)slot);
-                stacks[slot].writeToNBT(item);
+                this.stacks[slot].writeToNBT(item);
                 itemsList.appendTag(item);
             }
         }
@@ -221,50 +221,49 @@ public class TileEntityBlazeFurnace extends TileEntityFurnace {
         tags.setTag("Items", itemsList);
     }
 	@Override public void setInventorySlotContents(int slot, ItemStack stack) {
-        stacks[slot] = stack;
+        this.stacks[slot] = stack;
 
         if (stack != null && stack.stackSize > this.getInventoryStackLimit())
             stack.stackSize = this.getInventoryStackLimit();
     }
 	
 	@Override public ItemStack getStackInSlotOnClosing(int slot) {
-        if (stacks[slot] != null) {
-            ItemStack out = stacks[slot];
-            stacks[slot] = null;
+        if (this.stacks[slot] != null) {
+            ItemStack out = this.stacks[slot];
+            this.stacks[slot] = null;
             return out;
         } 
         return null;
     }
 	
 	@Override public ItemStack decrStackSize(int slot, int amt) {
-        if (stacks[slot] != null) {
+        if (this.stacks[slot] != null) {
             ItemStack out;
 
-            if (stacks[slot].stackSize <= amt) {
-                out = stacks[slot];
-                stacks[slot] = null;
-                return out;
-            } else {
-                out = this.stacks[slot].splitStack(amt);
-
-                if (this.stacks[slot].stackSize == 0) {
-                    this.stacks[slot] = null;
-                }
-
+            if (this.stacks[slot].stackSize <= amt) {
+                out = this.stacks[slot];
+                this.stacks[slot] = null;
                 return out;
             }
+			out = this.stacks[slot].splitStack(amt);
+
+			if (this.stacks[slot].stackSize == 0) {
+			    this.stacks[slot] = null;
+			}
+
+			return out;
         }
         return null;
     }
 	@Override public boolean isUseableByPlayer(EntityPlayer player) {
 		return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ?
 		false :
-			player.getDistanceSq((double)this.xCoord + 0.5D,
-				(double)this.yCoord + 0.5D,
-				(double)this.zCoord + 0.5D) <= 64.0D;
+			player.getDistanceSq(this.xCoord + 0.5D,
+				this.yCoord + 0.5D,
+				this.zCoord + 0.5D) <= 64.0D;
 	}
 	
-	@Override public ItemStack getStackInSlot(int slot) { return stacks[slot]; }
+	@Override public ItemStack getStackInSlot(int slot) { return this.stacks[slot]; }
 	@Override public boolean isInvNameLocalized() { return false; }
 	
 	@Override public boolean isItemValidForSlot(int slot, ItemStack stack) {
@@ -276,8 +275,8 @@ public class TileEntityBlazeFurnace extends TileEntityFurnace {
 		return false;
 	}
 	@Override public int getInventoryStackLimit() { return 64; }
-	@Override public void openChest()  { }
-	@Override public void closeChest() { }
+	@Override public void openChest()  { /* do nothing */ }
+	@Override public void closeChest() { /* do nothing */ }
 	
 	@Override public int[] getAccessibleSlotsFromSide(int side) {
 		if(side==1) return new int[] {0,1,2,3,4,5,12}; 		//top: material and fuel
@@ -293,7 +292,7 @@ public class TileEntityBlazeFurnace extends TileEntityFurnace {
 	@Override public Packet getDescriptionPacket() {
 		NBTTagCompound data = new NBTTagCompound();
 		writeToNBT(data);
-		return new Packet132TileEntityData(xCoord,yCoord,zCoord,0,data);
+		return new Packet132TileEntityData(this.xCoord,this.yCoord,this.zCoord,0,data);
 	}
 	@Override
 	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {

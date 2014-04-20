@@ -27,7 +27,7 @@ public class ItemCompactArmor extends ItemArmor {
 	}
 	
 	@Override public void registerIcons(IconRegister ir) {
-		itemIcon = ir.registerIcon(path);
+		this.itemIcon = ir.registerIcon(this.path);
 	}
 	
 	@ForgeSubscribe
@@ -44,7 +44,6 @@ public class ItemCompactArmor extends ItemArmor {
 	}
 	@Override @SideOnly(Side.CLIENT)
 	public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type) {
-		int id = stack.itemID;
 		if(Ref.matches(stack, Ref.DIORITE_HELM, Ref.DIORITE_PLATE, Ref.DIORITE_BOOTS))
 			return ImageFiles.COBBLE_1.path;
 		else if(Ref.matches(stack, Ref.DIORITE_PANTS))
@@ -62,9 +61,11 @@ public class ItemCompactArmor extends ItemArmor {
 		else
 			return ImageFiles.ADVANCED_2.path;
 	}
+	
+	/** Warnings suppressed due to override constraints */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@SideOnly(Side.CLIENT)
 	@Override public void addInformation(ItemStack thisStack, EntityPlayer player, List list, boolean wut) {
-		int id = thisStack.itemID;
 		if(Ref.matches(thisStack, Ref.WOVEN_HELM)) {
 			list.add("2x water breathing");
 		} else if(Ref.matches(thisStack, Ref.WOVEN_PLATE)) {

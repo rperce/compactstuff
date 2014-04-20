@@ -25,7 +25,7 @@ public class CompactAxe extends ItemAxe {
 		setCreativeTab(CompactStuff.compactTab);
 	}
 	@Override public void registerIcons(IconRegister ir) {
-		itemIcon = ir.registerIcon(CSIcons.PREFIX+path);
+		this.itemIcon = ir.registerIcon(CSIcons.PREFIX+this.path);
 	}
 	@Override public boolean getIsRepairable(ItemStack thisOne, ItemStack otherOne) {
         return CompactTool.getIsRepairable(thisOne,otherOne,"Axe");
@@ -54,6 +54,8 @@ public class CompactAxe extends ItemAxe {
 			return true;
 		} return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z, holder);
 	}
+	/** Warnings suppressed due to override constraints */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override public void addInformation(ItemStack thisStack, EntityPlayer player, List list, boolean boo) {
 		if(thisStack.itemID!=Ref.METCARB_AXE.id()) return;
 		list.add("Drops charcoal from logs");

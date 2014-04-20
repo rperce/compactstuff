@@ -1,6 +1,5 @@
 package com.rperce.compactstuff;
 
-import net.minecraft.client.audio.SoundManager;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.IFuelHandler;
 

@@ -42,7 +42,8 @@ public class ContainerCompactFurnace extends Container {
         }
     }
 
-    public void addCraftingToCrafters(ICrafting par1ICrafting) {
+    @Override
+	public void addCraftingToCrafters(ICrafting par1ICrafting) {
         super.addCraftingToCrafters(par1ICrafting);
         par1ICrafting.sendProgressBarUpdate(this, 0, this.furnace.getFurnaceCookTime());
         par1ICrafting.sendProgressBarUpdate(this, 1, this.furnace.getFurnaceBurnTime());
@@ -52,9 +53,10 @@ public class ContainerCompactFurnace extends Container {
     /**
      * Updates crafting matrix; called from onCraftMatrixChanged. Args: none
      */
-    public void detectAndSendChanges() {
+    @Override
+	public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        Iterator var1 = this.crafters.iterator();
+        Iterator<?> var1 = this.crafters.iterator();
 
         while (var1.hasNext())
         {
@@ -81,7 +83,8 @@ public class ContainerCompactFurnace extends Container {
         this.lastItemBurnTime = this.furnace.getCurrentItemBurnTime();
     }
 
-    @SideOnly(Side.CLIENT)
+    @Override
+	@SideOnly(Side.CLIENT)
     public void updateProgressBar(int par1, int par2) {
         if (par1 == 0)
         {
@@ -99,7 +102,8 @@ public class ContainerCompactFurnace extends Container {
         }
     }
 
-    public boolean canInteractWith(EntityPlayer par1EntityPlayer) {
+    @Override
+	public boolean canInteractWith(EntityPlayer par1EntityPlayer) {
         return this.furnace.isUseableByPlayer(par1EntityPlayer);
     }
 
@@ -118,7 +122,7 @@ public class ContainerCompactFurnace extends Container {
             } else if (par2 != 1 && par2 != 0) {
                 if (FurnaceRecipes.smelting().getSmeltingResult(var5) != null) {
                     if (!this.mergeItemStack(var5, 0, 1, false)) return null;
-                } else if(furnace.isCarbonFurnace() && TileEntityCarbonFurnace.custom.containsKey(var5)) {
+                } else if(this.furnace.isCarbonFurnace() && TileEntityCarbonFurnace.custom.containsKey(var5)) {
                 	if (!this.mergeItemStack(var5, 0, 1, false)) return null;
                 } else if (TileEntityFurnace.isItemFuel(var5)) {
                     if (!this.mergeItemStack(var5, 1, 2, false)) return null;

@@ -34,7 +34,7 @@ public class ContainerTmog extends Container {
 	}
 
 	@Override public boolean canInteractWith(EntityPlayer player) {
-		return te.isUseableByPlayer(player);
+		return this.te.isUseableByPlayer(player);
 	}
 	
 	@Override public ItemStack transferStackInSlot(EntityPlayer player, int slot) {

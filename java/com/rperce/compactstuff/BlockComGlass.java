@@ -2,7 +2,6 @@ package com.rperce.compactstuff;
 
 import java.util.HashMap;
 
-import com.rperce.compactstuff.client.CSIcons;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -10,7 +9,8 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import cpw.mods.fml.common.registry.LanguageRegistry;
+
+import com.rperce.compactstuff.client.CSIcons;
 
 public class BlockComGlass extends Block {
 	private boolean fancy;
@@ -26,10 +26,10 @@ public class BlockComGlass extends Block {
 		this.fancy = fancy;
 	}
 	@Override public void registerIcons(IconRegister ir) {
-		for(int i=0; i<15; i++) icons.put(i, ir.registerIcon(CSIcons.PREFIX+"comglass"+i));
-		for(int i=15; i<256; i+=16) icons.put(i, ir.registerIcon(CSIcons.PREFIX+"comglass"+i));
+		for(int i=0; i<15; i++) this.icons.put(i, ir.registerIcon(CSIcons.PREFIX+"comglass"+i));
+		for(int i=15; i<256; i+=16) this.icons.put(i, ir.registerIcon(CSIcons.PREFIX+"comglass"+i));
 		for(int i : new int[] {19, 22, 23, 25, 27, 28, 29, 30, 31, 39, 43, 45, 46, 47, 55, 59, 61, 62}) {
-			icons.put(i,ir.registerIcon(CSIcons.PREFIX+"comglass"+i));			
+			this.icons.put(i,ir.registerIcon(CSIcons.PREFIX+"comglass"+i));			
 		}
 	}
 	@Override public boolean canPlaceTorchOnTop(World w, int x, int y, int z) { return true; }
@@ -38,10 +38,11 @@ public class BlockComGlass extends Block {
 	@Override public boolean isBlockSolidOnSide(World w, int x, int y, int z, ForgeDirection side) { return true; }
 	
 	@Override public Icon getIcon(int side, int meta) {
-		return icons.get(0);
+		return this.icons.get(0);
 	}
+	@SuppressWarnings("incomplete-switch")
 	@Override public Icon getBlockTexture(IBlockAccess ba, int x, int y, int z, int side) {
-		if(!fancy) return icons.get(0);
+		if(!this.fancy) return this.icons.get(0);
 		int b = 0, m=0;
 		boolean[] a = new boolean[8];
 		switch(side) {
@@ -72,9 +73,9 @@ public class BlockComGlass extends Block {
 			case 12:if(!a[5]) m+=1; break;
 			case 15:for(int i=1; i<8; i+=2) if(!a[i]) m+=(int)Math.pow(2, i/2); break;
 		}
-		return icons.get(b+16*m);
+		return this.icons.get(b+16*m);
 	} private boolean a(IBlockAccess ba, int x, int y, int z) {
-		return ba.getBlockId(x,y,z)==blockID;
+		return ba.getBlockId(x,y,z)==this.blockID;
 	}
 	@Override public boolean shouldSideBeRendered(IBlockAccess par1IBlockAccess, int par2, int par3, int par4, int par5)
     {

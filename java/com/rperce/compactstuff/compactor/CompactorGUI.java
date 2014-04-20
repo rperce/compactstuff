@@ -28,7 +28,7 @@ public class CompactorGUI extends GuiContainer {
         int x0 = 133, y0 = 18;
         for(int r=0; r<3; r++) {
         	for(int c=0; c<2; c++) {
-        		if(CompactorRecipes.isEnabled(tec.enabled(), tec.getStackInSlot(tec.COMFIRST+r*2+c))) {
+        		if(CompactorRecipes.isEnabled(this.tec.enabled(), this.tec.getStackInSlot(this.tec.COMFIRST+r*2+c))) {
         			drawTexturedModalRect(x0+c*18,y0+r*18,176,0,18,18);
         		}
         	}
@@ -38,9 +38,9 @@ public class CompactorGUI extends GuiContainer {
 	@Override protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.renderEngine.bindTexture(ImageFiles.COMPACTOR_GUI.loc);
-        int x = (width - xSize) / 2;
-        int y = (height - ySize) / 2;
-        this.drawTexturedModalRect(x,y,0,0,xSize,ySize);
+        int x = (this.width - this.xSize) / 2;
+        int y = (this.height - this.ySize) / 2;
+        this.drawTexturedModalRect(x,y,0,0,this.xSize,this.ySize);
 	}
 	
 	private int getSlotNumberBetween(int x, int y, int first, int last) {
@@ -77,7 +77,7 @@ public class CompactorGUI extends GuiContainer {
 	}
 	
 	public void clickPacket(int slot, int button) {
-		TileEntityCompactor tile = tec;
+		TileEntityCompactor tile = this.tec;
 		String channel = (tile.CRAFTFIRST<=slot && slot<=tile.CRAFTLAST) ? Metas.CH_COMPCRAFT :
 						 (tile.OUTPUT==slot) ? Metas.CH_COMPOUT : Metas.CH_COMPMAKE;
 		CompactPacket packet = new CompactPacket(channel);

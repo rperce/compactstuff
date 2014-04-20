@@ -29,7 +29,7 @@ public class CompactPick extends ItemPickaxe {
 		setCreativeTab(CompactStuff.compactTab);
 	}
 	@Override public void registerIcons(IconRegister ir) {
-		itemIcon = ir.registerIcon(CSIcons.PREFIX + path);
+		this.itemIcon = ir.registerIcon(CSIcons.PREFIX + this.path);
 	}
 	@Override public boolean getIsRepairable(ItemStack thisOne, ItemStack otherOne) {
         return CompactTool.getIsRepairable(thisOne,otherOne,"Pick");
@@ -53,6 +53,9 @@ public class CompactPick extends ItemPickaxe {
 			return true;
 		} return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z, holder);
 	}
+
+	/** Warnings suppressed due to override constraints */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@SideOnly(Side.CLIENT)
 	@Override public void addInformation(ItemStack thisStack, EntityPlayer player, List list, boolean boo) {
 		if(thisStack.itemID!=Ref.METCARB_PICK.id()) return;

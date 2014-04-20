@@ -27,7 +27,7 @@ public class RenderFallingCompressed extends RenderFallingSand {
 	/**
 	* The actual render method that is used in doRender
 	*/
-	public void doRenderFalling(EntityFallingCompact entityFalling, double x, double y, double z, float useless, float floats) {
+	public void doRenderFalling(EntityFallingCompact entityFalling, double x, double y, double z) {
         GL11.glPushMatrix();
         GL11.glTranslatef((float)x, (float)y, (float)z);
         Block block = CompactStuff.comBlock;
@@ -50,6 +50,6 @@ public class RenderFallingCompressed extends RenderFallingSand {
     }
 
     @Override public void doRender(Entity entity, double x, double y, double z, float par8, float par9) {
-        this.doRenderFalling((EntityFallingCompact)entity, x, y, z, par8, par9);
+        this.doRenderFalling((EntityFallingCompact)entity, x, y, z);
     }
 }

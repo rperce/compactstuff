@@ -21,11 +21,11 @@ public enum ImageFiles {
 	public String path;
 	public ResourceLocation loc;
 	ImageFiles(String p) { 
-		path = "textures/"+p+".png"; 
-		loc = new ResourceLocation("compactstuff", path);	
+		this.path = "textures/"+p+".png"; 
+		this.loc = new ResourceLocation("compactstuff", this.path);	
 	}
 	ImageFiles(String type, String p) {
-		path = "compactstuff:textures/"+type+"/"+p+".png";
-		loc = new ResourceLocation("compactstuff", path);
+		this.path = "compactstuff:textures/"+type+"/"+p+".png";
+		this.loc = new ResourceLocation("compactstuff", this.path);
 	}
 }

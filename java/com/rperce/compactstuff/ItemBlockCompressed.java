@@ -17,8 +17,13 @@ public class ItemBlockCompressed extends ItemBlock {
 		return d;
 	}
 	
+	
+	/** 
+	 * Warning suppressed due to override constraints
+	 */
 	@SideOnly(Side.CLIENT)
-	@Override public void getSubItems(int i, CreativeTabs tab, List list) {
+	@SuppressWarnings({ "rawtypes", "unchecked" }) 
+	@Override public void getSubItems(int i, CreativeTabs tab,List list) {
 		for(Integer meta : BlockCompressed.names.keySet()) list.add(new ItemStack(i,1,meta));
 	}
 	

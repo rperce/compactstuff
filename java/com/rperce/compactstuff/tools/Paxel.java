@@ -37,7 +37,7 @@ public class Paxel extends ItemTool {
     }
     
     @Override public void registerIcons(IconRegister i) {
-    	itemIcon = i.registerIcon(CSIcons.PREFIX + path);
+    	this.itemIcon = i.registerIcon(CSIcons.PREFIX + this.path);
     }
     @Override public boolean canHarvestBlock(Block block) { return true; }
     
@@ -61,27 +61,25 @@ public class Paxel extends ItemTool {
 	    		}
 	    		return true;
 	    	}
-    		if(player instanceof EntityPlayer) {
-    			try { Block.blocksList[world.getBlockId(x, y, z)].getUnlocalizedName().toLowerCase(); }
-    			catch(NullPointerException e) {
-    				return false;
+			try { Block.blocksList[world.getBlockId(x, y, z)].getUnlocalizedName().toLowerCase(); }
+			catch(NullPointerException e) {
+				return false;
+			}
+    		if(Block.blocksList[world.getBlockId(x, y, z)].getUnlocalizedName().toLowerCase().contains("ore")) {
+    			int dmg = recursivelyBreakOres(world, x, y, z, player, 0);
+    			if(dmg>0) {
+    				thisStack.damageItem(dmg,player);
+    				return true;
     			}
-	    		if(Block.blocksList[world.getBlockId(x, y, z)].getUnlocalizedName().toLowerCase().contains("ore")) {
-	    			int dmg = recursivelyBreakOres(world, x, y, z, (EntityPlayer)player, 0);
-	    			if(dmg>0) {
-	    				thisStack.damageItem(dmg,player);
-	    				return true;
-	    			}
-	    		} else {
-	    			for(Block[] breakThese : allTheThingsToBreak) {
-	    				int dmg = recursivelyBreakThings(breakThese, world, x, y, z, (EntityPlayer)player, x,y,z);
-	    				if(dmg>0) {
-	    					thisStack.damageItem(dmg,player);
-	    					return true;
-	    				}
-	    			}
-	    		}
-	    	}
+    		} else {
+    			for(Block[] breakThese : allTheThingsToBreak) {
+    				int dmg = recursivelyBreakThings(breakThese, world, x, y, z, player, x,y,z);
+    				if(dmg>0) {
+    					thisStack.damageItem(dmg,player);
+    					return true;
+    				}
+    			}
+    		}
     	}
     	return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z, player);
     } private int recursivelyBreakThings(Block[] breakThese, World world, int x, int y, int z, EntityPlayer player,int ox,int oy,int oz) {

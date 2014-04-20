@@ -17,7 +17,9 @@ public class ItemBlockTmog extends ItemBlock {
 	@Override public int getMetadata(int d) {
 		return d;
 	}
-	
+
+	/** Warnings suppressed due to override constraints */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@SideOnly(Side.CLIENT)
 	@Override public void getSubItems(int id, CreativeTabs tab, List list) {
 		for(int i=0; i<3; i++) {
@@ -31,7 +33,8 @@ public class ItemBlockTmog extends ItemBlock {
 			case 0: case 4: return "Transmogrifier Core";
 			case 1: case 5: return "Transmogrifier Shielding";
 			case 2: case 6: return "Transmogrifier Frame";
-		} return "+++ OUT OF CHEESE ERROR +++";
+			default: return "+++ OUT OF CHEESE ERROR +++";
+		}
 	}
 
 }

@@ -49,6 +49,7 @@ public class CSIcons {
 			case Metas.DIORITE : return DIORITE;
 			case Metas.STEELBLOCK : return STEELBLOCK;
 			case Metas.COMGOLD: return COMGOLD;
-		} return "herpderp";
+			default: return "Error: unknown meta: "+meta;
+		}
 	}
 }

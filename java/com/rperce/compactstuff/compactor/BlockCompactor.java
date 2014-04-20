@@ -71,8 +71,7 @@ public class BlockCompactor extends BlockContainer {
                         }
 
                         stack.stackSize -= randAmt;
-                        EntityItem drop = new EntityItem(world, (double)((float)x + dx),
-                        		(double)((float)y + dy), (double)((float)z + dz),
+                        EntityItem drop = new EntityItem(world, x + dx, y + dy, z + dz,
                         		new ItemStack(stack.itemID, randAmt, stack.getItemDamage()));
 
                         if (stack.hasTagCompound()) {
@@ -80,9 +79,9 @@ public class BlockCompactor extends BlockContainer {
                         }
 
                         float var15 = 0.05F;
-                        drop.motionX = (double)((float)CompactStuff.rand.nextGaussian() * var15);
-                        drop.motionY = (double)((float)CompactStuff.rand.nextGaussian() * var15 + 0.2F);
-                        drop.motionZ = (double)((float)CompactStuff.rand.nextGaussian() * var15);
+                        drop.motionX = (float)CompactStuff.rand.nextGaussian() * var15;
+                        drop.motionY = (float)CompactStuff.rand.nextGaussian() * var15 + 0.2F;
+                        drop.motionZ = (float)CompactStuff.rand.nextGaussian() * var15;
                         world.spawnEntityInWorld(drop);
                     }
                 }

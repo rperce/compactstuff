@@ -4,10 +4,10 @@ import static com.rperce.compactstuff.CompactStuff.comCobArmorMaterial;
 import static com.rperce.compactstuff.CompactStuff.dioriteToolMaterial;
 import static com.rperce.compactstuff.CompactStuff.heatCarbArmorMaterial;
 import static com.rperce.compactstuff.CompactStuff.metCarbToolMaterial;
+import static com.rperce.compactstuff.CompactStuff.paxelMaterial;
+import static com.rperce.compactstuff.CompactStuff.pureCarbArmorMaterial;
 import static com.rperce.compactstuff.CompactStuff.steelToolMaterial;
 import static com.rperce.compactstuff.CompactStuff.wovnCarbArmorMaterial;
-import static com.rperce.compactstuff.CompactStuff.pureCarbArmorMaterial;
-import static com.rperce.compactstuff.CompactStuff.paxelMaterial;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -81,36 +81,34 @@ public enum Ref {
 	private Object material;
 	private int aID;
 	private int rID;
-	private String render;
 	private byte type;
 	private byte TOOL = 0, ARMOR = 1, BLOCK=4;
 	private HashMap<String, Integer> rIDs = new HashMap<String, Integer>();
 	
-	Ref(int id, EnumToolMaterial toolMat, String ident, Class type) {
+	Ref(int id, EnumToolMaterial toolMat, String ident, Class<?> type) {
 		basic(id, ident);
 		try {
-			this.type = TOOL;
+			this.type = this.TOOL;
 			this.material = toolMat;
-			ctor = type.getConstructor(Integer.TYPE, EnumToolMaterial.class, String.class);
+			this.ctor = type.getConstructor(Integer.TYPE, EnumToolMaterial.class, String.class);
 		} catch(NoSuchMethodException nsme) {
 			System.out.println("ERROR: could not get constructor for id " + id);
 		}
 	}
 	
-	Ref(int id, EnumArmorMaterial armorMat, String render, int armorType, String ident, Class type) {
+	Ref(int id, EnumArmorMaterial armorMat, String render, int armorType, String ident, Class<?> type) {
 		basic(id, ident);
 		try {
-			this.type = ARMOR;
+			this.type = this.ARMOR;
 			this.material = armorMat;
-			this.render = render;
 			this.aID = armorType;
-			if(rIDs.containsKey(render)) {
-				rID = rIDs.get(render);
+			if(this.rIDs.containsKey(render)) {
+				this.rID = this.rIDs.get(render);
 			} else {
-				rID = RenderingRegistry.addNewArmourRendererPrefix(render);
-				rIDs.put(render, rID);
+				this.rID = RenderingRegistry.addNewArmourRendererPrefix(render);
+				this.rIDs.put(render, this.rID);
 			}
-			ctor = type.getConstructor(Integer.TYPE, EnumArmorMaterial.class, Integer.TYPE, Integer.TYPE, String.class);
+			this.ctor = type.getConstructor(Integer.TYPE, EnumArmorMaterial.class, Integer.TYPE, Integer.TYPE, String.class);
 		} catch(NoSuchMethodException nsme) {
 			System.out.println("ERROR: could not get constructor for id " + id);
 		}
@@ -121,37 +119,37 @@ public enum Ref {
 		this.name = ident;
 	}
 	public void resolve(Configuration c) {
-		id = c.getItem(name, id).getInt();
+		this.id = c.getItem(this.name, this.id).getInt();
 		
 		try {
-			if(type==TOOL)
-				item = ((Item)ctor.newInstance(id, (EnumToolMaterial)material, name)).setUnlocalizedName(name);
-			else if(type==ARMOR)
-				item = ((Item)ctor.newInstance(id, (EnumArmorMaterial)material, rID, aID, name)).setUnlocalizedName(name);
+			if(this.type==this.TOOL)
+				this.item = ((Item)this.ctor.newInstance(this.id, this.material, this.name)).setUnlocalizedName(this.name);
+			else if(this.type==this.ARMOR)
+				this.item = ((Item)this.ctor.newInstance(this.id, this.material, this.rID, this.aID, this.name)).setUnlocalizedName(this.name);
 				
-			if(type==TOOL || type==ARMOR)
-				GameRegistry.registerItem(item, item.getUnlocalizedName());
+			if(this.type==this.TOOL || this.type==this.ARMOR)
+				GameRegistry.registerItem(this.item, this.item.getUnlocalizedName());
 		} catch(InvocationTargetException e) {
-			System.out.println("ERROR: non-instantiatable class for id " + id);
+			System.out.println("ERROR: non-instantiatable class for id " + this.id);
 		} catch(IllegalAccessException e) {
-			System.out.println("ERROR: not allowed to instantiate item with id " + id);
+			System.out.println("ERROR: not allowed to instantiate item with id " + this.id);
 		} catch(InstantiationException e) {
-			System.out.println("ERROR: could not instantiate item with id " + id);
+			System.out.println("ERROR: could not instantiate item with id " + this.id);
 		}
 	}
 	
-	public int id() { return id; }
-	public Item getItem() { return item; }
-	public Block getBlock() { return block; }
+	public int id() { return this.id; }
+	public Item getItem() { return this.item; }
+	public Block getBlock() { return this.block; }
 	public String unlocal() { 
-		if(type==BLOCK)
-			return block.getUnlocalizedName();
-		return item.getUnlocalizedName();
+		if(this.type==this.BLOCK)
+			return this.block.getUnlocalizedName();
+		return this.item.getUnlocalizedName();
 	}
 	public ItemStack stack() {
-		if(type==BLOCK)
-			return new ItemStack(block);
-		return new ItemStack(item);
+		if(this.type==this.BLOCK)
+			return new ItemStack(this.block);
+		return new ItemStack(this.item);
 	}
 	
 	public static boolean matches(String name, Ref... check) {

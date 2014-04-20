@@ -18,7 +18,6 @@ public class TileEntityCarbonFurnace extends TileEntityCompactFurnace {
 		Block.oreGold.blockID, Block.oreIron.blockID, Block.oreLapis.blockID,
 		Block.oreRedstone.blockID, Block.oreNetherQuartz.blockID
 	};
-	private static ItemStack glassPaneStack = new ItemStack(Block.thinGlass);
 	private ItemStack[] furnaceItemStacks = new ItemStack[3];
 	public int furnaceBurnTime = 0;
 	public int currentItemBurnTime = 0;
@@ -55,18 +54,18 @@ public class TileEntityCarbonFurnace extends TileEntityCompactFurnace {
 	@Override public HashMap<ItemStack, ItemStack> getCustom() { return custom; }
 	
 	private int getChange() {
-		change = (byte)((change+1)%4);
-		return change==0?1:0;
+		this.change = (byte)((this.change+1)%4);
+		return this.change==0?1:0;
 	}
 	
 	@Override public void updateEntity() {
         boolean burning = this.furnaceBurnTime > 0;
         boolean invChange = false;
         int change = getChange();
-        if(furnaceItemStacks[0]!=null) {
+        if(this.furnaceItemStacks[0]!=null) {
         	boolean k = true;
         	for(int i : oreIDs) {
-        		if(i==furnaceItemStacks[0].itemID) {
+        		if(i==this.furnaceItemStacks[0].itemID) {
         			k = false;
         			break;
         		}
@@ -88,7 +87,7 @@ public class TileEntityCarbonFurnace extends TileEntityCompactFurnace {
                         this.furnaceItemStacks[1].stackSize--;
 
                         if (this.furnaceItemStacks[1].stackSize == 0) {
-                            this.furnaceItemStacks[1] = this.furnaceItemStacks[1].getItem().getContainerItemStack(furnaceItemStacks[1]);
+                            this.furnaceItemStacks[1] = this.furnaceItemStacks[1].getItem().getContainerItemStack(this.furnaceItemStacks[1]);
                         }
                     }
                 }
@@ -120,17 +119,16 @@ public class TileEntityCarbonFurnace extends TileEntityCompactFurnace {
 	@Override public boolean canSmelt() {
         if (this.furnaceItemStacks[0] == null) {
         	return false;
-        } else {
-        	ItemStack var1 = null;
-        	if(custom.containsKey(this.furnaceItemStacks[0]))
-        		var1 = custom.get(this.furnaceItemStacks[0]);
-        	else var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
-            if (var1 == null) return false;
-            if (this.furnaceItemStacks[2] == null) return true;
-            if (!this.furnaceItemStacks[2].isItemEqual(var1)) return false;
-            int result = furnaceItemStacks[2].stackSize + var1.stackSize;
-            return (result <= getInventoryStackLimit() && result <= var1.getMaxStackSize());
         }
+		ItemStack var1 = null;
+		if(custom.containsKey(this.furnaceItemStacks[0]))
+			var1 = custom.get(this.furnaceItemStacks[0]);
+		else var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
+		if (var1 == null) return false;
+		if (this.furnaceItemStacks[2] == null) return true;
+		if (!this.furnaceItemStacks[2].isItemEqual(var1)) return false;
+		int result = this.furnaceItemStacks[2].stackSize + var1.stackSize;
+		return (result <= getInventoryStackLimit() && result <= var1.getMaxStackSize());
     }
 	 
 	@Override public void smeltItem() {
@@ -143,11 +141,11 @@ public class TileEntityCarbonFurnace extends TileEntityCompactFurnace {
             if (this.furnaceItemStacks[2] == null)
             	this.furnaceItemStacks[2] = result.copy();
             else if (this.furnaceItemStacks[2].isItemEqual(result))
-            	furnaceItemStacks[2].stackSize += result.stackSize;
+            	this.furnaceItemStacks[2].stackSize += result.stackSize;
 
             for(int b : oreIDs) {
-            	if(b == furnaceItemStacks[0].itemID) {
-            		furnaceItemStacks[2].stackSize++;
+            	if(b == this.furnaceItemStacks[0].itemID) {
+            		this.furnaceItemStacks[2].stackSize++;
             		break;
             	}
             }
@@ -159,7 +157,7 @@ public class TileEntityCarbonFurnace extends TileEntityCompactFurnace {
         }
     }
 	
-	@Override public int getSizeInventory() { return furnaceItemStacks.length; }
+	@Override public int getSizeInventory() { return this.furnaceItemStacks.length; }
 	@Override public int getFurnaceCookTime() { return this.furnaceCookTime; }
 	@Override public int getFurnaceBurnTime() { return this.furnaceBurnTime; }
 	@Override public int getCurrentItemBurnTime() { return this.currentItemBurnTime; }

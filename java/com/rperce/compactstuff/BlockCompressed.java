@@ -3,7 +3,6 @@ package com.rperce.compactstuff;
 import java.util.HashMap;
 import java.util.Random;
 
-import com.rperce.compactstuff.client.CSIcons;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -12,6 +11,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+
+import com.rperce.compactstuff.client.CSIcons;
 
 public class BlockCompressed extends Block {
 	public static HashMap<Integer, String> names = new HashMap<Integer, String>();
@@ -62,7 +63,7 @@ public class BlockCompressed extends Block {
 		return getBlockHardness(world, x, y, z);
 	}
 
-	private float getResFromMeta(int meta) {
+	private static float getResFromMeta(int meta) {
 		switch (meta) {
 		case Metas.COMCOBBLE:
 			return 0.7f;
@@ -120,9 +121,9 @@ public class BlockCompressed extends Block {
 
 		if (world.checkChunksExist(x - d, y - d, z - d, x + d, y + d, z + d)) {
 			if (!world.isRemote) {
-				double dx = (double) (x + .5f), dy = (double) (y + .5f), dz = (double) (z + .5f);
+				double dx = (x + .5f), dy = (y + .5f), dz = (z + .5f);
 				EntityFallingCompact var9 = new EntityFallingCompact(world, dx,
-						dy, dz, blockID, world.getBlockMetadata(x, y, z));
+						dy, dz, this.blockID, world.getBlockMetadata(x, y, z));
 				world.spawnEntityInWorld(var9);
 			}
 		} else {

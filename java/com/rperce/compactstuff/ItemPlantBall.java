@@ -3,6 +3,7 @@ package com.rperce.compactstuff;
 import java.util.List;
 
 import com.rperce.compactstuff.client.CSIcons;
+
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -26,6 +27,7 @@ public class ItemPlantBall extends Item {
 			plantBallIcons[i] = ir.registerIcon(CSIcons.PREFIX + "plantBall" + i);
 		}
 	}
+	@Override
 	public Icon getIconFromDamage(int dmg) {
 		return plantBallIcons[dmg];
 	}
@@ -33,7 +35,10 @@ public class ItemPlantBall extends Item {
 		try { return names[i.getItemDamage()]; }
 		catch(NullPointerException e) { return "Seed Ball"; }
 	}
-	
+
+	/** Warnings suppressed due to override constraints */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(int i, CreativeTabs tab, List list) {
 		list.add(new ItemStack(i,1,0));

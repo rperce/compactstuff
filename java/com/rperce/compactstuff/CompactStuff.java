@@ -1,6 +1,5 @@
 package com.rperce.compactstuff;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Random;
 
@@ -12,7 +11,6 @@ import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.EnumToolMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.EnumHelper;
@@ -26,12 +24,6 @@ import com.rperce.compactstuff.compactor.BlockCompactor;
 import com.rperce.compactstuff.furnace.BlockBlazeFurnace;
 import com.rperce.compactstuff.furnace.BlockCompactFurnace;
 import com.rperce.compactstuff.tmog.BlockTmog;
-import com.rperce.compactstuff.tools.CompactAxe;
-import com.rperce.compactstuff.tools.CompactHoe;
-import com.rperce.compactstuff.tools.CompactPick;
-import com.rperce.compactstuff.tools.CompactSpade;
-import com.rperce.compactstuff.tools.CompactSword;
-import com.rperce.compactstuff.tools.Paxel;
 import com.rperce.compactstuff.tools.SmeltOnAStick;
 
 import cpw.mods.fml.common.Mod;
@@ -112,20 +104,10 @@ public class CompactStuff {
 								
 				idPlantBall = c.getItem("plantBall", 		9337).getInt(),
 				idCarbon	= c.getItem("carbon",			9338).getInt(),
-				idPureHelmt	= c.getItem("pureCarbonHelmet",	9361).getInt(),
-				idPurePlate	= c.getItem("pureCarbonPlate",	9362).getInt(),
-				idPurePants	= c.getItem("pureCarbonPants",	9363).getInt(),
-				idPureBoots	= c.getItem("pureCarbonBoots",	9364).getInt(),
-				idPaxel		= c.getItem("paxel",			9365).getInt(),
+				
 				idBoH		= c.getItem("bagOfHolding",		9366).getInt(),
 				idCompact	= c.getItem("assortedItems",	9367).getInt(),
-				idSmeltStick= c.getItem("smeltOnAStick", 	9373).getInt(),
-								
-				cobRender 	= proxy.addArmor("Compressed Cobblestone"),
-				carbRender	= proxy.addArmor("Heated Compressed Carbon"),
-				wovnRender	= proxy.addArmor("Carbon Fiber"),
-				pureRender	= proxy.addArmor("Advanced Carbon");
-			
+				idSmeltStick= c.getItem("smeltOnAStick", 	9373).getInt();			
 			boolean fancyglass = c.get(Configuration.CATEGORY_GENERAL, "connectedComGlassTextures", true).getBoolean(true);
 			itemStuff = new ItemStuff(idCompact);
 			
@@ -142,13 +124,16 @@ public class CompactStuff {
 			for(Ref r : Ref.values())
 				r.resolve(c);
 			
-			//paxel		= new Paxel( idPaxel, paxelMaterial).setUnlocalizedName("compactPaxel");
 			bagOfHolding= new ItemBagOfHolding(idBoH);
 			smeltOnAStick=new SmeltOnAStick(idSmeltStick);
 			
 			c.save();
 		}
 		
+		/**
+		 * 
+		 * @param e	Parameter to make this an init event
+		 */
 		@EventHandler
 		public void init(FMLInitializationEvent e) {
 			CompactRecipes.setUpRecipes();
@@ -222,28 +207,28 @@ public class CompactStuff {
 					new ItemStack(tools[3]),
 					new ItemStack(tools[4]),
 			};
-			for(int i=0; i<toolnames.length; i++)
-				LanguageRegistry.addName(toolstacks[i], name+" "+toolnames[i]);
-			if(swo!=null) toolstacks[0].addEnchantment(swo, specEnchant);
-			if(name.equals("Metamorphic Carbon")) toolstacks[0].addEnchantment(Enchantment.looting, specEnchant);
+			for(int i=0; i<this.toolnames.length; i++)
+				LanguageRegistry.addName(toolstacks[i], name+" "+this.toolnames[i]);
+			if(swo!=null) toolstacks[0].addEnchantment(swo, this.specEnchant);
+			if(name.equals("Metamorphic Carbon")) toolstacks[0].addEnchantment(Enchantment.looting, this.specEnchant);
 			if(too!=null) {
-				toolstacks[1].addEnchantment(too, specEnchant);
-				toolstacks[2].addEnchantment(too, specEnchant);
-				toolstacks[4].addEnchantment(too, specEnchant);
+				toolstacks[1].addEnchantment(too, this.specEnchant);
+				toolstacks[2].addEnchantment(too, this.specEnchant);
+				toolstacks[4].addEnchantment(too, this.specEnchant);
 			}
 			addAllToolRecipes(toolstacks,material,handle);
 		}
 				
-		private void addAllToolRecipes(ItemStack[] tools,ItemStack material,ItemStack handle) {
+		private static void addAllToolRecipes(ItemStack[] tools,ItemStack material,ItemStack handle) {
 			if(tools.length<5) return;
 			if(handle==null) addAllToolRecipes(tools[0],tools[1],tools[2],tools[3],tools[4],material);
 			else addAllToolRecipes(tools[0],tools[1],tools[2],tools[3],tools[4],material,handle);
 		}
-		private void addAllToolRecipes(ItemStack a,ItemStack b,ItemStack c,ItemStack d,ItemStack e,ItemStack m) {
+		private static void addAllToolRecipes(ItemStack a,ItemStack b,ItemStack c,ItemStack d,ItemStack e,ItemStack m) {
 			ItemStack s = new ItemStack(Item.stick);
 			addAllToolRecipes(a,b,c,d,e,m,s);
 		}
-		private void addAllToolRecipes(ItemStack a, ItemStack b, ItemStack c, ItemStack d, ItemStack e, ItemStack m, ItemStack s) {
+		private static void addAllToolRecipes(ItemStack a, ItemStack b, ItemStack c, ItemStack d, ItemStack e, ItemStack m, ItemStack s) {
 			GameRegistry.addRecipe(a, " c "," c "," s ",'c',m,'s',s);
 			GameRegistry.addRecipe(b, "ccc"," s "," s ",'c',m,'s',s);
 			GameRegistry.addRecipe(c, "cc ","cs "," s ",'c',m,'s',s);
@@ -271,10 +256,10 @@ public class CompactStuff {
 			}; 
 			if(enchant!=null) {
 				for(int i=0; i<armor.length; i++)
-					armor[i].addEnchantment(enchant,specEnchant);
+					armor[i].addEnchantment(enchant,this.specEnchant);
 			}
 			for(int i=0; i<armor.length; i++)
-				LanguageRegistry.addName(armor[i], name+" "+armornames[i]);
+				LanguageRegistry.addName(armor[i], name+" "+this.armornames[i]);
 			
 			GameRegistry.addRecipe(armor[0],"ccc","c c",'c',material);
 			GameRegistry.addRecipe(armor[1],"c c","ccc","ccc",'c',material);
@@ -291,7 +276,7 @@ public class CompactStuff {
 			};
 			
 			for(int i=0; i<armor.length; i++) 
-				LanguageRegistry.addName(armor[i], "Carbon Fiber "+armornames[i]);
+				LanguageRegistry.addName(armor[i], "Carbon Fiber "+this.armornames[i]);
 			
 			ItemStack c = new ItemStack(carbon,1,6),
 					i = new ItemStack(itemStuff,1,ItemStuff.IRON_PLATE);
@@ -309,12 +294,10 @@ public class CompactStuff {
 			};
 			
 			for(int i=0; i<armor.length; i++)
-				LanguageRegistry.addName(armor[i], "Carbon Alloy "+armornames[i]);
+				LanguageRegistry.addName(armor[i], "Carbon Alloy "+this.armornames[i]);
 			
 			ItemStack c = new ItemStack(carbon,1,6), //woven carbon
-				p = new ItemStack(itemStuff,1,ItemStuff.DIAMOND_PLATE),
-				d = new ItemStack(itemStuff,1,ItemStuff.ALLOY_PLATE),
-				h = new ItemStack(carbon,1,4); //met carbon
+				d = new ItemStack(itemStuff,1,ItemStuff.ALLOY_PLATE);
 			GameRegistry.addRecipe(armor[0],"dod","cgc",
 				'd',d,'o',Ref.WOVEN_HELM.stack(),
 				'c',c,'g',new ItemStack(comGlass));

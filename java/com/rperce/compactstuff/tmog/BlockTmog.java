@@ -66,6 +66,7 @@ public class BlockTmog extends BlockContainer {
 		w.setBlockMetadataWithNotify(x, y, z, noo, 3);
 	}
 	
+	@SuppressWarnings("incomplete-switch")
 	@Override public Icon getBlockTexture(IBlockAccess ba,int x,int y,int z, int s) {
 		int meta = ba.getBlockMetadata(x,y,z);
 		if(meta!=6) //6 = 0110: valid frame
@@ -107,9 +108,9 @@ public class BlockTmog extends BlockContainer {
 		}
 		return frameicons.get(i?"!":path);
 	} private boolean a(IBlockAccess ba, int x, int y, int z) {
-		return ba.getBlockId(x,y,z)==blockID && ba.getBlockMetadata(x, y, z)==6; //6==0110, active frame
+		return ba.getBlockId(x,y,z)==this.blockID && ba.getBlockMetadata(x, y, z)==6; //6==0110, active frame
 	} private boolean b(IBlockAccess ba, int x, int y, int z) {
-		return ba.getBlockId(x,y,z)==blockID && ba.getBlockMetadata(x, y, z)==5; //5==0101, active shielding
+		return ba.getBlockId(x,y,z)==this.blockID && ba.getBlockMetadata(x, y, z)==5; //5==0101, active shielding
 	}
 	
 	@Override public Icon getIcon(int side, int meta) {
@@ -160,11 +161,12 @@ public class BlockTmog extends BlockContainer {
 	@Override public float getExplosionResistance(Entity entity, World world, int x, int y, int z, double eX, double eY, double eZ) {
         return getBlockHardness(world,x,y,z);
     }
-	private float getResFromMeta(int type) {
+	private static float getResFromMeta(int type) {
         switch(type) {
-        case 2 : return 0.7f;
-        case 1 : return 50f;
-        } return 4f;
+	        case 2 : return 0.7f;
+	        case 1 : return 50f;
+	        default: return 4f;
+        }
 	}
 
 }

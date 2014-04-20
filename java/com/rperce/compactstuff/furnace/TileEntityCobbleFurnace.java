@@ -39,7 +39,7 @@ public class TileEntityCobbleFurnace extends TileEntityCompactFurnace {
                         this.furnaceItemStacks[1].stackSize--;
 
                         if (this.furnaceItemStacks[1].stackSize == 0) {
-                            this.furnaceItemStacks[1] = this.furnaceItemStacks[1].getItem().getContainerItemStack(furnaceItemStacks[1]);
+                            this.furnaceItemStacks[1] = this.furnaceItemStacks[1].getItem().getContainerItemStack(this.furnaceItemStacks[1]);
                         }
                     }
                 }
@@ -71,14 +71,13 @@ public class TileEntityCobbleFurnace extends TileEntityCompactFurnace {
 	@Override public boolean canSmelt() {
         if (this.furnaceItemStacks[0] == null) {
         	return false;
-        } else {
-            ItemStack var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
-            if (var1 == null) return false;
-            if (this.furnaceItemStacks[2] == null) return true;
-            if (!this.furnaceItemStacks[2].isItemEqual(var1)) return false;
-            int result = furnaceItemStacks[2].stackSize + var1.stackSize;
-            return (result <= getInventoryStackLimit() && result <= var1.getMaxStackSize());
         }
+		ItemStack var1 = FurnaceRecipes.smelting().getSmeltingResult(this.furnaceItemStacks[0]);
+		if (var1 == null) return false;
+		if (this.furnaceItemStacks[2] == null) return true;
+		if (!this.furnaceItemStacks[2].isItemEqual(var1)) return false;
+		int result = this.furnaceItemStacks[2].stackSize + var1.stackSize;
+		return (result <= getInventoryStackLimit() && result <= var1.getMaxStackSize());
     }
 	 
 	@Override public void smeltItem() {
@@ -88,7 +87,7 @@ public class TileEntityCobbleFurnace extends TileEntityCompactFurnace {
             if (this.furnaceItemStacks[2] == null)
             	this.furnaceItemStacks[2] = var1.copy();
             else if (this.furnaceItemStacks[2].isItemEqual(var1))
-            	furnaceItemStacks[2].stackSize += var1.stackSize;
+            	this.furnaceItemStacks[2].stackSize += var1.stackSize;
 
             this.furnaceItemStacks[0].stackSize--;
 
@@ -97,7 +96,7 @@ public class TileEntityCobbleFurnace extends TileEntityCompactFurnace {
         }
     }
 	
-	@Override public int getSizeInventory() { return furnaceItemStacks.length; }
+	@Override public int getSizeInventory() { return this.furnaceItemStacks.length; }
 	@Override public int getFurnaceCookTime() { return this.furnaceCookTime; }
 	@Override public int getFurnaceBurnTime() { return this.furnaceBurnTime; }
 	@Override public int getCurrentItemBurnTime() { return this.currentItemBurnTime; }

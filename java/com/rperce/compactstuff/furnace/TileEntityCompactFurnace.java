@@ -3,15 +3,15 @@ package com.rperce.compactstuff.furnace;
 
 import java.util.HashMap;
 
-import com.rperce.compactstuff.Commons;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+
+import com.rperce.compactstuff.Commons;
 
 public abstract class TileEntityCompactFurnace extends TileEntity implements ISidedInventory {
 	/**
@@ -20,6 +20,7 @@ public abstract class TileEntityCompactFurnace extends TileEntity implements ISi
 	 */
 	public abstract ItemStack[] getFurnaceItemStacks();
 	public abstract void setFurnaceItemStacks(ItemStack[] i);
+	@Override
 	public abstract int getSizeInventory();
 	public abstract int getFurnaceCookTime();
 	public abstract int getFurnaceBurnTime();
@@ -27,6 +28,7 @@ public abstract class TileEntityCompactFurnace extends TileEntity implements ISi
 	public abstract void setFurnaceCookTime(int time);
 	public abstract void setFurnaceBurnTime(int time);
 	public abstract void setCurrentItemBurnTime(int time);
+	@Override
 	public abstract void updateEntity();
 	public abstract void smeltItem();
 	public abstract boolean canSmelt();
@@ -104,24 +106,23 @@ public abstract class TileEntityCompactFurnace extends TileEntity implements ISi
                 var3 = getFurnaceItemStacks()[slot];
                 getFurnaceItemStacks()[slot] = null;
                 return var3;
-            } else {
-                var3 = this.getFurnaceItemStacks()[slot].splitStack(amt);
-
-                if (this.getFurnaceItemStacks()[slot].stackSize == 0) {
-                    this.getFurnaceItemStacks()[slot] = null;
-                }
-
-                return var3;
             }
+			var3 = this.getFurnaceItemStacks()[slot].splitStack(amt);
+
+			if (this.getFurnaceItemStacks()[slot].stackSize == 0) {
+			    this.getFurnaceItemStacks()[slot] = null;
+			}
+
+			return var3;
         }
         return null;
     }
 	@Override public boolean isUseableByPlayer(EntityPlayer player) {
 		return this.worldObj.getBlockTileEntity(this.xCoord, this.yCoord, this.zCoord) != this ?
 		false :
-			player.getDistanceSq((double)this.xCoord + 0.5D,
-				(double)this.yCoord + 0.5D,
-				(double)this.zCoord + 0.5D) <= 64.0D;
+			player.getDistanceSq(this.xCoord + 0.5D,
+				this.yCoord + 0.5D,
+				this.zCoord + 0.5D) <= 64.0D;
 	}
 	@Override public ItemStack getStackInSlot(int par1) {
         return getFurnaceItemStacks()[par1];
@@ -132,11 +133,12 @@ public abstract class TileEntityCompactFurnace extends TileEntity implements ISi
 		switch(slot) {
 			case 0: return FurnaceRecipes.smelting().getSmeltingResult(stack)!=null || getCustom()!=null && getCustom().containsKey(stack);
 			case 1: return Commons.getItemBurnTime(stack)>0;
-		} return false;
+			default: return false;
+		}
 	}
 	@Override public int getInventoryStackLimit() { return 64; }
-	@Override public void openChest()  { }
-	@Override public void closeChest() { }
+	@Override public void openChest()  { /* do nothing */ }
+	@Override public void closeChest() { /* do nothing */ }
 	
 	@Override public int[] getAccessibleSlotsFromSide(int side) {
 		if(side==1) return new int[] {0,1}; //top: material and fuel

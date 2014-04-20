@@ -2,7 +2,6 @@ package com.rperce.compactstuff;
 
 import java.util.Arrays;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -13,11 +12,12 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class Commons {
 	public static boolean areShallowEqual(ItemStack a, ItemStack b) {
     	if(a==null) return b==null;
-    	if(b==null) return a==null;
+    	if(b==null) return false;
     	return a.itemID==b.itemID && a.getItemDamage()==b.getItemDamage();
 	}
 
@@ -67,28 +67,26 @@ public class Commons {
 	}
 	public static int getItemBurnTime(ItemStack stack) {
         if (stack == null) return 0;
-        else {
-            int id = stack.getItem().itemID;
-            Item item = stack.getItem();
+		int id = stack.getItem().itemID;
+		Item item = stack.getItem();
 
-            if (stack.getItem() instanceof ItemBlock && Block.blocksList[id] != null) {
-                Block var3 = Block.blocksList[id];
+		if (stack.getItem() instanceof ItemBlock && Block.blocksList[id] != null) {
+		    Block var3 = Block.blocksList[id];
 
-                if (var3 == Block.woodSingleSlab)
-                    return 150;
+		    if (var3 == Block.woodSingleSlab)
+		        return 150;
 
-                if (var3.blockMaterial == Material.wood)
-                    return 300;
-            }
-            if (item instanceof ItemTool && ((ItemTool) item).getToolMaterialName().equals("WOOD")) return 200;
-            if (item instanceof ItemSword && ((ItemSword) item).getToolMaterialName().equals("WOOD")) return 200;
-            if (item instanceof ItemHoe && ((ItemHoe) item).getMaterialName().equals("WOOD")) return 200;
-            if (id == Item.stick.itemID) return 100;
-            if (id == Item.coal.itemID) return 1600;
-            if (id == Item.bucketLava.itemID) return 20000;
-            if (id == Block.sapling.blockID) return 100;
-            if (id == Item.blazeRod.itemID) return 2400;
-            return GameRegistry.getFuelValue(stack);
-        }
+		    if (var3.blockMaterial == Material.wood)
+		        return 300;
+		}
+		if (item instanceof ItemTool && ((ItemTool) item).getToolMaterialName().equals("WOOD")) return 200;
+		if (item instanceof ItemSword && ((ItemSword) item).getToolMaterialName().equals("WOOD")) return 200;
+		if (item instanceof ItemHoe && ((ItemHoe) item).getMaterialName().equals("WOOD")) return 200;
+		if (id == Item.stick.itemID) return 100;
+		if (id == Item.coal.itemID) return 1600;
+		if (id == Item.bucketLava.itemID) return 20000;
+		if (id == Block.sapling.blockID) return 100;
+		if (id == Item.blazeRod.itemID) return 2400;
+		return GameRegistry.getFuelValue(stack);
     }
 }

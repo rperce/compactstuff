@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.rperce.compactstuff.CompactStuff;
 import com.rperce.compactstuff.client.CSIcons;
+
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -65,6 +66,9 @@ public class ItemBagOfHolding extends Item {
 		if(out==null) System.err.println("Bag of holding is null!");
 		return out;		
 	}	
+	/** Warnings suppressed due to override constraints */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(int id, CreativeTabs tab, List list) {
 		for(int meta=0; meta<16; meta++)

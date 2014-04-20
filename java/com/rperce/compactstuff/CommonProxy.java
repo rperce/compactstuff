@@ -26,6 +26,10 @@ public class CommonProxy implements IGuiHandler {
 		// Nothing here as this is the server side proxy
 	}
 	
+	/**
+	 * @param armor  Name to add to registry client-side
+	 * @return
+	 */
 	public int addArmor(String armor) {
 		return 0; //server doesn't give a crap
 	}
@@ -42,8 +46,8 @@ public class CommonProxy implements IGuiHandler {
 			case 3: return new ContainerCompactor(player.inventory, (TileEntityCompactor)te);
 			case 4: return new ContainerTmog(player.inventory, (TileEntityTransmog)te);
 			case 5: return new ContainerBlazeFurnace(player.inventory, (TileEntityBlazeFurnace)te);
+			default: return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -57,7 +61,7 @@ public class CommonProxy implements IGuiHandler {
 			case 3: return new CompactorGUI(player.inventory, (TileEntityCompactor)te);
 			case 4: return new TransmogGUI(player.inventory, (TileEntityTransmog)te);
 			case 5: return new BlazeFurnaceGUI(player.inventory, (TileEntityBlazeFurnace)te);
+			default: return null;
 		}
-		return null;
 	}
 }

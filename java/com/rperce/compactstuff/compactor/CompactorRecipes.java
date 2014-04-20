@@ -18,6 +18,7 @@ import com.rperce.compactstuff.CompactStuff;
 import com.rperce.compactstuff.ItemCarbon;
 import com.rperce.compactstuff.ItemStuff;
 import com.rperce.compactstuff.Metas;
+
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
@@ -116,7 +117,7 @@ public class CompactorRecipes {
         int i = 0, width = 0, height = 0;
 
         if (inputs[i] instanceof String[]) {
-            String[] astring = (String[])((String[])inputs[i++]);
+            String[] astring = ((String[])inputs[i++]);
 
             for (int l = 0; l < astring.length; l++) {
                 String s1 = astring[l];
@@ -150,7 +151,7 @@ public class CompactorRecipes {
             char c = s.charAt(l);
 
             if (hashmap.containsKey(Character.valueOf(c)))
-                recipe[l] = ((ItemStack)hashmap.get(Character.valueOf(c))).copy();
+                recipe[l] = hashmap.get(Character.valueOf(c)).copy();
             else recipe[l] = null;
         }
 
@@ -160,7 +161,7 @@ public class CompactorRecipes {
     }
 
     public static void addShapelessRecipe(ItemStack output, Object ... inputs) {
-        ArrayList list = new ArrayList();
+        ArrayList<ItemStack> list = new ArrayList<ItemStack>();
         Object[] aobject = inputs;
         int len = inputs.length;
 
@@ -191,7 +192,10 @@ public class CompactorRecipes {
                 ++i;
             }
         }
-
+        if(itemstack == null || itemstack1 == null) {
+        	System.err.println("SOMETHING HAS GONE HORRIBLY WRONG");
+        	return null;
+        }
         if (i == 2 && itemstack.itemID == itemstack1.itemID && itemstack.stackSize == 1 && itemstack1.stackSize == 1 && Item.itemsList[itemstack.itemID].isRepairable()) {
             Item item = Item.itemsList[itemstack.itemID];
             int k = item.getMaxDamage() - itemstack.getItemDamageForDisplay();
@@ -202,17 +206,16 @@ public class CompactorRecipes {
             if (j1 < 0) j1 = 0;
 
             return new ItemStack(itemstack.itemID, 1, j1);
-        } else {
-            for (j = 0; j < recipes.size(); ++j) {
-                IRecipe recipe = (IRecipe)recipes.get(j);
-
-                if (recipe.matches(inv, world)) return recipe.getCraftingResult(inv);
-            }
-
-            return null;
         }
+		for (j = 0; j < recipes.size(); ++j) {
+		    IRecipe recipe = recipes.get(j);
+
+		    if (recipe.matches(inv, world)) return recipe.getCraftingResult(inv);
+		}
+
+		return null;
     }
-    public static List getRecipes() {
+    public static List<IRecipe> getRecipes() {
     	return recipes;
     }
     public synchronized static void enableRecipe(HashSet<ItemStack> enabled, ItemStack output) {
@@ -238,7 +241,8 @@ public class CompactorRecipes {
 		return false;
     }
     
-    public static boolean isEnabledIngredient(HashSet<ItemStack> enabled, ItemStack input) {
+    @SuppressWarnings("unchecked")
+	public static boolean isEnabledIngredient(HashSet<ItemStack> enabled, ItemStack input) {
     	for(IRecipe recipe : recipes) {
     		if(enabled.contains(recipe.getRecipeOutput())) {
     			if(recipe instanceof ShapedRecipes) {
@@ -260,7 +264,8 @@ public class CompactorRecipes {
     	}
     	return out;
     }
-    public static List<IRecipe> getMatchingRecipes(HashSet<ItemStack> enabled, ItemStack input) {
+    @SuppressWarnings("unchecked")
+	public static List<IRecipe> getMatchingRecipes(HashSet<ItemStack> enabled, ItemStack input) {
     	List<IRecipe> goodOnes = new ArrayList<IRecipe>();
     	for(IRecipe recipe : getEnabledRecipes(enabled)) {
 			if(recipe instanceof ShapedRecipes) {
@@ -283,7 +288,8 @@ public class CompactorRecipes {
     	for(IRecipe r : recipes) if(Commons.areShallowEqual(r.getRecipeOutput(),out)) return r;
     	return null;
     }
-    public static List<ItemStack> getRequirements(IRecipe r) {
+    @SuppressWarnings("unchecked")
+	public static List<ItemStack> getRequirements(IRecipe r) {
     	ArrayList<ItemStack> out = new ArrayList<ItemStack>();
     	ArrayList<ItemStack> flat = new ArrayList<ItemStack>();
     	if(r instanceof ShapedRecipes) flat.addAll(Arrays.asList(((ShapedRecipes)r).recipeItems));

@@ -23,7 +23,7 @@ public class CompactHoe extends ItemHoe {
 		setCreativeTab(CompactStuff.compactTab);
 	}
 	@Override public void registerIcons(IconRegister ir) {
-		itemIcon = ir.registerIcon(CSIcons.PREFIX + path);
+		this.itemIcon = ir.registerIcon(CSIcons.PREFIX + this.path);
 	}
 	@Override public boolean getIsRepairable(ItemStack thisOne, ItemStack otherOne) {
         return CompactTool.getIsRepairable(thisOne,otherOne,"Hoe");
@@ -42,6 +42,9 @@ public class CompactHoe extends ItemHoe {
 		}
 		return true;
 	}
+
+	/** Warnings suppressed due to override constraints */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override public void addInformation(ItemStack thisStack, EntityPlayer player, List list, boolean boo) {
 		if(thisStack.itemID!=Ref.METCARB_HOE.id()) return;
 		list.add("Tills a 9x9 area on right-click");

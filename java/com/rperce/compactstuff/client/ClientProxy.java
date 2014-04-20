@@ -1,8 +1,7 @@
 package com.rperce.compactstuff.client;
 
 import com.rperce.compactstuff.CommonProxy;
-import com.rperce.compactstuff.EntityFallingCompact;
-import net.minecraftforge.client.MinecraftForgeClient;
+
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
 public class ClientProxy extends CommonProxy {

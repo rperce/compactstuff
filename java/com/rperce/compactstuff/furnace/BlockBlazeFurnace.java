@@ -35,10 +35,10 @@ public class BlockBlazeFurnace extends BlockCompactFurnace {
 	@Override public TileEntity createTileEntity(World w, int m) { return new TileEntityBlazeFurnace(); }
 	@Override public int damageDropped(int meta) { return 2; }
 	@Override public void registerIcons(IconRegister ir) {
-		icons[0] = ir.registerIcon(CSIcons.PREFIX+CSIcons.BLAZEFURNACE_TOP);
-		icons[1] = ir.registerIcon(CSIcons.PREFIX+CSIcons.BLAZEFURNACE_SIDE);
-		icons[2] = ir.registerIcon(CSIcons.PREFIX+CSIcons.BLAZEFURNACE_FRONT_INACTIVE);
-		icons[3] = ir.registerIcon(CSIcons.PREFIX+CSIcons.BLAZEFURNACE_FRONT_ACTIVE);
+		this.icons[0] = ir.registerIcon(CSIcons.PREFIX+CSIcons.BLAZEFURNACE_TOP);
+		this.icons[1] = ir.registerIcon(CSIcons.PREFIX+CSIcons.BLAZEFURNACE_SIDE);
+		this.icons[2] = ir.registerIcon(CSIcons.PREFIX+CSIcons.BLAZEFURNACE_FRONT_INACTIVE);
+		this.icons[3] = ir.registerIcon(CSIcons.PREFIX+CSIcons.BLAZEFURNACE_FRONT_ACTIVE);
 	}
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z,EntityPlayer player, int a, float b, float c, float d) {
@@ -54,14 +54,13 @@ public class BlockBlazeFurnace extends BlockCompactFurnace {
 		return true;
 	}
 	@Override public Icon getBlockTexture(IBlockAccess ba,int x,int y,int z, int s) {
-		if(s==0 || s==1) return icons[0]; 
-		TileEntityBlazeFurnace te = (TileEntityBlazeFurnace)(ba.getBlockTileEntity(x, y, z));
+		if(s==0 || s==1) return this.icons[0]; 
 		int front = getFront(ba,x,y,z);
 		boolean isActive = isActive(ba,x,y,z);
-		return icons[s==front ? (isActive ? 3 : 2) : 1];
+		return this.icons[s==front ? (isActive ? 3 : 2) : 1];
 	}
 	
 	@Override public Icon getIcon(int side, int meta) {
-		return icons[(side==1||side==0) ? 0 : (side==3 ? 2 : 1)];
+		return this.icons[(side==1||side==0) ? 0 : (side==3 ? 2 : 1)];
 	}
 }

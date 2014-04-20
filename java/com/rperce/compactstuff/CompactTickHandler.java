@@ -1,10 +1,9 @@
 package com.rperce.compactstuff;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.List;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -28,14 +27,14 @@ public class CompactTickHandler implements ITickHandler {
 	public static CompactTickHandler getHandler() { return instance; }
 	private HashMap<EntityPlayer,Boolean> tickEvens;
 	public CompactTickHandler(EnumSet<TickType> type) {
-		tickSet = type;
+		this.tickSet = type;
 		instance = this;
-		tickEvens = new HashMap<EntityPlayer,Boolean>();
+		this.tickEvens = new HashMap<EntityPlayer,Boolean>();
 	}
 	
 	public void toggleFastMode() {
-		fastmode = !fastmode;
-		System.out.println("Fastmode: "+fastmode);
+		this.fastmode = !this.fastmode;
+		System.out.println("Fastmode: "+this.fastmode);
 	}
 	
 	@Override
@@ -46,9 +45,9 @@ public class CompactTickHandler implements ITickHandler {
 				ItemStack[] armor = player.inventory.armorInventory;
 				if(armor[3]!=null) { //helmet
 					if(Ref.matches(armor[3], Ref.WOVEN_HELM)) {
-						Boolean is = tickEvens.get(player);
+						Boolean is = this.tickEvens.get(player);
 						is=(is==null)?false:is;
-						tickEvens.put(player,!is);
+						this.tickEvens.put(player,!is);
 						if(is) player.setAir(player.getAir()+1);
 					} else if(Ref.matches(armor[3], Ref.ADV_HELM)) {
 						player.setAir(300);
@@ -84,8 +83,8 @@ public class CompactTickHandler implements ITickHandler {
 		}
 	}
 	
-	private void doThornyThings(EntityPlayer player,double d,int dmg) {
-		List l = new ArrayList(player.worldObj.getEntitiesWithinAABBExcludingEntity(player, player.boundingBox.expand(d, d, d)));
+	private static void doThornyThings(EntityPlayer player,double d,int dmg) {
+		Collection<?> l = player.worldObj.getEntitiesWithinAABBExcludingEntity(player, player.boundingBox.expand(d, d, d));
 		for(Object o : l) {			
 			if(o instanceof EntityLivingBase) {
 				EntityLivingBase e = (EntityLivingBase)o;
@@ -103,23 +102,23 @@ public class CompactTickHandler implements ITickHandler {
 				}
 			}
 		}
-	} private void alsoCheckForSlimes(EntityPlayer player, double d,int dmg) {
-		List l = new ArrayList(player.worldObj.getEntitiesWithinAABBExcludingEntity(player, player.boundingBox.expand(d, d, d)));
+	} private static void alsoCheckForSlimes(EntityPlayer player, double d,int dmg) {
+		Collection<?> l = player.worldObj.getEntitiesWithinAABBExcludingEntity(player, player.boundingBox.expand(d, d, d));
 		for(Object o : l) {			
 			if(o instanceof EntitySlime)				
 				((EntitySlime)o).attackEntityFrom(DamageSource.causePlayerDamage(player), dmg);
 		}
 	}
-	private EntityPlayer findPlayerToAttack(EntityMob e) {
+	private static EntityPlayer findPlayerToAttack(EntityMob e) {
 		EntityPlayer var1 = e.worldObj.getClosestVulnerablePlayerToEntity(e, 16.0D);
         return var1 != null && e.canEntityBeSeen(var1) ? var1 : null;
 	}
-	private double distance(Entity a, Entity b) {
+	/*private static double distance(Entity a, Entity b) {
 		double dx=a.posX-b.posX, dy=a.posY-b.posY, dz=a.posZ-b.posZ;
 		return Math.sqrt(dx*dx+dy*dy+dz*dz);
-	}
+	}*/
 	
-	private boolean setPlayerIsImmuneToFire(EntityPlayer player, boolean is) {
+	private static boolean setPlayerIsImmuneToFire(EntityPlayer player, boolean is) {
 		Field fireResist = null;
 		try {
 			fireResist = Entity.class.getDeclaredField("isImmuneToFire");
@@ -143,11 +142,13 @@ public class CompactTickHandler implements ITickHandler {
 	}
 
 	@Override
-	public void tickEnd(EnumSet<TickType> type, Object... tickData) {}
+	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
+		// we must override to prevent action taken
+	}
 
 	@Override
 	public EnumSet<TickType> ticks() {
-		return tickSet;
+		return this.tickSet;
 	}
 
 	@Override
