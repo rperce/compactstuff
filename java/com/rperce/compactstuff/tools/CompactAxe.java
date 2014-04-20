@@ -40,7 +40,7 @@ public class CompactAxe extends ItemAxe {
     public boolean onBlockDestroyed(ItemStack thisStack, World world,
             int blockSlot, int x, int y, int z, EntityLivingBase holder) {
         if (world.isRemote) return false;
-        if (thisStack.itemID != Ref.METCARB_AXE.id()
+        if (Ref.matches(thisStack, Ref.METCARB_HOE)
                 || !(holder instanceof EntityPlayer)
                 || world.isAirBlock(x, y, z))
             return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z,
@@ -75,7 +75,7 @@ public class CompactAxe extends ItemAxe {
     @Override
     public void addInformation(ItemStack thisStack, EntityPlayer player,
             List list, boolean boo) {
-        if (thisStack.itemID != Ref.METCARB_AXE.id()) return;
+        if (Ref.matches(thisStack, Ref.METCARB_AXE)) return;
         list.add("Drops charcoal from logs");
         list.add("40% double charcoal");
     }

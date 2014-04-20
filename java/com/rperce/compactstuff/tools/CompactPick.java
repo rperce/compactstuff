@@ -43,7 +43,7 @@ public class CompactPick extends ItemPickaxe {
     @Override
     public boolean onBlockDestroyed(ItemStack thisStack, World world,
             int blockSlot, int x, int y, int z, EntityLivingBase holder) {
-        if (thisStack.itemID != Ref.METCARB_PICK.id()
+        if (Ref.matches(thisStack, Ref.METCARB_PICK)
                 || !(holder instanceof EntityPlayer)
                 || world.isAirBlock(x, y, z) || world.isRemote)
             return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z,
@@ -76,7 +76,7 @@ public class CompactPick extends ItemPickaxe {
     @Override
     public void addInformation(ItemStack thisStack, EntityPlayer player,
             List list, boolean boo) {
-        if (thisStack.itemID != Ref.METCARB_PICK.id()) return;
+        if (Ref.matches(thisStack, Ref.METCARB_PICK)) return;
         list.add("Smelts iron, gold, stone, and netherrack");
     }
 }

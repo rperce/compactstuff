@@ -28,10 +28,7 @@ import com.rperce.compactstuff.tools.CompactSpade;
 import com.rperce.compactstuff.tools.CompactSword;
 import com.rperce.compactstuff.tools.Paxel;
 
-import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public enum Ref {
 	DIORITE_SWORD(9339, dioriteToolMaterial, "dioriteSword",	CompactSword.class),
@@ -85,6 +82,7 @@ public enum Ref {
 	private int rID;
 	private byte type;
 	private byte TOOL = 0, ARMOR = 1, BLOCK=4;
+	private String render;
 	private HashMap<String, Integer> rIDs = new HashMap<String, Integer>();
 	
 	Ref(int id, EnumToolMaterial toolMat, String ident, Class<?> type) {
@@ -104,20 +102,18 @@ public enum Ref {
 			this.type = this.ARMOR;
 			this.material = armorMat;
 			this.aID = armorType;
-			this.rID = 0;
-			setrID(render);
+			this.render = render;
 			this.ctor = type.getConstructor(Integer.TYPE, EnumArmorMaterial.class, Integer.TYPE, Integer.TYPE, String.class);
 		} catch(NoSuchMethodException nsme) {
 			System.out.println("ERROR: could not get constructor for id " + id);
 		}
 	}
-	
-	@SideOnly(Side.CLIENT)
-	private void setrID(String render) {
+		
+	private void setrID(String render, CommonProxy proxy) {
         if(this.rIDs.containsKey(render)) {
             this.rID = this.rIDs.get(render);
         } else {
-            this.rID = RenderingRegistry.addNewArmourRendererPrefix(render);
+            this.rID = proxy.addArmor(render);
             this.rIDs.put(render, this.rID);
         }
 	}
@@ -125,15 +121,16 @@ public enum Ref {
 		this.id = id;
 		this.name = ident;
 	}
-	public void resolve(Configuration c) {
+	public void resolve(Configuration c, CommonProxy proxy) {
 		this.id = c.getItem(this.name, this.id).getInt();
 		
 		try {
 			if(this.type==this.TOOL)
 				this.item = ((Item)this.ctor.newInstance(this.id, this.material, this.name)).setUnlocalizedName(this.name);
-			else if(this.type==this.ARMOR)
-				this.item = ((Item)this.ctor.newInstance(this.id, this.material, this.rID, this.aID, this.name)).setUnlocalizedName(this.name);
-				
+			else if(this.type==this.ARMOR) {
+			    setrID(this.render, proxy);
+			    this.item = ((Item)this.ctor.newInstance(this.id, this.material, this.rID, this.aID, this.name)).setUnlocalizedName(this.name);
+			}
 			if(this.type==this.TOOL || this.type==this.ARMOR)
 				GameRegistry.registerItem(this.item, this.item.getUnlocalizedName());
 		} catch(InvocationTargetException e) {
@@ -145,7 +142,6 @@ public enum Ref {
 		}
 	}
 	
-	public int id() { return this.id; }
 	public Item getItem() { return this.item; }
 	public Block getBlock() { return this.block; }
 	public String unlocal() { 

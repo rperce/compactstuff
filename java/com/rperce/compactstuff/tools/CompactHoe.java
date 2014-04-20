@@ -59,7 +59,7 @@ public class CompactHoe extends ItemHoe {
     @Override
     public void addInformation(ItemStack thisStack, EntityPlayer player,
             List list, boolean boo) {
-        if (thisStack.itemID != Ref.METCARB_HOE.id()) return;
+        if (Ref.matches(thisStack, Ref.METCARB_HOE)) return;
         list.add("Tills a 9x9 area on right-click");
     }
 }

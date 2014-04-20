@@ -141,7 +141,7 @@ public class CompactStuff {
         carbon = new ItemCarbon(idCarbon);
 
         for (Ref r : Ref.values())
-            r.resolve(c);
+            r.resolve(c, proxy);
 
         bagOfHolding = new ItemBagOfHolding(idBoH);
         smeltOnAStick = new SmeltOnAStick(idSmeltStick);

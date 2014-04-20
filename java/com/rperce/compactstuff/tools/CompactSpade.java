@@ -39,7 +39,7 @@ public class CompactSpade extends ItemSpade {
     @Override
     public boolean onBlockDestroyed(ItemStack thisStack, World world,
             int blockSlot, int x, int y, int z, EntityLivingBase holder) {
-        if (thisStack.itemID != Ref.METCARB_SPADE.id()
+        if (Ref.matches(thisStack, Ref.METCARB_SPADE)
                 || !(holder instanceof EntityPlayer)
                 || world.isAirBlock(x, y, z) || world.isRemote)
             return super.onBlockDestroyed(thisStack, world, blockSlot, x, y, z,
@@ -75,7 +75,7 @@ public class CompactSpade extends ItemSpade {
     @Override
     public void addInformation(ItemStack thisStack, EntityPlayer player,
             List list, boolean boo) {
-        if (thisStack.itemID != Ref.METCARB_SPADE.id()) return;
+        if (Ref.matches(thisStack, Ref.METCARB_SPADE)) return;
         list.add("Drops glass from sand");
         list.add("Drops bricks from clay blocks");
         list.add("40% double bricks and glass");
