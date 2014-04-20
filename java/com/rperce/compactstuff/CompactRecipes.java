@@ -32,7 +32,7 @@ public class CompactRecipes {
 	public static void setUpRecipes() {
 		setUpPlantBalls();
 		setUpComBlocks();
-		setUpSmeltStick();
+        setUpSmeltStick();
 		setUpFurnaces();
 		setUpGlassAndStuff();
 		setUpCompactors();

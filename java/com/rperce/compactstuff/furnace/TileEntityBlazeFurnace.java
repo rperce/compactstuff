@@ -296,7 +296,7 @@ public class TileEntityBlazeFurnace extends TileEntityFurnace {
 	}
 	@Override
 	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
-		readFromNBT(pkt.data);
-	}
+        readFromNBT(pkt.data);
+    }
 
 }

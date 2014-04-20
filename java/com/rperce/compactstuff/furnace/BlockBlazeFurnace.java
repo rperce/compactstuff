@@ -25,42 +25,70 @@ import net.minecraft.world.World;
  *  11 -> 4
  */
 public class BlockBlazeFurnace extends BlockCompactFurnace {
-	Icon[] icons = new Icon[4];
-	public BlockBlazeFurnace(int id) {
-		super(id);
-	}
-	
-	@Override public int idPicked(World world, int x, int y, int z) { return CompactStuff.blazeFurn.blockID; }
-	@Override public int idDropped(int a, Random b, int c) { return CompactStuff.blazeFurn.blockID; }
-	@Override public TileEntity createTileEntity(World w, int m) { return new TileEntityBlazeFurnace(); }
-	@Override public int damageDropped(int meta) { return 2; }
-	@Override public void registerIcons(IconRegister ir) {
-		this.icons[0] = ir.registerIcon(CSIcons.PREFIX+CSIcons.BLAZEFURNACE_TOP);
-		this.icons[1] = ir.registerIcon(CSIcons.PREFIX+CSIcons.BLAZEFURNACE_SIDE);
-		this.icons[2] = ir.registerIcon(CSIcons.PREFIX+CSIcons.BLAZEFURNACE_FRONT_INACTIVE);
-		this.icons[3] = ir.registerIcon(CSIcons.PREFIX+CSIcons.BLAZEFURNACE_FRONT_ACTIVE);
-	}
-	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z,EntityPlayer player, int a, float b, float c, float d) {
-		if(player.isSneaking()) return true;
+    Icon[] icons = new Icon[4];
+
+    public BlockBlazeFurnace(int id) {
+        super(id);
+    }
+
+    @Override
+    public int idPicked(World world, int x, int y, int z) {
+        return CompactStuff.blazeFurn.blockID;
+    }
+
+    @Override
+    public int idDropped(int a, Random b, int c) {
+        return CompactStuff.blazeFurn.blockID;
+    }
+
+    @Override
+    public TileEntity createTileEntity(World w, int m) {
+        return new TileEntityBlazeFurnace();
+    }
+
+    @Override
+    public int damageDropped(int meta) {
+        return 2;
+    }
+
+    @Override
+    public void registerIcons(IconRegister ir) {
+        this.icons[0] = ir.registerIcon(CSIcons.PREFIX
+                + CSIcons.BLAZEFURNACE_TOP);
+        this.icons[1] = ir.registerIcon(CSIcons.PREFIX
+                + CSIcons.BLAZEFURNACE_SIDE);
+        this.icons[2] = ir.registerIcon(CSIcons.PREFIX
+                + CSIcons.BLAZEFURNACE_FRONT_INACTIVE);
+        this.icons[3] = ir.registerIcon(CSIcons.PREFIX
+                + CSIcons.BLAZEFURNACE_FRONT_ACTIVE);
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z,
+            EntityPlayer player, int a, float b, float c, float d) {
+        if (player.isSneaking()) return true;
         if (world.isRemote) return true;
-        
-    	TileEntityBlazeFurnace tileEntity = (TileEntityBlazeFurnace)world.getBlockTileEntity(x, y, z);
-		
-		if (tileEntity != null) {
-			player.openGui(CompactStuff.instance, 5, world, x, y, z);
-		}
-		
-		return true;
-	}
-	@Override public Icon getBlockTexture(IBlockAccess ba,int x,int y,int z, int s) {
-		if(s==0 || s==1) return this.icons[0]; 
-		int front = getFront(ba,x,y,z);
-		boolean isActive = isActive(ba,x,y,z);
-		return this.icons[s==front ? (isActive ? 3 : 2) : 1];
-	}
-	
-	@Override public Icon getIcon(int side, int meta) {
-		return this.icons[(side==1||side==0) ? 0 : (side==3 ? 2 : 1)];
-	}
+
+        TileEntityBlazeFurnace tileEntity = (TileEntityBlazeFurnace) world
+                .getBlockTileEntity(x, y, z);
+
+        if (tileEntity != null) {
+            player.openGui(CompactStuff.instance, 5, world, x, y, z);
+        }
+
+        return true;
+    }
+
+    @Override
+    public Icon getBlockTexture(IBlockAccess ba, int x, int y, int z, int s) {
+        if (s == 0 || s == 1) return this.icons[0];
+        int front = getFront(ba, x, y, z);
+        boolean isActive = isActive(ba, x, y, z);
+        return this.icons[s == front ? (isActive ? 3 : 2) : 1];
+    }
+
+    @Override
+    public Icon getIcon(int side, int meta) {
+        return this.icons[(side == 1 || side == 0) ? 0 : (side == 3 ? 2 : 1)];
+    }
 }

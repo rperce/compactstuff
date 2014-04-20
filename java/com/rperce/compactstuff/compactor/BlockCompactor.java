@@ -16,43 +16,50 @@ import com.rperce.compactstuff.CompactStuff;
 import com.rperce.compactstuff.client.CSIcons;
 
 public class BlockCompactor extends BlockContainer {
-	private static Icon[] icons = new Icon[4];
-	
-	public BlockCompactor(int id) {
-		super(id, Material.rock);
-		this.setHardness(4.0f);
-		this.setStepSound(soundMetalFootstep);
-		this.setUnlocalizedName("cs_compactor");
-		this.setCreativeTab(CompactStuff.compactTab);
-	}
-	
-	@Override public void registerIcons(IconRegister ir) {
-		icons[0] = ir.registerIcon(CSIcons.PREFIX + CSIcons.COMPACTOR_BOTTOM);
-		icons[1] = ir.registerIcon(CSIcons.PREFIX + CSIcons.COMPACTOR_TOP);
-		icons[2] = ir.registerIcon(CSIcons.PREFIX + CSIcons.COMPACTOR_SIDE1);
-		icons[3] = ir.registerIcon(CSIcons.PREFIX + CSIcons.COMPACTOR_SIDE2);
-	}
-	
-	@Override public Icon getIcon(int side, int meta) {
-		return icons[(side==0||side==1)?side:(side<4?2:3)];
-	}
-	
-	@Override public TileEntity createTileEntity(World world, int meta) {
+    private static Icon[] icons = new Icon[4];
+
+    public BlockCompactor(int id) {
+        super(id, Material.rock);
+        this.setHardness(4.0f);
+        this.setStepSound(soundMetalFootstep);
+        this.setUnlocalizedName("cs_compactor");
+        this.setCreativeTab(CompactStuff.compactTab);
+    }
+
+    @Override
+    public void registerIcons(IconRegister ir) {
+        icons[0] = ir.registerIcon(CSIcons.PREFIX + CSIcons.COMPACTOR_BOTTOM);
+        icons[1] = ir.registerIcon(CSIcons.PREFIX + CSIcons.COMPACTOR_TOP);
+        icons[2] = ir.registerIcon(CSIcons.PREFIX + CSIcons.COMPACTOR_SIDE1);
+        icons[3] = ir.registerIcon(CSIcons.PREFIX + CSIcons.COMPACTOR_SIDE2);
+    }
+
+    @Override
+    public Icon getIcon(int side, int meta) {
+        return icons[(side == 0 || side == 1) ? side : (side < 4 ? 2 : 3)];
+    }
+
+    @Override
+    public TileEntity createTileEntity(World world, int meta) {
         return new TileEntityCompactor();
     }
-	
-	@Override public boolean onBlockActivated(World world, int x, int y, int z,
-	EntityPlayer player, int a, float b, float c, float d) {
-		if(player.isSneaking() || world.isRemote) return true;
-		if(world.getBlockTileEntity(x,y,z)!=null) { 
-			player.openGui(CompactStuff.instance, 3, world, x, y, z);
-		}
-		return true;
-	}
-	@Override
-	public void breakBlock(World world, int x, int y, int z, int useless, int variables) {
-		TileEntityCompactor te = (TileEntityCompactor)world.getBlockTileEntity(x, y, z);
-		
+
+    @Override
+    public boolean onBlockActivated(World world, int x, int y, int z,
+            EntityPlayer player, int a, float b, float c, float d) {
+        if (player.isSneaking() || world.isRemote) return true;
+        if (world.getBlockTileEntity(x, y, z) != null) {
+            player.openGui(CompactStuff.instance, 3, world, x, y, z);
+        }
+        return true;
+    }
+
+    @Override
+    public void breakBlock(World world, int x, int y, int z, int useless,
+            int variables) {
+        TileEntityCompactor te = (TileEntityCompactor) world
+                .getBlockTileEntity(x, y, z);
+
         if (te != null) {
             for (int i = te.INVFIRST; i <= te.INVLAST; i++) {
                 ItemStack stack = te.getStackInSlot(i);
@@ -65,23 +72,28 @@ public class BlockCompactor extends BlockContainer {
                     while (stack.stackSize > 0) {
                         int randAmt = CompactStuff.rand.nextInt(21) + 10;
 
-                        if (randAmt > stack.stackSize)
-                        {
+                        if (randAmt > stack.stackSize) {
                             randAmt = stack.stackSize;
                         }
 
                         stack.stackSize -= randAmt;
-                        EntityItem drop = new EntityItem(world, x + dx, y + dy, z + dz,
-                        		new ItemStack(stack.itemID, randAmt, stack.getItemDamage()));
+                        EntityItem drop = new EntityItem(world, x + dx, y + dy,
+                                z + dz, new ItemStack(stack.itemID, randAmt,
+                                        stack.getItemDamage()));
 
                         if (stack.hasTagCompound()) {
-                        	drop.getEntityItem().setTagCompound((NBTTagCompound)stack.getTagCompound().copy());
+                            drop.getEntityItem().setTagCompound(
+                                    (NBTTagCompound) stack.getTagCompound()
+                                            .copy());
                         }
 
                         float var15 = 0.05F;
-                        drop.motionX = (float)CompactStuff.rand.nextGaussian() * var15;
-                        drop.motionY = (float)CompactStuff.rand.nextGaussian() * var15 + 0.2F;
-                        drop.motionZ = (float)CompactStuff.rand.nextGaussian() * var15;
+                        drop.motionX = (float) CompactStuff.rand.nextGaussian()
+                                * var15;
+                        drop.motionY = (float) CompactStuff.rand.nextGaussian()
+                                * var15 + 0.2F;
+                        drop.motionZ = (float) CompactStuff.rand.nextGaussian()
+                                * var15;
                         world.spawnEntityInWorld(drop);
                     }
                 }
@@ -90,15 +102,18 @@ public class BlockCompactor extends BlockContainer {
         world.removeBlockTileEntity(x, y, z);
         world.setBlockToAir(x, y, z);
     }
-	
-	@Override public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase placer, ItemStack stack) {
-		if(placer==null) return;
-		TileEntity te = this.createTileEntity(world, world.getBlockMetadata(x,y,z));
-		world.setBlockTileEntity(x, y, z, te);
+
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z,
+            EntityLivingBase placer, ItemStack stack) {
+        if (placer == null) return;
+        TileEntity te = this.createTileEntity(world,
+                world.getBlockMetadata(x, y, z));
+        world.setBlockTileEntity(x, y, z, te);
     }
 
-	@Override
-	public TileEntity createNewTileEntity(World world) {
-		return new TileEntityCompactor();
-	}
+    @Override
+    public TileEntity createNewTileEntity(World world) {
+        return new TileEntityCompactor();
+    }
 }

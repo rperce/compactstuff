@@ -10,17 +10,19 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class EntityFallingCompact extends Entity {
-	public int blockID,
-    	metadata;
+    public int     blockID, metadata;
 
-    public int fallTime;
+    public int     fallTime;
     public boolean shouldDropItem;
+
     public EntityFallingCompact(World world) {
-    	super(world);
-    	this.fallTime=0;
-    	this.shouldDropItem=true;
+        super(world);
+        this.fallTime = 0;
+        this.shouldDropItem = true;
     }
-    public EntityFallingCompact(World par1World, double x, double y, double z, int id, int meta) {
+
+    public EntityFallingCompact(World par1World, double x, double y, double z,
+            int id, int meta) {
         super(par1World);
         this.fallTime = 0;
         this.shouldDropItem = true;
@@ -38,18 +40,22 @@ public class EntityFallingCompact extends Entity {
         this.prevPosY = y;
         this.prevPosZ = z;
     }
+
     public int getMetadata() {
-    	return this.metadata;
+        return this.metadata;
     }
-    @Override public int getPortalCooldown() {
-    	return this.metadata;
+
+    @Override
+    public int getPortalCooldown() {
+        return this.metadata;
     }
+
     /**
      * Called to update the entity's position/logic.
      */
     @Override
     public void onUpdate() {
-    
+
         this.prevPosX = this.posX;
         this.prevPosY = this.posY;
         this.prevPosZ = this.posZ;
@@ -66,7 +72,8 @@ public class EntityFallingCompact extends Entity {
             int var3 = MathHelper.floor_double(this.posZ);
 
             if (this.fallTime == 1) {
-                if (this.fallTime != 1 || this.worldObj.getBlockId(var1, var2, var3) != this.blockID) {
+                if (this.fallTime != 1
+                        || this.worldObj.getBlockId(var1, var2, var3) != this.blockID) {
                     this.setDead();
                     return;
                 }
@@ -82,43 +89,80 @@ public class EntityFallingCompact extends Entity {
                 if (this.worldObj.getBlockId(var1, var2, var3) != Block.pistonMoving.blockID) {
                     this.setDead();
 
-                    if(!(this.worldObj.canPlaceEntityOnSide(this.blockID, var1, var2, var3, true, 1, (Entity)null, (ItemStack)null) &&
-                    !BlockCompressed.canFallBelow(this.worldObj, var1, var2 - 1, var3) &&
-                    this.worldObj.setBlock(var1, var2, var3, this.blockID, this.metadata, 3)) &&
-                    this.shouldDropItem) {
-                        this.entityDropItem(new ItemStack(this.blockID, 1, Block.blocksList[this.blockID].damageDropped(this.metadata)), 0.0F);
+                    if (!(this.worldObj.canPlaceEntityOnSide(this.blockID,
+                            var1, var2, var3, true, 1, (Entity) null,
+                            (ItemStack) null)
+                            && !BlockCompressed.canFallBelow(this.worldObj,
+                                    var1, var2 - 1, var3) && this.worldObj
+                                .setBlock(var1, var2, var3, this.blockID,
+                                        this.metadata, 3))
+                            && this.shouldDropItem) {
+                        this.entityDropItem(
+                                new ItemStack(this.blockID, 1,
+                                        Block.blocksList[this.blockID]
+                                                .damageDropped(this.metadata)),
+                                0.0F);
                     }
                 }
-            }
-            else if (this.fallTime > 100 && !this.worldObj.isRemote && (var2 < 1 || var2 > 256) || this.fallTime > 600) {
+            } else if (this.fallTime > 100 && !this.worldObj.isRemote
+                    && (var2 < 1 || var2 > 256) || this.fallTime > 600) {
                 if (this.shouldDropItem)
-                	this.entityDropItem(new ItemStack(this.blockID, 1, Block.blocksList[this.blockID].damageDropped(this.metadata)), 0.0F);
+                    this.entityDropItem(
+                            new ItemStack(this.blockID, 1,
+                                    Block.blocksList[this.blockID]
+                                            .damageDropped(this.metadata)),
+                            0.0F);
 
                 this.setDead();
             }
         }
     }
 
-    @Override protected void writeEntityToNBT(NBTTagCompound nbt) {
-        nbt.setByte("Tile", (byte)this.blockID);
-        nbt.setByte("Data", (byte)this.metadata);
-        nbt.setByte("Time", (byte)this.fallTime);
+    @Override
+    protected void writeEntityToNBT(NBTTagCompound nbt) {
+        nbt.setByte("Tile", (byte) this.blockID);
+        nbt.setByte("Data", (byte) this.metadata);
+        nbt.setByte("Time", (byte) this.fallTime);
     }
 
-    @Override protected void readEntityFromNBT(NBTTagCompound nbt) {
+    @Override
+    protected void readEntityFromNBT(NBTTagCompound nbt) {
         this.blockID = nbt.getByte("Tile") & 255;
         this.metadata = nbt.getByte("Data") & 255;
         this.fallTime = nbt.getByte("Time") & 255;
 
-        if (this.blockID == 0)
-            this.blockID = CompactStuff.comBlock.blockID;
+        if (this.blockID == 0) this.blockID = CompactStuff.comBlock.blockID;
     }
-    @Override protected boolean canTriggerWalking() { return false; }
-    @Override protected void entityInit() {
-    	// Must be overrode, but we don't want to do anything
+
+    @Override
+    protected boolean canTriggerWalking() {
+        return false;
     }
-    @Override public boolean canBeCollidedWith() { return !this.isDead; }
-    @SideOnly(Side.CLIENT) @Override public float getShadowSize() { return 0.0F; }
-    @SideOnly(Side.CLIENT) public World getWorld() { return this.worldObj; }
-    @SideOnly(Side.CLIENT) @Override public boolean canRenderOnFire() { return false;}
+
+    @Override
+    protected void entityInit() {
+        // Must be overrode, but we don't want to do anything
+    }
+
+    @Override
+    public boolean canBeCollidedWith() {
+        return !this.isDead;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public float getShadowSize() {
+        return 0.0F;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public World getWorld() {
+        return this.worldObj;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public boolean canRenderOnFire() {
+        return false;
+    }
 }
