@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "name=comgold":   { "model": "compactstuff:blockcompact_comgold_model" },
+    "name=comdirt":   { "model": "compactstuff:blockcompact_comdirt_model" },
+    "name=comsand":   { "model": "compactstuff:blockcompact_comsand_model" },
+    "name=comgravel": { "model": "compactstuff:blockcompact_comgravel_model" }
+  }
+}

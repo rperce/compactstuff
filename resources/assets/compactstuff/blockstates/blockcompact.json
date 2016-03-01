@@ -1,0 +1,15 @@
+{
+  "variants": {
+    "name=comcobble": { "model": "compactstuff:blockcompact_comcobble_model" },
+    "name=ironstone": { "model": "compactstuff:blockcompact_ironstone_model" },
+    "name=comnether": { "model": "compactstuff:blockcompact_comnether_model" },
+    "name=comdiamond": { "model": "compactstuff:blockcompact_comdiamond_model" },
+    "name=comiron": { "model": "compactstuff:blockcompact_comiron_model" },
+    "name=comgold": { "model": "compactstuff:blockcompact_comgold_model" },
+    "name=comdirt": { "model": "compactstuff:blockcompact_comdirt_model" },
+    "name=comsand": { "model": "compactstuff:blockcompact_comsand_model" },
+    "name=comgravel": { "model": "compactstuff:blockcompact_comgravel_model" },
+    "name=steelblock": { "model": "compactstuff:blockcompact_steelblock_model" },
+    "name=comsteel": { "model": "compactstuff:blockcompact_comsteel_model" }
+  }
+}

@@ -1,0 +1,12 @@
+tile.blockcompact.comcobble.name=Compressed Cobblestone
+tile.blockcompact.ironstone.name=Ironstone
+tile.blockcompact.comnether.name=Compressed Netherrack
+tile.blockcompact.comdiamond.name=Compressed Diamond Block
+tile.blockcompact.comiron.name=Compressed Iron Block
+tile.blockcompact.comgold.name=Compressed Gold Block
+tile.blockcompact.steelblock.name=Compressed Steel Block
+tile.blockcompact.comsteel.name=Steel Block
+tile.blockcompact_squish.comsand.name=Compressed Sand
+tile.blockcompact_squish.comdirt.name=Compressed Dirt
+tile.blockcompact_squish.comgravel.name=Compressed Gravel
+tile.comglass.name=Compressed Glass

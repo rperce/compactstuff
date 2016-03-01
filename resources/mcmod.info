@@ -1,0 +1,16 @@
+[
+{
+  "modid": "compactstuff",
+  "name": "Compact Stuff",
+  "description": "Compact materials and devices for great justice!",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["DukeCeph"],
+  "credits": "Rexsmart (art)",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
