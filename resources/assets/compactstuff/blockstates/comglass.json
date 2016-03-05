@@ -1,0 +1,525 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "textures": {
+      "down": "compactstuff:blocks/comglass/none",
+      "up": "compactstuff:blocks/comglass/none",
+      "north": "compactstuff:blocks/comglass/none",
+      "south": "compactstuff:blocks/comglass/none",
+      "west": "compactstuff:blocks/comglass/none",
+      "east": "compactstuff:blocks/comglass/none",
+      "particle": "compactstuff:blocks/comglass/none"
+    }
+  },
+  "variants": {
+    "down=false,east=false,north=true,south=true,up=true,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/top_bottom_left",
+        "east": "compactstuff:blocks/comglass/top_left_right"
+      }
+    },
+    "down=false,east=false,north=true,south=false,up=false,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/bottom_left",
+        "up": "compactstuff:blocks/comglass/top_left",
+        "south": "compactstuff:blocks/comglass/left",
+        "east": "compactstuff:blocks/comglass/right"
+      }
+    },
+    "down=true,east=false,north=false,south=false,up=true,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "north": "compactstuff:blocks/comglass/top_bottom_right",
+        "south": "compactstuff:blocks/comglass/top_bottom_left",
+        "east": "compactstuff:blocks/comglass/top_bottom"
+      }
+    },
+    "down=false,east=false,north=false,south=false,up=false,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/none",
+        "up": "compactstuff:blocks/comglass/none",
+        "north": "compactstuff:blocks/comglass/none",
+        "south": "compactstuff:blocks/comglass/none",
+        "west": "compactstuff:blocks/comglass/none",
+        "east": "compactstuff:blocks/comglass/none"
+      }
+    },
+    "down=false,east=false,north=true,south=true,up=false,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/top_bottom",
+        "up": "compactstuff:blocks/comglass/top_bottom",
+        "west": "compactstuff:blocks/comglass/left_right",
+        "east": "compactstuff:blocks/comglass/left_right"
+      }
+    },
+    "down=true,east=false,north=true,south=false,up=true,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "south": "compactstuff:blocks/comglass/top_bottom_left",
+        "east": "compactstuff:blocks/comglass/top_bottom_right"
+      }
+    },
+    "down=true,east=false,north=false,south=false,up=true,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "north": "compactstuff:blocks/comglass/top_bottom",
+        "south": "compactstuff:blocks/comglass/top_bottom",
+        "west": "compactstuff:blocks/comglass/top_bottom",
+        "east": "compactstuff:blocks/comglass/top_bottom"
+      }
+    },
+    "down=false,east=false,north=true,south=false,up=true,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/bottom_left",
+        "south": "compactstuff:blocks/comglass/top_left",
+        "east": "compactstuff:blocks/comglass/top_right"
+      }
+    },
+    "down=false,east=true,north=true,south=true,up=true,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/top_bottom_right",
+        "west": "compactstuff:blocks/comglass/top_left_right"
+      }
+    },
+    "down=true,east=false,north=false,south=true,up=true,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "north": "compactstuff:blocks/comglass/top_bottom_right",
+        "east": "compactstuff:blocks/comglass/top_bottom_left"
+      }
+    },
+    "down=false,east=true,north=true,south=false,up=false,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/bottom_right",
+        "up": "compactstuff:blocks/comglass/top_right",
+        "south": "compactstuff:blocks/comglass/right",
+        "west": "compactstuff:blocks/comglass/left"
+      }
+    },
+    "down=true,east=false,north=true,south=false,up=true,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "south": "compactstuff:blocks/comglass/top_bottom",
+        "west": "compactstuff:blocks/comglass/top_bottom_left",
+        "east": "compactstuff:blocks/comglass/top_bottom_right"
+      }
+    },
+    "down=true,east=true,north=false,south=true,up=true,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "north": "compactstuff:blocks/comglass/top_bottom_left",
+        "west": "compactstuff:blocks/comglass/top_bottom_right"
+      }
+    },
+    "down=false,east=false,north=false,south=true,up=true,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/top_left",
+        "north": "compactstuff:blocks/comglass/top_right",
+        "east": "compactstuff:blocks/comglass/top_left"
+      }
+    },
+    "down=true,east=false,north=true,south=true,up=false,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "up": "compactstuff:blocks/comglass/top_bottom",
+        "west": "compactstuff:blocks/comglass/bottom_left_right",
+        "east": "compactstuff:blocks/comglass/bottom_left_right"
+      }
+    },
+    "down=false,east=true,north=true,south=false,up=false,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/bottom_left_right",
+        "up": "compactstuff:blocks/comglass/top_left_right",
+        "south": "compactstuff:blocks/comglass/left_right"
+      }
+    },
+    "down=true,east=true,north=true,south=true,up=false,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "up": "compactstuff:blocks/comglass/open"
+      }
+    },
+    "down=false,east=false,north=false,south=false,up=false,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/left",
+        "up": "compactstuff:blocks/comglass/left",
+        "north": "compactstuff:blocks/comglass/right",
+        "south": "compactstuff:blocks/comglass/left",
+        "east": "compactstuff:blocks/comglass/none"
+      }
+    },
+    "down=false,east=true,north=false,south=false,up=true,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/right",
+        "north": "compactstuff:blocks/comglass/top_left",
+        "south": "compactstuff:blocks/comglass/top_right",
+        "west": "compactstuff:blocks/comglass/top"
+      }
+    },
+    "down=true,east=true,north=true,south=false,up=false,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "up": "compactstuff:blocks/comglass/top_left_right",
+        "south": "compactstuff:blocks/comglass/bottom_left_right"
+      }
+    },
+    "down=true,east=true,north=false,south=true,up=true,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "north": "compactstuff:blocks/comglass/open"
+      }
+    },
+    "down=false,east=true,north=false,south=true,up=true,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/top_right",
+        "north": "compactstuff:blocks/comglass/top_left",
+        "west": "compactstuff:blocks/comglass/top_right"
+      }
+    },
+    "down=false,east=true,north=true,south=true,up=false,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/top_bottom_right",
+        "up": "compactstuff:blocks/comglass/top_bottom_right",
+        "west": "compactstuff:blocks/comglass/left_right"
+      }
+    },
+    "down=true,east=false,north=true,south=true,up=true,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "east": "compactstuff:blocks/comglass/open"
+      }
+    },
+    "down=false,east=false,north=false,south=true,up=false,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/top",
+        "up": "compactstuff:blocks/comglass/bottom",
+        "north": "compactstuff:blocks/comglass/none",
+        "west": "compactstuff:blocks/comglass/right",
+        "east": "compactstuff:blocks/comglass/left"
+      }
+    },
+    "down=true,east=true,north=true,south=true,up=false,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "up": "compactstuff:blocks/comglass/top_bottom_right",
+        "west": "compactstuff:blocks/comglass/bottom_left_right"
+      }
+    },
+    "down=false,east=false,north=true,south=false,up=true,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/bottom",
+        "south": "compactstuff:blocks/comglass/top",
+        "west": "compactstuff:blocks/comglass/top_left",
+        "east": "compactstuff:blocks/comglass/top_right"
+      }
+    },
+    "down=false,east=true,north=true,south=true,up=false,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/open",
+        "up": "compactstuff:blocks/comglass/open"
+      }
+    },
+    "down=true,east=true,north=false,south=false,up=true,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "north": "compactstuff:blocks/comglass/open",
+        "south": "compactstuff:blocks/comglass/open"
+      }
+    },
+    "down=false,east=true,north=false,south=false,up=true,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/left_right",
+        "north": "compactstuff:blocks/comglass/top_left_right",
+        "south": "compactstuff:blocks/comglass/top_left_right"
+      }
+    },
+    "down=true,east=false,north=false,south=true,up=false,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "up": "compactstuff:blocks/comglass/bottom_left",
+        "north": "compactstuff:blocks/comglass/bottom_right",
+        "east": "compactstuff:blocks/comglass/bottom_left"
+      }
+    },
+    "down=false,east=true,north=false,south=false,up=false,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/right",
+        "up": "compactstuff:blocks/comglass/right",
+        "north": "compactstuff:blocks/comglass/left",
+        "south": "compactstuff:blocks/comglass/right",
+        "west": "compactstuff:blocks/comglass/none"
+      }
+    },
+    "down=false,east=false,north=false,south=false,up=true,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/none",
+        "north": "compactstuff:blocks/comglass/top",
+        "south": "compactstuff:blocks/comglass/top",
+        "west": "compactstuff:blocks/comglass/top",
+        "east": "compactstuff:blocks/comglass/top"
+      }
+    },
+    "down=false,east=true,north=false,south=false,up=false,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/left_right",
+        "up": "compactstuff:blocks/comglass/left_right",
+        "north": "compactstuff:blocks/comglass/left_right",
+        "south": "compactstuff:blocks/comglass/left_right"
+      }
+    },
+    "down=true,east=false,north=false,south=false,up=false,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "up": "compactstuff:blocks/comglass/none",
+        "north": "compactstuff:blocks/comglass/bottom",
+        "south": "compactstuff:blocks/comglass/bottom",
+        "west": "compactstuff:blocks/comglass/bottom",
+        "east": "compactstuff:blocks/comglass/bottom"
+      }
+    },
+    "down=true,east=true,north=true,south=false,up=true,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "south": "compactstuff:blocks/comglass/top_bottom_right",
+        "west": "compactstuff:blocks/comglass/top_bottom_left"
+      }
+    },
+    "down=true,east=false,north=false,south=true,up=true,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "north": "compactstuff:blocks/comglass/top_bottom",
+        "west": "compactstuff:blocks/comglass/top_bottom_right",
+        "east": "compactstuff:blocks/comglass/top_bottom_left"
+      }
+    },
+    "down=true,east=true,north=false,south=true,up=false,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "up": "compactstuff:blocks/comglass/bottom_left_right",
+        "north": "compactstuff:blocks/comglass/bottom_left_right"
+      }
+    },
+    "down=false,east=true,north=false,south=true,up=false,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/top_right",
+        "up": "compactstuff:blocks/comglass/bottom_right",
+        "north": "compactstuff:blocks/comglass/left",
+        "west": "compactstuff:blocks/comglass/right"
+      }
+    },
+    "down=false,east=true,north=false,south=true,up=false,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/top_left_right",
+        "up": "compactstuff:blocks/comglass/bottom_left_right",
+        "north": "compactstuff:blocks/comglass/left_right"
+      }
+    },
+    "down=false,east=false,north=true,south=true,up=true,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/top_bottom",
+        "west": "compactstuff:blocks/comglass/top_left_right",
+        "east": "compactstuff:blocks/comglass/top_left_right"
+      }
+    },
+    "down=true,east=true,north=false,south=false,up=true,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "north": "compactstuff:blocks/comglass/top_bottom_left",
+        "south": "compactstuff:blocks/comglass/top_bottom_right",
+        "west": "compactstuff:blocks/comglass/top_bottom"
+      }
+    },
+    "down=false,east=false,north=true,south=false,up=false,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/bottom",
+        "up": "compactstuff:blocks/comglass/top",
+        "south": "compactstuff:blocks/comglass/none",
+        "west": "compactstuff:blocks/comglass/left",
+        "east": "compactstuff:blocks/comglass/right"
+      }
+    },
+    "down=false,east=true,north=true,south=false,up=true,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/bottom_left_right",
+        "south": "compactstuff:blocks/comglass/top_left_right"
+      }
+    },
+    "down=false,east=false,north=false,south=true,up=false,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/top_left",
+        "up": "compactstuff:blocks/comglass/bottom_left",
+        "north": "compactstuff:blocks/comglass/right",
+        "east": "compactstuff:blocks/comglass/left"
+      }
+    },
+    "down=true,east=true,north=false,south=true,up=false,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "up": "compactstuff:blocks/comglass/bottom_right",
+        "north": "compactstuff:blocks/comglass/bottom_left",
+        "west": "compactstuff:blocks/comglass/bottom_right"
+      }
+    },
+    "down=true,east=false,north=true,south=true,up=true,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "west": "compactstuff:blocks/comglass/open",
+        "east": "compactstuff:blocks/comglass/open"
+      }
+    },
+    "down=true,east=true,north=true,south=false,up=true,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "south": "compactstuff:blocks/comglass/open"
+      }
+    },
+    "down=true,east=false,north=false,south=true,up=false,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "up": "compactstuff:blocks/comglass/bottom",
+        "north": "compactstuff:blocks/comglass/bottom",
+        "west": "compactstuff:blocks/comglass/bottom_right",
+        "east": "compactstuff:blocks/comglass/bottom_left"
+      }
+    },
+    "down=true,east=true,north=true,south=false,up=false,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "up": "compactstuff:blocks/comglass/top_right",
+        "south": "compactstuff:blocks/comglass/bottom_right",
+        "west": "compactstuff:blocks/comglass/bottom_left"
+      }
+    },
+    "down=true,east=false,north=false,south=false,up=false,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "up": "compactstuff:blocks/comglass/left",
+        "north": "compactstuff:blocks/comglass/bottom_right",
+        "south": "compactstuff:blocks/comglass/bottom_left",
+        "east": "compactstuff:blocks/comglass/bottom"
+      }
+    },
+    "down=true,east=true,north=true,south=true,up=true,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "west": "compactstuff:blocks/comglass/open"
+      }
+    },
+    "down=true,east=true,north=false,south=false,up=false,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "up": "compactstuff:blocks/comglass/left_right",
+        "north": "compactstuff:blocks/comglass/bottom_left_right",
+        "south": "compactstuff:blocks/comglass/bottom_left_right"
+      }
+    },
+    "down=true,east=false,north=true,south=false,up=false,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "up": "compactstuff:blocks/comglass/top",
+        "south": "compactstuff:blocks/comglass/bottom",
+        "west": "compactstuff:blocks/comglass/bottom_left",
+        "east": "compactstuff:blocks/comglass/bottom_right"
+      }
+    },
+    "down=false,east=false,north=true,south=true,up=false,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/top_bottom_left",
+        "up": "compactstuff:blocks/comglass/top_bottom_left",
+        "east": "compactstuff:blocks/comglass/left_right"
+      }
+    },
+    "down=false,east=false,north=false,south=true,up=true,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/top",
+        "north": "compactstuff:blocks/comglass/top",
+        "west": "compactstuff:blocks/comglass/top_right",
+        "east": "compactstuff:blocks/comglass/top_left"
+      }
+    },
+    "down=true,east=true,north=false,south=false,up=false,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "up": "compactstuff:blocks/comglass/right",
+        "north": "compactstuff:blocks/comglass/bottom_left",
+        "south": "compactstuff:blocks/comglass/bottom_right",
+        "west": "compactstuff:blocks/comglass/bottom"
+      }
+    },
+    "down=false,east=false,north=false,south=false,up=true,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/left",
+        "north": "compactstuff:blocks/comglass/top_right",
+        "south": "compactstuff:blocks/comglass/top_left",
+        "east": "compactstuff:blocks/comglass/top"
+      }
+    },
+    "down=true,east=false,north=true,south=false,up=false,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "up": "compactstuff:blocks/comglass/top_left",
+        "south": "compactstuff:blocks/comglass/bottom_left",
+        "east": "compactstuff:blocks/comglass/bottom_right"
+      }
+    },
+    "down=true,east=true,north=true,south=true,up=true,west=true": {
+    },
+    "down=false,east=true,north=true,south=true,up=true,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/open"
+      }
+    },
+    "down=false,east=true,north=false,south=true,up=true,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/top_left_right",
+        "north": "compactstuff:blocks/comglass/top_left_right"
+      }
+    },
+    "down=true,east=false,north=true,south=true,up=false,west=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "up": "compactstuff:blocks/comglass/top_bottom_left",
+        "east": "compactstuff:blocks/comglass/bottom_left_right"
+      }
+    },
+    "down=false,east=true,north=true,south=false,up=true,west=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "down": "compactstuff:blocks/comglass/bottom_right",
+        "south": "compactstuff:blocks/comglass/top_right",
+        "west": "compactstuff:blocks/comglass/top_left"
+      }
+    }
+  }
+}

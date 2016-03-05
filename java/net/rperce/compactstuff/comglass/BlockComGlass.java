@@ -10,10 +10,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.common.property.Properties;
 
 import java.util.HashMap;
 
@@ -30,6 +26,7 @@ public class BlockComGlass extends Block {
         this.setHardness(0.7f);
         this.setResistance(21f);
         this.setLightOpacity(0);
+        //this.setCreativeTab(CreativeTabs.tabBlock);
         this.fancy = fancy;
     }
 
@@ -44,40 +41,50 @@ public class BlockComGlass extends Block {
     }
 
     @Override
+    public boolean isFullCube() {
+        return false;
+    }
+
+    @Override
     public EnumWorldBlockLayer getBlockLayer() {
         return EnumWorldBlockLayer.CUTOUT_MIPPED;
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        return super.getActualState(state, worldIn, pos);
+    public boolean shouldSideBeRendered(IBlockAccess world, BlockPos pos, EnumFacing side) {
+        if (adjacencies.containsKey(side)) {
+            return world.getBlockState(pos).getBlock() != StartupCommon.blockComGlass;
+        }
+        return super.shouldSideBeRendered(world, pos, side);
     }
 
     @Override
-    protected BlockState createBlockState() {
-        IProperty[] listedProperties = new IProperty[0];
-        IUnlistedProperty<Boolean>[] unlistedProperties = new IUnlistedProperty[] { ABOVE, BELOW, NORTH, SOUTH, EAST, WEST };
-        return new ExtendedBlockState(this, listedProperties, unlistedProperties);
-    }
-
-    @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        if (state instanceof IExtendedBlockState) {
-            IExtendedBlockState ret = (IExtendedBlockState)state;
-            for (EnumFacing dir : EnumFacing.values()) {
-                BlockPos pos1 = pos.offset(dir);
-                boolean b = world.getBlockState(pos1).getBlock() == StartupCommon.blockComGlass;
-                ret = ret.withProperty(ulprops.get(dir), b);
-            }
-            return ret;
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        for (EnumFacing dir : adjacencies.keySet()) {
+            BlockPos pos1 = pos.offset(dir);
+            boolean b = world.getBlockState(pos1).getBlock() == StartupCommon.blockComGlass;
+            state = state.withProperty(adjacencies.get(dir), b);
         }
         return state;
     }
 
-    public static HashMap<EnumFacing, IUnlistedProperty<Boolean>> ulprops;
+    @Override
+    protected BlockState createBlockState() {
+        return new BlockState(this, adjacencies.values().toArray(new IProperty[adjacencies.values().size()]));
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return 0;
+    }
+
+    public static HashMap<EnumFacing, IProperty<Boolean>> adjacencies;
     static {
-        for (EnumFacing dir : EnumFacing.values()) {
-            ulprops.put(dir, new Properties.PropertyAdapter<>(PropertyBool.create("block_" + dir.getName())));
+        adjacencies = new HashMap<>();
+        EnumFacing[] dirs = EnumFacing.values();
+        //EnumFacing[] dirs = new EnumFacing[] { EnumFacing.DOWN, EnumFacing.UP };
+        for (EnumFacing dir : dirs) {
+            adjacencies.put(dir, PropertyBool.create(dir.getName()));
         }
     }
 }

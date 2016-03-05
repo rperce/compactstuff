@@ -1,0 +1,46 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "textures": {
+      "down": "compactstuff:blocks/comglass/none",
+      "up": "compactstuff:blocks/comglass/none",
+      "north": "compactstuff:blocks/comglass/none",
+      "south": "compactstuff:blocks/comglass/none",
+      "west": "compactstuff:blocks/comglass/none",
+      "east": "compactstuff:blocks/comglass/none",
+      "particle": "compactstuff:blocks/comglass/none"
+    }
+  },
+  "variants": {
+    "down=true,up=false": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "east": "compactstuff:blocks/comglass/bottom",
+        "west": "compactstuff:blocks/comglass/bottom",
+        "north": "compactstuff:blocks/comglass/bottom",
+        "south": "compactstuff:blocks/comglass/bottom"
+      }
+    },
+    "down=false,up=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "east": "compactstuff:blocks/comglass/top",
+        "west": "compactstuff:blocks/comglass/top",
+        "north": "compactstuff:blocks/comglass/top",
+        "south": "compactstuff:blocks/comglass/top"
+      }
+    },
+    "down=true,up=true": {
+      "model": "compactstuff:comglass_model",
+      textures: {
+        "east": "compactstuff:blocks/comglass/top_bottom",
+        "west": "compactstuff:blocks/comglass/top_bottom",
+        "north": "compactstuff:blocks/comglass/top_bottom",
+        "south": "compactstuff:blocks/comglass/top_bottom"
+      }
+    },
+    "down=false,up=false": {
+      "model": "compactstuff:comglass_model"
+    }
+  }
+}
