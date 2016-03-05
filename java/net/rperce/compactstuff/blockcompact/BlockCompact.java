@@ -52,7 +52,7 @@ public class BlockCompact extends Block {
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void getSubBlocks(Item itemIn, CreativeTabs tab, List list) {
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
         for (Meta m : Meta.values()) {
             list.add(new ItemStack(itemIn, 1, m.id));
         }
@@ -81,10 +81,7 @@ public class BlockCompact extends Block {
 
     @Override
     public boolean isFireSource(World world, BlockPos pos, EnumFacing side) {
-        if ((Meta)world.getBlockState(pos).getValue(PROPERTY_NAME) == Meta.COMNETHER) {
-            return true;
-        }
-        return super.isFireSource(world, pos, side);
+        return (world.getBlockState(pos).getValue(PROPERTY_NAME) == Meta.COMNETHER) || super.isFireSource(world, pos, side);
     }
 
     @Override
@@ -110,7 +107,7 @@ public class BlockCompact extends Block {
 
         public int id, hardness;
 
-        private Meta(int id, int hardness) {
+        Meta(int id, int hardness) {
             this.hardness = hardness;
             this.id = id;
         }

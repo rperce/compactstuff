@@ -1,5 +1,6 @@
 package net.rperce.compactstuff.comglass;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
@@ -18,6 +19,6 @@ public class StartupClientOnly extends BlankStartup {
         ModelResourceLocation resourceLocation = new ModelResourceLocation(Utilities.colonize(
                 CompactStuff.MODID, BlockComGlass.canonicalName), "inventory");
         int meta = 0;
-        ModelLoader.setCustomModelResourceLocation(itemComGlass, meta, resourceLocation);
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(itemComGlass, meta, resourceLocation);
     }
 }

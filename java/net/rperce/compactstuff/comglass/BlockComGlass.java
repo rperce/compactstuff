@@ -6,6 +6,7 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
@@ -26,7 +27,7 @@ public class BlockComGlass extends Block {
         this.setHardness(0.7f);
         this.setResistance(21f);
         this.setLightOpacity(0);
-        //this.setCreativeTab(CreativeTabs.tabBlock);
+        this.setCreativeTab(CreativeTabs.tabBlock);
         this.fancy = fancy;
     }
 
