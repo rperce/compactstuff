@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "up":       "compactstuff:blocks/compactor/top",
+    "down":     "compactstuff:blocks/compactor/bottom",
+    "east":     "compactstuff:blocks/compactor/side",
+    "west":     "compactstuff:blocks/compactor/side",
+    "north":    "compactstuff:blocks/compactor/side2",
+    "south":    "compactstuff:blocks/compactor/side2",
+    "particle": "compactstuff:blocks/compactor/top"
+  }
+}

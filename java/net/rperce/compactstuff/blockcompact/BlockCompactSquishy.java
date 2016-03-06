@@ -33,6 +33,9 @@ public class BlockCompactSquishy extends Block {
     }
     public static final PropertyEnum PROPERTY_NAME = PropertyEnum.create("name", Meta.class);
 
+    public static ItemStack stack(Meta m) { return stack(1, m); }
+    public static ItemStack stack(int amt, Meta m) { return new ItemStack(StartupCommon.compactBlockSquishy, amt, m.id);}
+
     @Override
     public float getBlockHardness(World world, BlockPos pos) {
         return 4f;
