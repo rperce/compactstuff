@@ -1,14 +1,11 @@
 package net.rperce.compactstuff;
 
-import net.minecraft.init.Blocks;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-
-import java.util.Random;
 
 @Mod(modid = CompactStuff.MODID, version = CompactStuff.VERSION)
 public class CompactStuff {
@@ -20,7 +17,7 @@ public class CompactStuff {
     public static CompactStuff instance;
 
     @SidedProxy(clientSide = "net.rperce.compactstuff.ClientOnlyProxy", serverSide = "net.rperce.compactstuff.DedicatedServerProxy")
-    public static CommonProxy proxy;
+    private static CommonProxy proxy;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {

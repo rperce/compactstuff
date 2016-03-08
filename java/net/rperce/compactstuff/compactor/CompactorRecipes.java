@@ -3,12 +3,14 @@ package net.rperce.compactstuff.compactor;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.world.World;
 import net.rperce.compactstuff.blockcompact.BlockCompact;
 import net.rperce.compactstuff.blockcompact.BlockCompactSquishy;
 import static net.rperce.compactstuff.blockcompact.BlockCompact.Meta.*;
@@ -16,24 +18,21 @@ import static net.rperce.compactstuff.blockcompact.BlockCompactSquishy.Meta.*;
 import java.util.*;
 import java.util.stream.Stream;
 
-/**
- * Created by robert on 3/5/16.
- */
-public class CompactorRecipes {
-    private static Map<ItemStack, Set<IRecipe>> recipes    = new HashMap<>();
-    private static Set<ItemStack> defaultEnabled = new HashSet<>();
+class CompactorRecipes {
+    private static final Set<IRecipe> recipes = new HashSet<>();
+    private static final Set<ItemStack> defaultEnabled = new HashSet<>();
 
     public static Set<ItemStack> getDefaultEnabled() { return defaultEnabled; }
 
     public static void setup() {
         // Enabled by default, 3x3
         RecipePair[] pairs = new RecipePair[] {
-                new RecipePair(Blocks.diamond_block, Items.diamond),
                 new RecipePair(BlockCompact.stack(COMCOBBLE), Blocks.cobblestone),
                 new RecipePair(BlockCompact.stack(COMNETHER), Blocks.netherrack),
                 new RecipePair(BlockCompactSquishy.stack(COMDIRT), Blocks.dirt),
                 new RecipePair(BlockCompactSquishy.stack(COMGRAVEL), Blocks.gravel),
                 new RecipePair(BlockCompactSquishy.stack(COMSAND), Blocks.sand),
+                new RecipePair(Blocks.diamond_block, Items.diamond),
                 new RecipePair(Blocks.emerald_block, Items.emerald),
                 new RecipePair(Blocks.iron_block,    Items.iron_ingot),
                 new RecipePair(Blocks.gold_block,    Items.gold_ingot),
@@ -61,12 +60,11 @@ public class CompactorRecipes {
         }
     }
 
-    public static void addHomogeneousRecipe(RecipePair io, int amt) {
+    private static void addHomogeneousRecipe(RecipePair io, int amt) {
         addHomogeneousRecipe(io, amt, true);
     }
 
-    public static void addHomogeneousRecipe(RecipePair io, int amt, boolean enable) {
-        System.err.println("Adding recipe " + io.toString());
+    private static void addHomogeneousRecipe(RecipePair io, int amt, boolean enable) {
         Object[] o = new Object[amt];
         Arrays.fill(o, io.input);
         addShapelessRecipe(io.output, o);
@@ -75,8 +73,7 @@ public class CompactorRecipes {
         }
     }
 
-    public static void addShapelessRecipe(ItemStack output, Object... inputs) {
-        System.err.printf("Adding shapeless recipe %s <- %s\n", output, Arrays.toString(inputs));
+    private static void addShapelessRecipe(ItemStack output, Object... inputs) {
         ArrayList<ItemStack> list = new ArrayList<>();
         for(Object o : inputs) {
             if (o instanceof ItemStack) {
@@ -92,8 +89,7 @@ public class CompactorRecipes {
         addRecipe(new ShapelessRecipes(output, list));
     }
 
-    public static void enableRecipe(Set<ItemStack> enabled, ItemStack output) {
-        System.err.printf("Enabling %s in %s\n", output, enabled);
+    private static void enableRecipe(Set<ItemStack> enabled, ItemStack output) {
         for (ItemStack stack : enabled) {
             if (stack.isItemEqual(output)) return;
         }
@@ -104,8 +100,14 @@ public class CompactorRecipes {
 
     public static boolean isEnabledIngredient(Set<ItemStack> enabled, ItemStack input) {
         return getEnabledRecipes(enabled)
-                .flatMap(recipe -> getRequirements(recipe))
+                .flatMap(CompactorRecipes::getRequirements)
                 .anyMatch(stack -> stack.isItemEqual(input));
+    }
+
+    public static boolean isEnabled(Set<ItemStack> enabled, ItemStack output) {
+        return getEnabledRecipes(enabled)
+                .map(IRecipe::getRecipeOutput)
+                .anyMatch(stack -> stack.isItemEqual(output));
     }
 
     public static Stream<ItemStack> getRequirements(IRecipe recipe) {
@@ -119,15 +121,27 @@ public class CompactorRecipes {
 
     public static Stream<IRecipe> getEnabledRecipes(Set<ItemStack> enabled) {
         return enabled.stream()
-                .filter(stack -> recipes.containsKey(stack))
-                .flatMap(stack -> recipes.get(stack).stream());
+                .filter(CompactorRecipes::containsRecipe)
+                .flatMap(CompactorRecipes::getRecipesFor);
     }
 
-    public static void addRecipe(IRecipe recipe) {
+    private static void addRecipe(IRecipe recipe) {
         ItemStack out = recipe.getRecipeOutput();
         out.stackSize = 1;
-        if (!recipes.containsKey(out))
-            recipes.put(out, new HashSet<>());
-        recipes.get(out).add(recipe);
+        recipes.add(recipe);
+    }
+
+    private static boolean containsRecipe(ItemStack stack) {
+        return recipes.stream().anyMatch(s -> s.getRecipeOutput().isItemEqual(stack));
+    }
+    private static Stream<IRecipe> getRecipesFor(ItemStack stack) {
+        return recipes.stream().filter(s -> s.getRecipeOutput().isItemEqual(stack));
+    }
+
+    public static Optional<ItemStack> findMatchingRecipe(InventoryCrafting inv, World world) {
+        return recipes.stream()
+                .filter(recipe -> recipe.matches(inv, world))
+                .map(recipe -> recipe.getCraftingResult(inv))
+                .findFirst();
     }
 }

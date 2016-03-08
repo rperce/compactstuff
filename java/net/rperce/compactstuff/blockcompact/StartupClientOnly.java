@@ -6,15 +6,16 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.rperce.compactstuff.BlankStartup;
+import net.rperce.compactstuff.BaseStartup;
 import net.rperce.compactstuff.CompactStuff;
 import net.rperce.compactstuff.Utilities;
 
 /**
  * Created by Robert on 2/26/2016.
  */
-public class StartupClientOnly extends BlankStartup {
-    public static void preInit() {
+public class StartupClientOnly extends BaseStartup {
+    @Override
+    public void preInit() {
         Item itemCompactBlock = GameRegistry.findItem(CompactStuff.MODID, BlockCompact.canonicalName);
         ResourceLocation[] resources = BlockCompact.Meta.getNames()
                 .map(name -> {
@@ -33,7 +34,9 @@ public class StartupClientOnly extends BlankStartup {
                 .toArray(ModelResourceLocation[]::new);
         ModelBakery.registerItemVariants(itemCompactSquishBlock, resources);
     }
-    public static void init() {
+
+    @Override
+    public void init() {
         Item itemCompactBlock = GameRegistry.findItem(CompactStuff.MODID, BlockCompact.canonicalName);
         for (BlockCompact.Meta m : BlockCompact.Meta.values()) {
             String name = m.getName();

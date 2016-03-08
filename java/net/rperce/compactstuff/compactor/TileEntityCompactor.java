@@ -2,6 +2,7 @@ package net.rperce.compactstuff.compactor;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,15 +11,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.rperce.compactstuff.Utilities;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
-/**
- * Created by robert on 3/5/16.
- */
 public class TileEntityCompactor extends TileEntity implements ISidedInventory, ITickable {
     // 3x9 inventory, 3x3 crafting grid, 1 output, 2x3 compacting
     private static final int SLOT_COUNT = 43;
@@ -31,12 +28,11 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory, 
                                 COMFIRST    = 37,
                                 COMLAST     = 42;
 
-    private HashSet<ItemStack> enabled;
+    public HashSet<ItemStack> enabled;
     public TileEntityCompactor() {
         super();
         CompactorRecipes.setup();
         enabled = new HashSet<>(CompactorRecipes.getDefaultEnabled());
-        System.err.println("enabled is " + enabled.toString());
     }
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
@@ -45,18 +41,12 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory, 
 
     @Override
     public boolean canInsertItem(int slot, ItemStack itemStackIn, EnumFacing direction) {
-        if (direction == EnumFacing.DOWN) {
-            return false;
-        }
-        return isItemValidForSlot(slot, itemStackIn);
+        return direction != EnumFacing.DOWN && isItemValidForSlot(slot, itemStackIn);
     }
 
     @Override
     public boolean canExtractItem(int slot, ItemStack stack, EnumFacing direction) {
-        if (direction == EnumFacing.UP) {
-            return false;
-        }
-        return Utilities.inRange(INV_FIRST, slot, INV_LAST) &&
+        return direction != EnumFacing.UP && Utilities.inRange(INV_FIRST, slot, INV_LAST) &&
                 !CompactorRecipes.isEnabledIngredient(this.enabled, stack);
     }
 
@@ -76,15 +66,17 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory, 
         if (stack == null) {
             return null;
         }
+        ItemStack out;
         if (stack.stackSize <= count) {
-            ItemStack out = stack;
+            out = stack.copy();
             this.stacks[slot] = null;
-            return out;
+        } else {
+            out = stack.splitStack(count);
+            if (stack.stackSize == 0) {
+                this.stacks[slot] = null;
+            }
         }
-        ItemStack out = stack.splitStack(count);
-        if (stack.stackSize == 0) {
-            this.stacks[slot] = null;
-        }
+        markDirty();
         return out;
     }
 
@@ -99,6 +91,7 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory, 
     public void setInventorySlotContents(int slot, ItemStack stack) {
         try {
             this.stacks[slot] = stack;
+            this.markDirty();
         } catch(ArrayIndexOutOfBoundsException e) {
             e.printStackTrace();
         }
@@ -188,36 +181,89 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory, 
     @Override
     public void update() {
         if (this.worldObj.isRemote) return;
-        CompactorRecipes.getEnabledRecipes(this.enabled).anyMatch(r -> tryToMake(r) == 0);
+        List<IRecipe> recipes = CompactorRecipes.getEnabledRecipes(this.enabled).collect(Collectors.toList());
+        for (int i = 0; i < recipes.size(); i++) {
+            IRecipe recipe = recipes.get(i);
+            if (this.tryToMake(recipe))
+                break;
+        }
     }
-    public int tryToMake(IRecipe recipe) {
-        if (recipe == null) return -1;
-        LinkedList<ItemStack> reqs = CompactorRecipes.getRequirements(recipe)
-                    .collect(Collectors.toCollection(LinkedList::new));
+    private boolean tryToMake(IRecipe recipe) {
+        if (recipe == null || this.worldObj.isRemote || this.isMainInventoryEmpty()) return false;
 
-        System.err.println("Trying to make recipe " + recipe);
-        ItemStack[] invCopy = stacks.clone();
-        while (!reqs.isEmpty()) {
-            ItemStack req = reqs.remove();
-            for (int i = INV_FIRST; i <= INV_LAST; i++) {
-                ItemStack stack = getStackInSlot(i);
-                if (req.isItemEqual(stack)) {
-                    int orig = stack.stackSize;
-                    stack.stackSize = Math.max(0, stack.stackSize - req.stackSize);
-                    req.stackSize -= (orig - stack.stackSize);
-                    if (stack.stackSize == 0)
-                        invCopy[i] = null;
-                    if (req.stackSize < 1)
-                        break;
+        Stream<ItemStack> reqs = CompactorRecipes.getRequirements(recipe);
+        int[] remove = getChangesFromRemoving(reqs);
+        if (remove == null || !hasRoomFor(recipe.getRecipeOutput(), remove)) return false;
+
+        for (int i = INV_FIRST; i < INV_LAST; i++) {
+            this.decrStackSize(i, remove[i]);
+        }
+
+        ItemStack out = recipe.getRecipeOutput().copy();
+        for (int i = INV_FIRST; i < INV_LAST; i++) {
+            ItemStack stack = this.getStackInSlot(i);
+            if (stack == null) continue;
+            if (stack.isItemEqual(out)) {
+                int origSize = stack.stackSize;
+                int newSize = Math.min(origSize + out.stackSize,
+                        Math.min(stack.getMaxStackSize(), this.getInventoryStackLimit()));
+                stack.stackSize = newSize;
+                out.stackSize -= (newSize - origSize);
+                if (out.stackSize < 1) break;
+            }
+        }
+        if (out.stackSize > 0) {
+            for (int i = INV_FIRST; i < INV_LAST; i++) {
+                ItemStack stack = this.getStackInSlot(i);
+                if (stack == null) {
+                    this.setInventorySlotContents(i, out);
+                    break;
                 }
             }
-            if (req.stackSize > 0) return -1;
         }
-        System.err.println("Success!");
-        for (int i = 0; i < invCopy.length; i++) {
-            this.setInventorySlotContents(i, invCopy[i]);
-        }
+        this.worldObj.markBlockForUpdate(this.pos);
         this.markDirty();
-        return 0;
+        return true;
+    }
+    private boolean isMainInventoryEmpty() {
+        boolean empty = true;
+        for (int i = INV_FIRST; empty && i <= INV_LAST; i++) {
+            if (stacks[i] != null) empty = false;
+        }
+        return empty;
+    }
+    private int[] getChangesFromRemoving(Stream<ItemStack> itemStacks) {
+        List<ItemStack> it = itemStacks.collect(Collectors.toList());
+        int[] want   = it.stream().mapToInt(stack -> stack.stackSize).toArray();
+        int[] remove = new int[stacks.length];
+        Arrays.fill(remove, 0);
+        for (int c = 0; c < it.size(); c++) {
+            ItemStack req = it.get(c);
+            for (int i = INV_FIRST; i <= INV_LAST; i++) {
+                if (stacks[i] == null || !stacks[i].isItemEqual(req)) continue;
+                int origSize = stacks[i].stackSize - remove[i];
+                int newSize  = Math.max(0, origSize - want[c]);
+                remove[i] = stacks[i].stackSize - newSize;
+                want[c]  -= (origSize - newSize);
+                if (want[c] < 1) break;
+            }
+            if (want[c] > 0) return null;
+        }
+        return remove;
+    }
+    private boolean hasRoomFor(ItemStack stack, int[] remove) {
+        int want = stack.stackSize;
+        for (int i = INV_FIRST; i <= INV_LAST; i++) {
+            if (stacks[i] == null) {
+                want -= Math.min(stack.getMaxStackSize(), this.getInventoryStackLimit());
+                if (want < 1) break;
+            }
+            if (!stacks[i].isItemEqual(stack)) continue;
+            int origSize = stacks[i].stackSize - remove[i];
+            int newSize  = Math.max(0, origSize - want);
+            want = (origSize - newSize);
+            if (want < 1) break;
+        }
+        return want < 1;
     }
 }

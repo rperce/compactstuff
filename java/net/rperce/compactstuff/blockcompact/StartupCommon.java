@@ -1,19 +1,18 @@
 package net.rperce.compactstuff.blockcompact;
 
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.rperce.compactstuff.BlankStartup;
+import net.rperce.compactstuff.BaseStartup;
 
 /**
  * Created by Robert on 2/26/2016.
  */
-public class StartupCommon extends BlankStartup {
+public class StartupCommon extends BaseStartup {
     public static BlockCompact compactBlock;
     public static BlockCompactSquishy compactBlockSquishy;
 
-    public static void preInit() {
+    @Override
+    public void preInit() {
         compactBlock = (BlockCompact)(new BlockCompact().setUnlocalizedName(BlockCompact.canonicalName));
         GameRegistry.registerBlock(compactBlock, ItemCompactBlock.class, BlockCompact.canonicalName);
 
@@ -21,8 +20,8 @@ public class StartupCommon extends BlankStartup {
         GameRegistry.registerBlock(compactBlockSquishy, ItemCompactBlockSquishy.class, BlockCompactSquishy.canonicalName);
     }
 
-    public static void postInit() {
-
+    @Override
+    public void postInit() {
         GameRegistry.addRecipe(BlockCompact.stack(BlockCompact.Meta.COMCOBBLE),
                 "ccc",
                 "ccc",

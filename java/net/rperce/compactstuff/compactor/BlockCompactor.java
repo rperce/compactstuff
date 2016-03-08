@@ -14,13 +14,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.World;
 import net.rperce.compactstuff.CompactStuff;
-import net.rperce.compactstuff.GuiHandlerRegistry;
 
 import java.util.stream.IntStream;
 
-/**
- * Created by robert on 3/5/16.
- */
 public class BlockCompactor extends BlockContainer {
     public static final String canonicalName = "compactor";
 
@@ -59,7 +55,7 @@ public class BlockCompactor extends BlockContainer {
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
         TileEntityCompactor te = (TileEntityCompactor)world.getTileEntity(pos);
         if (te != null) {
-            IntStream.rangeClosed(te.INV_FIRST, te.CRAFT_LAST).forEach(slot -> {
+            IntStream.rangeClosed(TileEntityCompactor.INV_FIRST, TileEntityCompactor.CRAFT_LAST).forEach(slot -> {
                 ItemStack stack = te.getStackInSlot(slot);
                 if (stack != null) {
                     EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5,

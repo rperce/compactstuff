@@ -3,16 +3,17 @@ package net.rperce.compactstuff.compactor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import scala.tools.nsc.backend.icode.Members;
 
-/**
- * Created by robert on 3/5/16.
- */
-public class ContainerCompactor extends Container {
-    private IInventory playerInventory;
-    private TileEntityCompactor te;
+import java.util.Optional;
+
+class ContainerCompactor extends Container {
+    private final IInventory playerInventory;
+    private final TileEntityCompactor te;
 
     public ContainerCompactor(IInventory player, TileEntityCompactor tileEntity) {
         this.te = tileEntity;
@@ -34,7 +35,12 @@ public class ContainerCompactor extends Container {
                 this.addSlotToContainer(new Slot(this.te,
                         27 +  r * 3 + c,
                         8  + 18 * c,
-                        19 + 18 * r));
+                        19 + 18 * r) {
+                    @Override
+                    public void onSlotChanged() {
+                        craftMatrixChanged();
+                    }
+                });
             }
         }
 
@@ -94,7 +100,7 @@ public class ContainerCompactor extends Container {
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         int PLAYER_FIRST = 3 * 3 + 1 + 2 * 3 + 3 * 9;
         int PLAYER_LAST  = PLAYER_FIRST + 4 * 9 - 1;
-        if (index > TileEntityCompactor.INV_LAST && index < PLAYER_FIRST
+        if (index > TileEntityCompactor.CRAFT_LAST && index < PLAYER_FIRST
                 || index < 0 || index > PLAYER_LAST)
             return null;
         Slot slot = this.inventorySlots.get(index);
@@ -102,7 +108,7 @@ public class ContainerCompactor extends Container {
         if (slot != null && slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             original = stack.copy();
-            if (index <= TileEntityCompactor.INV_LAST) {
+            if (index <= TileEntityCompactor.CRAFT_LAST) {
                 if (!mergeItemStack(stack, PLAYER_FIRST, PLAYER_LAST + 1, false))
                     return null;
             } else {
@@ -119,5 +125,22 @@ public class ContainerCompactor extends Container {
         return original;
     }
 
+    public void craftMatrixChanged() {
+        Optional<ItemStack> out = CompactorRecipes.findMatchingRecipe(
+                new LocalCrafting(this, TileEntityCompactor.CRAFT_FIRST),
+                this.te.getWorld());
+        if (out.isPresent() && CompactorRecipes.isEnabled(this.te.enabled, out.get()))
+            te.setInventorySlotContents(TileEntityCompactor.OUTPUT, out.get());
+        else
+            te.setInventorySlotContents(TileEntityCompactor.OUTPUT, null);
+    }
 
+    class LocalCrafting extends InventoryCrafting {
+        public LocalCrafting(Container container, int first) {
+            super(container, 3, 3);
+            for (int i = 0; i < getSizeInventory(); i++) {
+                this.setInventorySlotContents(i, container.inventoryItemStacks.get(i + first));
+            }
+        }
+    }
 }

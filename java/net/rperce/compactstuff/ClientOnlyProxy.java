@@ -1,22 +1,14 @@
 package net.rperce.compactstuff;
 
-/**
- * Created by Robert on 2/26/2016.
- */
+import java.util.stream.Stream;
+
 public class ClientOnlyProxy extends CommonProxy {
-
-    public void preInit() {
-        super.preInit();
-        doStartupFor(wantsInit, "StartupClientOnly", "preInit");
-    }
-
-    public void init() {
-        super.init();
-        doStartupFor(wantsInit, "StartupClientOnly", "init");
-    }
-
-    public void postInit() {
-        super.postInit();
-        doStartupFor(wantsInit, "StartupClientOnly", "postInit");
+    @Override
+    protected Stream<BaseStartup> toInit() {
+        Stream.Builder<BaseStartup> out = Stream.builder();
+        out.add(new net.rperce.compactstuff.blockcompact.StartupClientOnly());
+        out.add(new net.rperce.compactstuff.comglass.StartupClientOnly());
+        out.add(new net.rperce.compactstuff.compactor.StartupClientOnly());
+        return Stream.concat(super.toInit(), out.build());
     }
 }

@@ -9,12 +9,9 @@ import net.rperce.compactstuff.CompactStuff;
 
 import java.awt.*;
 
-/**
- * Created by robert on 3/5/16.
- */
-public class GuiCompactor extends GuiContainer {
+class GuiCompactor extends GuiContainer {
     private static final ResourceLocation texture = new ResourceLocation(CompactStuff.MODID, "textures/compactor_gui.png");
-    private TileEntityCompactor tec;
+    private final TileEntityCompactor tec;
 
     public GuiCompactor(IInventory player, TileEntityCompactor tec) {
         super(new ContainerCompactor(player, tec));

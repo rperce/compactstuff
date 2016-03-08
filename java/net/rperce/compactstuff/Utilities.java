@@ -11,11 +11,7 @@ import java.util.Arrays;
  * Created by Robert on 2/26/2016.
  */
 public class Utilities {
-    public static final int NBT_TYPE_LIST = 9;
-    public static String enpackage(String s) {
-        return "net.rperce.compactstuff."+s;
-    }
-
+    public static final int NBT_TYPE_LIST = 10;
     public static String colonize(String s, String x) {
         return String.format("%s:%s", s, x);
     }
