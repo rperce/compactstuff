@@ -20,9 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-/**
- * Created by Robert on 2/26/2016.
- */
 public class BlockCompactSquishy extends Block {
     public static final String canonicalName = "blockcompact_squish";
     public BlockCompactSquishy() {
@@ -81,7 +78,7 @@ public class BlockCompactSquishy extends Block {
         COMGRAVEL(2);
 
         public int id;
-        private Meta(int id) {
+        Meta(int id) {
             this.id = id;
         }
 

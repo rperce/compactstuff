@@ -8,9 +8,6 @@ import net.rperce.compactstuff.BaseStartup;
 import net.rperce.compactstuff.CompactStuff;
 import net.rperce.compactstuff.Utilities;
 
-/**
- * Created by Robert on 2/27/2016.
- */
 public class StartupClientOnly extends BaseStartup {
 
     @Override

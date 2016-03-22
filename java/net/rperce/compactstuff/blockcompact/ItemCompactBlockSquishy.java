@@ -4,9 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
-/**
- * Created by Robert on 2/26/2016.
- */
 public class ItemCompactBlockSquishy extends ItemBlock {
     public ItemCompactBlockSquishy(Block block) {
         super(block);

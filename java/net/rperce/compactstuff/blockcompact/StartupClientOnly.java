@@ -10,27 +10,24 @@ import net.rperce.compactstuff.BaseStartup;
 import net.rperce.compactstuff.CompactStuff;
 import net.rperce.compactstuff.Utilities;
 
-/**
- * Created by Robert on 2/26/2016.
- */
 public class StartupClientOnly extends BaseStartup {
     @Override
     public void preInit() {
         Item itemCompactBlock = GameRegistry.findItem(CompactStuff.MODID, BlockCompact.canonicalName);
         ResourceLocation[] resources = BlockCompact.Meta.getNames()
-                .map(name -> {
-                    return new ModelResourceLocation(Utilities.colonVariant(CompactStuff.MODID,
-                            BlockCompact.canonicalName, name), "inventory");
-                })
+                .map(name ->
+                    new ModelResourceLocation(Utilities.colonVariant(CompactStuff.MODID,
+                            BlockCompact.canonicalName, name), "inventory")
+                )
                 .toArray(ModelResourceLocation[]::new);
         ModelBakery.registerItemVariants(itemCompactBlock, resources);
 
         Item itemCompactSquishBlock = GameRegistry.findItem(CompactStuff.MODID, BlockCompactSquishy.canonicalName);
         resources = BlockCompactSquishy.Meta.getNames()
-                .map(name -> {
-                    return new ModelResourceLocation(Utilities.colonVariant(CompactStuff.MODID,
-                            BlockCompact.canonicalName, name), "inventory"); // yes, we're using BlockCompact on purpose
-                })
+                .map(name ->
+                    new ModelResourceLocation(Utilities.colonVariant(CompactStuff.MODID,
+                            BlockCompact.canonicalName, name), "inventory") // yes, we're using BlockCompact on purpose
+                )
                 .toArray(ModelResourceLocation[]::new);
         ModelBakery.registerItemVariants(itemCompactSquishBlock, resources);
     }

@@ -5,19 +5,15 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import scala.tools.nsc.backend.icode.Members;
 
 import java.util.Optional;
 
 class ContainerCompactor extends Container {
-    private final IInventory playerInventory;
     private final TileEntityCompactor te;
 
-    public ContainerCompactor(IInventory player, TileEntityCompactor tileEntity) {
+    public ContainerCompactor(IInventory playerInventory, TileEntityCompactor tileEntity) {
         this.te = tileEntity;
-        this.playerInventory = player;
 
         // compactor inventory
         for (int r = 0; r < 3; r++) {
@@ -60,7 +56,7 @@ class ContainerCompactor extends Container {
         // player inventory
         for (int r = 0; r < 3; r++) {
             for (int c = 0; c < 9; c++) {
-                this.addSlotToContainer(new Slot(this.playerInventory,
+                this.addSlotToContainer(new Slot(playerInventory,
                         9   +  r * 9 + c,
                         8   + 18 * c,
                         140 + 18 * r
@@ -70,7 +66,7 @@ class ContainerCompactor extends Container {
 
         // player hotbar
         for (int c = 0; c < 9; c++) {
-            this.addSlotToContainer(new Slot(this.playerInventory,
+            this.addSlotToContainer(new Slot(playerInventory,
                     c,
                     8 + 18 * c,
                     198));

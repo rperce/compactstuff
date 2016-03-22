@@ -4,9 +4,6 @@ import net.minecraft.init.Blocks;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.rperce.compactstuff.BaseStartup;
 
-/**
- * Created by Robert on 2/26/2016.
- */
 public class StartupCommon extends BaseStartup {
     public static BlockCompact compactBlock;
     public static BlockCompactSquishy compactBlockSquishy;

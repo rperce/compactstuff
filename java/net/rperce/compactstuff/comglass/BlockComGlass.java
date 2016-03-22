@@ -14,9 +14,6 @@ import net.minecraft.world.IBlockAccess;
 
 import java.util.HashMap;
 
-/**
- * Created by Robert on 2/26/2016.
- */
 public class BlockComGlass extends Block {
     private boolean fancy;
     public static String canonicalName = "comglass";

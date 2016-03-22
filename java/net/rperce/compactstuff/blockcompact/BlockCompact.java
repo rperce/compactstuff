@@ -12,7 +12,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -23,9 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-/**
- * Created by Robert on 2/26/2016.
- */
 public class BlockCompact extends Block {
     public static String canonicalName = "blockcompact";
 

@@ -1,15 +1,11 @@
 package net.rperce.compactstuff;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import java.util.Arrays;
 
-/**
- * Created by Robert on 2/26/2016.
- */
 public class Utilities {
     public static final int NBT_TYPE_LIST = 10;
     public static String colonize(String s, String x) {

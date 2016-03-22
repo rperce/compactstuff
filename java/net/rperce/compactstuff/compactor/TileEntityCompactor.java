@@ -2,7 +2,6 @@ package net.rperce.compactstuff.compactor;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
@@ -182,8 +181,7 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory, 
     public void update() {
         if (this.worldObj.isRemote) return;
         List<IRecipe> recipes = CompactorRecipes.getEnabledRecipes(this.enabled).collect(Collectors.toList());
-        for (int i = 0; i < recipes.size(); i++) {
-            IRecipe recipe = recipes.get(i);
+        for (IRecipe recipe : recipes) {
             if (this.tryToMake(recipe))
                 break;
         }
@@ -195,35 +193,43 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory, 
         int[] remove = getChangesFromRemoving(reqs);
         if (remove == null || !hasRoomFor(recipe.getRecipeOutput(), remove)) return false;
 
-        for (int i = INV_FIRST; i < INV_LAST; i++) {
+        applyRemovalArray(remove);
+        this.mergeItemStackWithInventory(recipe.getRecipeOutput().copy());
+
+        this.worldObj.markBlockForUpdate(this.pos);
+        this.markDirty();
+        return true;
+    }
+    private void applyRemovalArray(int[] remove) {
+        for (int i = INV_FIRST; i <= INV_LAST; i++) {
             this.decrStackSize(i, remove[i]);
         }
-
-        ItemStack out = recipe.getRecipeOutput().copy();
+    }
+    private int maxStackSize(ItemStack stack) {
+        return Math.min(stack.getMaxStackSize(), this.getInventoryStackLimit());
+    }
+    private void mergeItemStackWithInventory(ItemStack merge) {
         for (int i = INV_FIRST; i < INV_LAST; i++) {
             ItemStack stack = this.getStackInSlot(i);
             if (stack == null) continue;
-            if (stack.isItemEqual(out)) {
+            if (stack.isItemEqual(merge)) {
                 int origSize = stack.stackSize;
-                int newSize = Math.min(origSize + out.stackSize,
-                        Math.min(stack.getMaxStackSize(), this.getInventoryStackLimit()));
+                int newSize = Math.min(origSize + merge.stackSize, this.maxStackSize(stack));
                 stack.stackSize = newSize;
-                out.stackSize -= (newSize - origSize);
-                if (out.stackSize < 1) break;
+                merge.stackSize -= (newSize - origSize);
+                if (merge.stackSize < 1) break;
             }
         }
-        if (out.stackSize > 0) {
+
+        if (merge.stackSize > 0) {
             for (int i = INV_FIRST; i < INV_LAST; i++) {
                 ItemStack stack = this.getStackInSlot(i);
                 if (stack == null) {
-                    this.setInventorySlotContents(i, out);
+                    this.setInventorySlotContents(i, merge);
                     break;
                 }
             }
         }
-        this.worldObj.markBlockForUpdate(this.pos);
-        this.markDirty();
-        return true;
     }
     private boolean isMainInventoryEmpty() {
         boolean empty = true;
@@ -260,8 +266,8 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory, 
             }
             if (!stacks[i].isItemEqual(stack)) continue;
             int origSize = stacks[i].stackSize - remove[i];
-            int newSize  = Math.max(0, origSize - want);
-            want = (origSize - newSize);
+            int newSize = Math.min(origSize + want, this.maxStackSize(stack));
+            want = (newSize - origSize);
             if (want < 1) break;
         }
         return want < 1;
