@@ -1,18 +1,19 @@
 package net.rperce.compactstuff.blockcompact;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class BlockCompact extends Block {
-    public static String canonicalName = "blockcompact";
+    public static final String canonicalName = "blockcompact";
 
     public BlockCompact(Material m) {
         super(m);
@@ -31,18 +32,23 @@ public class BlockCompact extends Block {
     public BlockCompact() {
         this(Material.rock);
         this.setCreativeTab(CreativeTabs.tabBlock);
-        this.setStepSound(Block.soundTypeStone);
+        this.setStepSound(SoundType.STONE);
         this.setHarvestLevel("pickaxe", 2);
     }
 
     public static ItemStack stack(Meta m) { return stack(1, m); }
     public static ItemStack stack(int amt, Meta m) { return new ItemStack(StartupCommon.compactBlock, amt, m.id);}
 
-    public static final PropertyEnum PROPERTY_NAME = PropertyEnum.create("name", Meta.class);
+    public static final PropertyEnum<Meta> PROPERTY_NAME = PropertyEnum.create("name", Meta.class);
+
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, PROPERTY_NAME);
+    }
 
     @Override
     public int damageDropped(IBlockState state) {
-        Meta meta = (Meta) state.getValue(PROPERTY_NAME);
+        Meta meta = state.getValue(PROPERTY_NAME);
         return meta.id;
     }
 
@@ -61,17 +67,17 @@ public class BlockCompact extends Block {
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        Meta meta = (Meta) state.getValue(PROPERTY_NAME);
+        Meta meta = state.getValue(PROPERTY_NAME);
         return meta.id;
     }
 
-    @Override
-    protected BlockState createBlockState() {
-        return new BlockState(this, PROPERTY_NAME);
-    }
+//    @Override
+//    protected BlockState createBlockState() {
+//        return new BlockState(this, PROPERTY_NAME);
+//    }
 
     @Override
-    public IBlockState onBlockPlaced(World w, BlockPos p, EnumFacing click, float x, float y, float z, int meta, EntityLivingBase player) {
+    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
         return this.getDefaultState().withProperty(PROPERTY_NAME, Meta.fromID(meta));
     }
 
@@ -81,13 +87,14 @@ public class BlockCompact extends Block {
     }
 
     @Override
-    public float getBlockHardness(World world, BlockPos pos) {
-        return ((Meta)world.getBlockState(pos).getValue(PROPERTY_NAME)).hardness;
+    public float getBlockHardness(IBlockState blockState, World worldIn, BlockPos pos) {
+        return (blockState.getValue(PROPERTY_NAME)).hardness;
     }
+
 
     @Override
     public float getExplosionResistance(World world, BlockPos pos, Entity exploder, Explosion explosion) {
-        return getBlockHardness(world, pos);
+        return getBlockHardness(world.getBlockState(pos), world, pos);
     }
 
     public enum Meta implements IStringSerializable {
@@ -101,7 +108,7 @@ public class BlockCompact extends Block {
         COMSTEEL(7,   14);
 
 
-        public int id, hardness;
+        public final int id, hardness;
 
         Meta(int id, int hardness) {
             this.hardness = hardness;

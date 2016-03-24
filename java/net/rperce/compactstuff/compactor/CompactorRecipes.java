@@ -13,10 +13,12 @@ import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.world.World;
 import net.rperce.compactstuff.blockcompact.BlockCompact;
 import net.rperce.compactstuff.blockcompact.BlockCompactSquishy;
-import static net.rperce.compactstuff.blockcompact.BlockCompact.Meta.*;
-import static net.rperce.compactstuff.blockcompact.BlockCompactSquishy.Meta.*;
+
 import java.util.*;
 import java.util.stream.Stream;
+
+import static net.rperce.compactstuff.blockcompact.BlockCompact.Meta.*;
+import static net.rperce.compactstuff.blockcompact.BlockCompactSquishy.Meta.*;
 
 class CompactorRecipes {
     private static final Set<IRecipe> recipes = new HashSet<>();
@@ -24,14 +26,17 @@ class CompactorRecipes {
 
     public static Set<ItemStack> getDefaultEnabled() { return defaultEnabled; }
 
+    // not used in normal code, but used for testing
+    public static Set<IRecipe> getAllRecipes() { return recipes; }
+
     public static void setup() {
         // Enabled by default, 3x3
         RecipePair[] pairs = new RecipePair[] {
                 new RecipePair(BlockCompact.stack(COMCOBBLE), Blocks.cobblestone),
                 new RecipePair(BlockCompact.stack(COMNETHER), Blocks.netherrack),
                 new RecipePair(BlockCompactSquishy.stack(COMDIRT), Blocks.dirt),
-                new RecipePair(BlockCompactSquishy.stack(COMGRAVEL), Blocks.gravel),
                 new RecipePair(BlockCompactSquishy.stack(COMSAND), Blocks.sand),
+                new RecipePair(BlockCompactSquishy.stack(COMGRAVEL), Blocks.gravel),
                 new RecipePair(Blocks.diamond_block, Items.diamond),
                 new RecipePair(Blocks.emerald_block, Items.emerald),
                 new RecipePair(Blocks.iron_block,    Items.iron_ingot),
@@ -131,10 +136,10 @@ class CompactorRecipes {
         recipes.add(recipe);
     }
 
-    private static boolean containsRecipe(ItemStack stack) {
+    public static boolean containsRecipe(ItemStack stack) {
         return recipes.stream().anyMatch(s -> s.getRecipeOutput().isItemEqual(stack));
     }
-    private static Stream<IRecipe> getRecipesFor(ItemStack stack) {
+    public static Stream<IRecipe> getRecipesFor(ItemStack stack) {
         return recipes.stream().filter(s -> s.getRecipeOutput().isItemEqual(stack));
     }
 

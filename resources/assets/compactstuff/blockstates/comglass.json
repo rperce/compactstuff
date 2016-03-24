@@ -11,6 +11,9 @@
     }
   },
   "variants": {
+    "normal": [{
+      "model": "compactstuff:comglass_model"
+    }],
     "down=false,east=false,north=true,south=true,up=true,west=true": {
       "model": "compactstuff:comglass_model",
       "textures": {

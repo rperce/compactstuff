@@ -12,12 +12,14 @@ public class CompactStuff {
     public static final String MODID = "compactstuff";
     public static final String VERSION = "0.0.1";
     public static final int GUI_ID_COMPACTOR = 1;
+    public static int channelID = 0;
+    public static int nextChannelID() { return channelID++; }
 
     @Mod.Instance(CompactStuff.MODID)
     public static CompactStuff instance;
 
     @SidedProxy(clientSide = "net.rperce.compactstuff.ClientOnlyProxy", serverSide = "net.rperce.compactstuff.DedicatedServerProxy")
-    private static CommonProxy proxy;
+    public static CommonProxy proxy;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {

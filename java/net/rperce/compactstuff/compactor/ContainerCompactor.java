@@ -1,75 +1,76 @@
 package net.rperce.compactstuff.compactor;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.rperce.compactstuff.IntRange;
+import net.rperce.compactstuff.slots.CraftSlot;
+import net.rperce.compactstuff.slots.GhostSlot;
 
 import java.util.Optional;
 
 class ContainerCompactor extends Container {
     private final TileEntityCompactor te;
+    private final IntRange PLAYER_INV;
+    public TileEntityCompactor getTileEntity() {
+        return te;
+    }
+    private final int[] cachedFields;
 
+    private static int slotID = 0;
     public ContainerCompactor(IInventory playerInventory, TileEntityCompactor tileEntity) {
         this.te = tileEntity;
+        cachedFields = new int[te.getFieldCount()];
 
+        slotID = 0;
         // compactor inventory
-        for (int r = 0; r < 3; r++) {
-            for (int c = 0; c < 9; c++) {
-                this.addSlotToContainer(new Slot(this.te,
-                        c  +  r * 9,
-                        8  + 18 * c,
-                        79 + 18 * r));
-            }
-        }
+        addSlots(3, 9, this.te, 8, 79, "Slot");
 
         // crafting grid
-        for (int r = 0; r < 3; r++) {
-            for (int c = 0; c < 3; c++) {
-                this.addSlotToContainer(new Slot(this.te,
-                        27 +  r * 3 + c,
-                        8  + 18 * c,
-                        19 + 18 * r) {
-                    @Override
-                    public void onSlotChanged() {
-                        craftMatrixChanged();
-                    }
-                });
-            }
-        }
+        addSlots(3, 3, this.te, 8, 19, "CraftSlot");
 
         // output slot
-        this.addSlotToContainer(new GhostSlot(this.te, 36, 89, 37));
+        addSlots(1, 1, this.te, 89, 37, "GhostSlot");
 
         // compression slots
-        for (int r = 0; r < 3; r++) {
-            for (int c = 0; c < 2; c++) {
-                this.addSlotToContainer(new GhostSlot(this.te,
-                        37  +  r * 2 + c,
-                        134 + 18 * c,
-                        19  + 18 * r));
-            }
-        }
+        addSlots(3, 2, this.te, 134, 19, "GhostSlot");
+
+        slotID = 0;
+        // player hotbar
+        addSlots(1, 9, playerInventory, 8, 198, "Slot");
 
         // player inventory
-        for (int r = 0; r < 3; r++) {
-            for (int c = 0; c < 9; c++) {
-                this.addSlotToContainer(new Slot(playerInventory,
-                        9   +  r * 9 + c,
-                        8   + 18 * c,
-                        140 + 18 * r
-                        ));
-            }
-        }
+        addSlots(3, 9, playerInventory, 8, 140, "Slot");
 
-        // player hotbar
-        for (int c = 0; c < 9; c++) {
-            this.addSlotToContainer(new Slot(playerInventory,
-                    c,
-                    8 + 18 * c,
-                    198));
+
+        int p_first = 3 * 3 + 1 + 2 * 3 + 3 * 9;
+        int p_last = p_first + 4 * 9 - 1;
+        PLAYER_INV = IntRange.closed(p_first, p_last);
+    }
+
+    private void addSlots(int rows, int cols, IInventory inv, int startX, int startY, String slotType) {
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                switch(slotType) {
+                    case "Slot":
+                        this.addSlotToContainer(new Slot(
+                                inv, slotID++, startX + 18 * c, startY + 18 * r));
+                        break;
+                    case "CraftSlot":
+                        this.addSlotToContainer(new CraftSlot(
+                                inv, slotID++, startX + 18 * c, startY + 18 * r,
+                                this::craftMatrixChanged
+                        ));
+                        break;
+                    case "GhostSlot":
+                        this.addSlotToContainer(new GhostSlot(
+                                inv, slotID++, startX + 18 * c, startY + 18 * r
+                        ));
+                        break;
+                }
+            }
         }
     }
     @Override
@@ -77,58 +78,73 @@ class ContainerCompactor extends Container {
         return this.te.isUseableByPlayer(player);
     }
 
-    private class GhostSlot extends Slot {
-        public GhostSlot(IInventory a, int b, int c, int d) {
-            super(a, b, c, d);
-        }
-        @Override
-        public boolean canTakeStack(EntityPlayer playerIn) {
-            return false;
-        }
-
-        @Override
-        public boolean isItemValid(ItemStack stack) {
-            return false;
-        }
+    private boolean isTransferableSlot(int index) {
+        return TileEntityCompactor.CRAFTING.contains(index) ||
+                TileEntityCompactor.INVENTORY.contains(index) ||
+                PLAYER_INV.contains(index);
     }
-
+    private boolean mergeItemStackFailed(ItemStack stack, IntRange range, boolean backwards) {
+        return !this.mergeItemStack(stack, range.first(), range.last() + 1, backwards);
+    }
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-        int PLAYER_FIRST = 3 * 3 + 1 + 2 * 3 + 3 * 9;
-        int PLAYER_LAST  = PLAYER_FIRST + 4 * 9 - 1;
-        if (index > TileEntityCompactor.CRAFT_LAST && index < PLAYER_FIRST
-                || index < 0 || index > PLAYER_LAST)
+        if (!isTransferableSlot(index))
             return null;
+
         Slot slot = this.inventorySlots.get(index);
         ItemStack original = null;
         if (slot != null && slot.getHasStack()) {
             ItemStack stack = slot.getStack();
             original = stack.copy();
-            if (index <= TileEntityCompactor.CRAFT_LAST) {
-                if (!mergeItemStack(stack, PLAYER_FIRST, PLAYER_LAST + 1, false))
+            if (PLAYER_INV.contains(index)) {
+                if (mergeItemStackFailed(stack, TileEntityCompactor.INVENTORY, false))
                     return null;
             } else {
-                if (!mergeItemStack(stack, TileEntityCompactor.INV_FIRST,
-                        TileEntityCompactor.INV_LAST + 1, false))
+                if (mergeItemStackFailed(stack, PLAYER_INV, false))
                     return null;
             }
 
             if (stack.stackSize < 1)
                 slot.putStack(null);
-            else
-                slot.onSlotChanged();
+            slot.onSlotChanged();
         }
         return original;
     }
 
     public void craftMatrixChanged() {
         Optional<ItemStack> out = CompactorRecipes.findMatchingRecipe(
-                new LocalCrafting(this, TileEntityCompactor.CRAFT_FIRST),
+                new LocalCrafting(this, TileEntityCompactor.CRAFTING.first()),
                 this.te.getWorld());
         if (out.isPresent() && CompactorRecipes.isEnabled(this.te.enabled, out.get()))
-            te.setInventorySlotContents(TileEntityCompactor.OUTPUT, out.get());
+            te.setInventorySlotContents(TileEntityCompactor.OUTPUT.first(), out.get());
         else
-            te.setInventorySlotContents(TileEntityCompactor.OUTPUT, null);
+            te.setInventorySlotContents(TileEntityCompactor.OUTPUT.first(), null);
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+        boolean[] fieldHasChanged = new boolean[cachedFields.length];
+        for (int i = 0; i < cachedFields.length; i++) {
+            if (cachedFields[i] != te.getField(i)) {
+                cachedFields[i] = te.getField(i);
+                fieldHasChanged[i] = true;
+            }
+        }
+
+        for(ICrafting crafter : this.crafters) {
+            for (int i = 0; i < te.getFieldCount(); i++) {
+                if (fieldHasChanged[i]) {
+                    crafter.sendProgressBarUpdate(this, i, cachedFields[i]);
+                }
+            }
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void updateProgressBar(int id, int data) {
+        te.setField(id, data);
     }
 
     class LocalCrafting extends InventoryCrafting {

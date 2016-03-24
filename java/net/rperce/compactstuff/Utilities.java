@@ -16,15 +16,11 @@ public class Utilities {
         return String.format("%s:%s_%s", s, x, v);
     }
 
-    public static boolean inRange(int lo, int x, int hi) {
-        return lo <= x && x <= hi;
+    public static void writeStacksToNBT(NBTTagCompound data, ItemStack... stacks) {
+        writeStacksToNBT(data, "itemsList", stacks);
     }
 
-    public static NBTTagCompound writeStacksToNBT(NBTTagCompound data, ItemStack... stacks) {
-        return writeStacksToNBT(data, "itemsList", stacks);
-    }
-
-    public static NBTTagCompound writeStacksToNBT(NBTTagCompound data, String tagName, ItemStack... stacks) {
+    public static void writeStacksToNBT(NBTTagCompound data, String tagName, ItemStack... stacks) {
         if (stacks == null) {
             throw new IllegalArgumentException("null stacks input");
         }
@@ -40,7 +36,6 @@ public class Utilities {
         }
         data.setTag(tagName, itemsList);
         data.setShort(tagName + "Length", (short)stacks.length);
-        return data;
     }
 
     public static ItemStack[] readStacksFromNBT(NBTTagCompound data) {
@@ -71,5 +66,9 @@ public class Utilities {
                     expected,
                     got);
         }
+    }
+
+    public static boolean isNotNull(Object o) {
+        return o != null;
     }
 }

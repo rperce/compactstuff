@@ -1,31 +1,32 @@
 package net.rperce.compactstuff.compactor;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.rperce.compactstuff.ClickType;
+import net.rperce.compactstuff.CompactTileEntityInventory;
+import net.rperce.compactstuff.IntRange;
 import net.rperce.compactstuff.Utilities;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class TileEntityCompactor extends TileEntity implements ISidedInventory, ITickable {
+public class TileEntityCompactor extends CompactTileEntityInventory implements ISidedInventory, ITickable {
     // 3x9 inventory, 3x3 crafting grid, 1 output, 2x3 compacting
     private static final int SLOT_COUNT = 43;
     private ItemStack[] stacks = new ItemStack[SLOT_COUNT];
-    public static final int     INV_FIRST   = 0,
-                                INV_LAST    = 26,
-                                CRAFT_FIRST = 27,
-                                CRAFT_LAST  = 35,
-                                OUTPUT      = 36,
-                                COMFIRST    = 37,
-                                COMLAST     = 42;
+    public static final IntRange INVENTORY  = IntRange.closed(0, 26),
+                                 CRAFTING   = IntRange.closed(27, 35),
+                                 OUTPUT     = IntRange.only(36),
+                                 SELECTED   = IntRange.closed(37, 42);
 
     public HashSet<ItemStack> enabled;
     public TileEntityCompactor() {
@@ -33,9 +34,20 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory, 
         CompactorRecipes.setup();
         enabled = new HashSet<>(CompactorRecipes.getDefaultEnabled());
     }
+
+    @Override
+    protected ItemStack[] getStacks() {
+        return stacks;
+    }
+
+    @Override
+    protected void setStacks(ItemStack[] stacks) {
+        this.stacks = stacks;
+    }
+
     @Override
     public int[] getSlotsForFace(EnumFacing side) {
-        return IntStream.rangeClosed(INV_FIRST, INV_LAST).toArray();
+        return INVENTORY.stream().toArray();
     }
 
     @Override
@@ -45,92 +57,92 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory, 
 
     @Override
     public boolean canExtractItem(int slot, ItemStack stack, EnumFacing direction) {
-        return direction != EnumFacing.UP && Utilities.inRange(INV_FIRST, slot, INV_LAST) &&
+        return direction != EnumFacing.UP && INVENTORY.contains(slot) &&
                 !CompactorRecipes.isEnabledIngredient(this.enabled, stack);
     }
 
     @Override
-    public int getSizeInventory() {
-        return stacks.length;
-    }
-
-    @Override
-    public ItemStack getStackInSlot(int slot) {
-        return stacks[slot];
-    }
-
-    @Override
-    public ItemStack decrStackSize(int slot, int count) {
-        ItemStack stack = this.stacks[slot];
-        if (stack == null) {
-            return null;
-        }
-        ItemStack out;
-        if (stack.stackSize <= count) {
-            out = stack.copy();
-            this.stacks[slot] = null;
-        } else {
-            out = stack.splitStack(count);
-            if (stack.stackSize == 0) {
-                this.stacks[slot] = null;
-            }
-        }
-        markDirty();
-        return out;
-    }
-
-    @Override
-    public ItemStack removeStackFromSlot(int index) {
-        ItemStack stack = this.stacks[index];
-        setInventorySlotContents(index, null);
-        return stack;
-    }
-
-    @Override
-    public void setInventorySlotContents(int slot, ItemStack stack) {
-        try {
-            this.stacks[slot] = stack;
-            this.markDirty();
-        } catch(ArrayIndexOutOfBoundsException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    @Override
-    public int getInventoryStackLimit() {
-        return 64;
-    }
-
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
-        return true;
-    }
-
-    @Override public void openInventory(EntityPlayer player) { }
-    @Override public void closeInventory(EntityPlayer player) { }
-
-    @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return Utilities.inRange(INV_FIRST, index, INV_LAST);
+        return INVENTORY.contains(index);
     }
-
-    @Override
-    public int getField(int id) {
-        return 0;
-    }
-
-    @Override
-    public void setField(int id, int value) { }
 
     @Override
     public int getFieldCount() {
-        return 0;
+        return SELECTED.count();
+    }
+
+    private final int[] autocompact = new int[this.getFieldCount()];
+    @Override
+    public int getField(int id) {
+        return autocompact[id];
     }
 
     @Override
-    public void clear() {
-        Arrays.fill(this.stacks, null);
+    public void setField(int id, int value) {
+        System.err.printf("Setting %d to %d\n", id, value);
+        autocompact[id] = value;
+    }
+
+    public void acceptCompactorMessage(CompactorMessage message) {
+        int globalSlotIndex = message.getSlot();
+        ClickType clickType = message.getClickType();
+        System.err.printf("Accepting message with %d and %s\n", globalSlotIndex, clickType);
+        if (TileEntityCompactor.OUTPUT.contains(globalSlotIndex)) {
+            selectOutputStack();
+        }
+        if (TileEntityCompactor.SELECTED.contains(globalSlotIndex)) {
+            alterSelectedStack(globalSlotIndex, clickType);
+        }
+    }
+
+    private void selectOutputStack() {
+        ItemStack output = this.getStackInSlot(TileEntityCompactor.OUTPUT.first());
+        if (output == null) return;
+        boolean alreadyThere = TileEntityCompactor.SELECTED.stream()
+                .mapToObj(this::getStackInSlot)
+                .filter(Utilities::isNotNull)
+                .anyMatch(output::isItemEqual);
+        if (alreadyThere) return;
+
+        TileEntityCompactor.SELECTED.stream()
+                .filter(slot -> this.getStackInSlot(slot) == null)
+                .findFirst()
+                .ifPresent(slot -> {
+                    this.setInventorySlotContents(slot, output);
+
+                    int fieldID = slot - TileEntityCompactor.SELECTED.first();
+                    boolean enab = CompactorRecipes.isEnabled(enabled, output);
+                    this.setField(fieldID, enab ? 1 : 0);
+                });
+    }
+
+    private void alterSelectedStack(int globalSlotIndex, ClickType clickType) {
+        if (this.getStackInSlot(globalSlotIndex) == null) return;
+        int fieldID = globalSlotIndex - TileEntityCompactor.SELECTED.first();
+        if (clickType.hasShift()) {
+            this.setInventorySlotContents(globalSlotIndex, null);
+        }
+        ItemStack stack = getStackInSlot(globalSlotIndex);
+        if (clickType.equals(ClickType.LEFT)) {
+            if (CompactorRecipes.containsRecipe(stack)) {
+                Optional<IRecipe> recipe = CompactorRecipes.getRecipesFor(stack).findFirst();
+                recipe.ifPresent(this::tryToMake);
+            }
+        } else if (clickType.equals(ClickType.RIGHT)) {
+            if (CompactorRecipes.isEnabled(enabled, stack)) {
+                System.err.println("Disabling!");
+                enabled.stream()
+                    .filter(stack::isItemEqual)
+                    .findFirst()
+                    .ifPresent(enabled::remove);
+                setField(fieldID, 0);
+            } else {
+                System.err.println("Enabling!");
+                enabled.add(stack);
+                setField(fieldID, 1);
+            }
+        }
+        markDirty();
     }
 
     @Override
@@ -139,22 +151,9 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory, 
     }
 
     @Override
-    public boolean hasCustomName() {
-        return false;
-    }
-
-    @Override
-    public IChatComponent getDisplayName() {
-        boolean c = this.hasCustomName();
-        String n = this.getName();
-        return c ? new ChatComponentText(n) : new ChatComponentTranslation(n);
-    }
-
-    @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
 
-        this.stacks = Utilities.readStacksFromNBT(compound);
         NBTTagList enabledList = compound.getTagList("Enabled", Utilities.NBT_TYPE_LIST);
         this.enabled = new HashSet<>();
         for (int i = 0; i < enabledList.tagCount(); i++) {
@@ -167,7 +166,6 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory, 
     public void writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
 
-        Utilities.writeStacksToNBT(compound, this.stacks);
         NBTTagList enabledList = new NBTTagList();
         for (ItemStack stack : this.enabled) {
             NBTTagCompound tag = new NBTTagCompound();
@@ -176,6 +174,7 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory, 
         }
         compound.setTag("Enabled", enabledList);
     }
+
 
     @Override
     public void update() {
@@ -194,46 +193,19 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory, 
         if (remove == null || !hasRoomFor(recipe.getRecipeOutput(), remove)) return false;
 
         applyRemovalArray(remove);
-        this.mergeItemStackWithInventory(recipe.getRecipeOutput().copy());
+        this.mergeItemStackWithSlots(recipe.getRecipeOutput().copy(), INVENTORY);
 
-        this.worldObj.markBlockForUpdate(this.pos);
         this.markDirty();
         return true;
     }
     private void applyRemovalArray(int[] remove) {
-        for (int i = INV_FIRST; i <= INV_LAST; i++) {
-            this.decrStackSize(i, remove[i]);
-        }
-    }
-    private int maxStackSize(ItemStack stack) {
-        return Math.min(stack.getMaxStackSize(), this.getInventoryStackLimit());
-    }
-    private void mergeItemStackWithInventory(ItemStack merge) {
-        for (int i = INV_FIRST; i < INV_LAST; i++) {
-            ItemStack stack = this.getStackInSlot(i);
-            if (stack == null) continue;
-            if (stack.isItemEqual(merge)) {
-                int origSize = stack.stackSize;
-                int newSize = Math.min(origSize + merge.stackSize, this.maxStackSize(stack));
-                stack.stackSize = newSize;
-                merge.stackSize -= (newSize - origSize);
-                if (merge.stackSize < 1) break;
-            }
-        }
-
-        if (merge.stackSize > 0) {
-            for (int i = INV_FIRST; i < INV_LAST; i++) {
-                ItemStack stack = this.getStackInSlot(i);
-                if (stack == null) {
-                    this.setInventorySlotContents(i, merge);
-                    break;
-                }
-            }
-        }
+        INVENTORY.stream().forEach(i ->
+            this.decrStackSize(i, remove[i])
+        );
     }
     private boolean isMainInventoryEmpty() {
         boolean empty = true;
-        for (int i = INV_FIRST; empty && i <= INV_LAST; i++) {
+        for (int i = INVENTORY.first(); empty && i <= INVENTORY.last(); i++) {
             if (stacks[i] != null) empty = false;
         }
         return empty;
@@ -245,7 +217,7 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory, 
         Arrays.fill(remove, 0);
         for (int c = 0; c < it.size(); c++) {
             ItemStack req = it.get(c);
-            for (int i = INV_FIRST; i <= INV_LAST; i++) {
+            for (int i = INVENTORY.first(); i <= INVENTORY.last(); i++) {
                 if (stacks[i] == null || !stacks[i].isItemEqual(req)) continue;
                 int origSize = stacks[i].stackSize - remove[i];
                 int newSize  = Math.max(0, origSize - want[c]);
@@ -259,7 +231,7 @@ public class TileEntityCompactor extends TileEntity implements ISidedInventory, 
     }
     private boolean hasRoomFor(ItemStack stack, int[] remove) {
         int want = stack.stackSize;
-        for (int i = INV_FIRST; i <= INV_LAST; i++) {
+        for (int i = INVENTORY.first(); i <= INVENTORY.last(); i++) {
             if (stacks[i] == null) {
                 want -= Math.min(stack.getMaxStackSize(), this.getInventoryStackLimit());
                 if (want < 1) break;

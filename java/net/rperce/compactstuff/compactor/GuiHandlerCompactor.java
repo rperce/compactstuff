@@ -2,7 +2,7 @@ package net.rperce.compactstuff.compactor;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.rperce.compactstuff.CompactStuff;
@@ -26,8 +26,10 @@ class GuiHandlerCompactor implements IGuiHandler {
         BlockPos pos = new BlockPos(x, y, z);
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileEntityCompactor) {
-            return new GuiCompactor(player.inventory, (TileEntityCompactor)te);
+            return new GuiCompactor(player, (TileEntityCompactor)te);
         }
         return null;
     }
+
+
 }

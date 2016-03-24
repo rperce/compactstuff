@@ -11,3 +11,4 @@ tile.blockcompact_squish.comdirt.name=Compressed Dirt
 tile.blockcompact_squish.comgravel.name=Compressed Gravel
 tile.comglass.name=Compressed Glass
 tile.compactor.name=Compactor
+container.compactor.name=Compactor

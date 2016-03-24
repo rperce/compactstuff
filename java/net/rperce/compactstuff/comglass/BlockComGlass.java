@@ -1,26 +1,26 @@
 package net.rperce.compactstuff.comglass;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 import java.util.HashMap;
 
 public class BlockComGlass extends Block {
-    private boolean fancy;
-    public static String canonicalName = "comglass";
+    private final boolean fancy;
+    public static final String canonicalName = "comglass";
 
     public BlockComGlass(boolean fancy) {
         super(Material.glass);
-        this.setStepSound(Block.soundTypeGlass);
+        this.setStepSound(SoundType.GLASS);
         this.setHardness(0.7f);
         this.setResistance(21f);
         this.setLightOpacity(0);
@@ -29,31 +29,33 @@ public class BlockComGlass extends Block {
     }
 
     @Override
-    public boolean canPlaceTorchOnTop(IBlockAccess world, BlockPos pos) {
+    public boolean canPlaceTorchOnTop(IBlockState state, IBlockAccess world, BlockPos pos) {
         return true;
     }
 
     @Override
-    public boolean isOpaqueCube() {
+    public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
 
+
     @Override
-    public boolean isFullCube() {
+    public boolean isFullCube(IBlockState state) {
         return false;
+
     }
 
     @Override
-    public EnumWorldBlockLayer getBlockLayer() {
-        return EnumWorldBlockLayer.CUTOUT_MIPPED;
+    public BlockRenderLayer getBlockLayer() {
+        return BlockRenderLayer.CUTOUT_MIPPED;
     }
 
     @Override
-    public boolean shouldSideBeRendered(IBlockAccess world, BlockPos pos, EnumFacing side) {
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
         if (adjacencies.containsKey(side)) {
-            return world.getBlockState(pos).getBlock() != StartupCommon.blockComGlass;
+            return blockAccess.getBlockState(pos).getBlock() != StartupCommon.blockComGlass;
         }
-        return super.shouldSideBeRendered(world, pos, side);
+        return super.shouldSideBeRendered(blockState, blockAccess, pos, side);
     }
 
     @Override
@@ -66,17 +68,17 @@ public class BlockComGlass extends Block {
         return state;
     }
 
-    @Override
-    protected BlockState createBlockState() {
-        return new BlockState(this, adjacencies.values().toArray(new IProperty[adjacencies.values().size()]));
-    }
+//    @Override
+//    protected BlockState createBlockState() {
+//        return new BlockState(this, adjacencies.values().toArray(new IProperty[adjacencies.values().size()]));
+//    }
 
     @Override
     public int getMetaFromState(IBlockState state) {
         return 0;
     }
 
-    public static HashMap<EnumFacing, IProperty<Boolean>> adjacencies;
+    public static final HashMap<EnumFacing, IProperty<Boolean>> adjacencies;
     static {
         adjacencies = new HashMap<>();
         EnumFacing[] dirs = EnumFacing.values();
