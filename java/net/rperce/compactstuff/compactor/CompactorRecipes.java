@@ -11,6 +11,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.world.World;
+import net.rperce.compactstuff.ItemStackSet;
 import net.rperce.compactstuff.blockcompact.BlockCompact;
 import net.rperce.compactstuff.blockcompact.BlockCompactSquishy;
 
@@ -22,12 +23,9 @@ import static net.rperce.compactstuff.blockcompact.BlockCompactSquishy.Meta.*;
 
 class CompactorRecipes {
     private static final Set<IRecipe> recipes = new HashSet<>();
-    private static final Set<ItemStack> defaultEnabled = new HashSet<>();
+    private static final ItemStackSet defaultEnabled = new ItemStackSet();
 
-    public static Set<ItemStack> getDefaultEnabled() { return defaultEnabled; }
-
-    // not used in normal code, but used for testing
-    public static Set<IRecipe> getAllRecipes() { return recipes; }
+    public static ItemStackSet getDefaultEnabled() { return defaultEnabled; }
 
     public static void setup() {
         // Enabled by default, 3x3

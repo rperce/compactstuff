@@ -22,7 +22,7 @@ public class BlockCompactor extends BlockContainer {
 
     public BlockCompactor() {
         super(Material.iron);
-        this.setStepSound(SoundType.METAL);
+        this.setSoundType(SoundType.METAL);
         this.setHardness(4f);
         this.setCreativeTab(CreativeTabs.tabBlock);
     }

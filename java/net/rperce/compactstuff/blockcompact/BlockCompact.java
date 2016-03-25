@@ -32,7 +32,7 @@ public class BlockCompact extends Block {
     public BlockCompact() {
         this(Material.rock);
         this.setCreativeTab(CreativeTabs.tabBlock);
-        this.setStepSound(SoundType.STONE);
+        this.setSoundType(SoundType.STONE);
         this.setHarvestLevel("pickaxe", 2);
     }
 

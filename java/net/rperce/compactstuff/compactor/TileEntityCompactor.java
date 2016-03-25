@@ -7,10 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.rperce.compactstuff.ClickType;
-import net.rperce.compactstuff.CompactTileEntityInventory;
-import net.rperce.compactstuff.IntRange;
-import net.rperce.compactstuff.Utilities;
+import net.rperce.compactstuff.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -28,11 +25,11 @@ public class TileEntityCompactor extends CompactTileEntityInventory implements I
                                  OUTPUT     = IntRange.only(36),
                                  SELECTED   = IntRange.closed(37, 42);
 
-    public HashSet<ItemStack> enabled;
+    public ItemStackSet enabled;
     public TileEntityCompactor() {
         super();
         CompactorRecipes.setup();
-        enabled = new HashSet<>(CompactorRecipes.getDefaultEnabled());
+        enabled = new ItemStackSet(CompactorRecipes.getDefaultEnabled());
     }
 
     @Override
@@ -117,12 +114,19 @@ public class TileEntityCompactor extends CompactTileEntityInventory implements I
     }
 
     private void alterSelectedStack(int globalSlotIndex, ClickType clickType) {
-        if (this.getStackInSlot(globalSlotIndex) == null) return;
+        ItemStack stack = this.getStackInSlot(globalSlotIndex);
+        if (stack == null) return;
         int fieldID = globalSlotIndex - TileEntityCompactor.SELECTED.first();
+
         if (clickType.hasShift()) {
             this.setInventorySlotContents(globalSlotIndex, null);
+            if (CompactorRecipes.isEnabled(CompactorRecipes.getDefaultEnabled(), stack)) {
+                enabled.add(stack);
+            } else {
+                enabled.remove(stack);
+            }
+            setField(fieldID, 0);
         }
-        ItemStack stack = getStackInSlot(globalSlotIndex);
         if (clickType.equals(ClickType.LEFT)) {
             if (CompactorRecipes.containsRecipe(stack)) {
                 Optional<IRecipe> recipe = CompactorRecipes.getRecipesFor(stack).findFirst();
@@ -130,14 +134,9 @@ public class TileEntityCompactor extends CompactTileEntityInventory implements I
             }
         } else if (clickType.equals(ClickType.RIGHT)) {
             if (CompactorRecipes.isEnabled(enabled, stack)) {
-                System.err.println("Disabling!");
-                enabled.stream()
-                    .filter(stack::isItemEqual)
-                    .findFirst()
-                    .ifPresent(enabled::remove);
+                enabled.remove(stack);
                 setField(fieldID, 0);
             } else {
-                System.err.println("Enabling!");
                 enabled.add(stack);
                 setField(fieldID, 1);
             }
@@ -155,7 +154,7 @@ public class TileEntityCompactor extends CompactTileEntityInventory implements I
         super.readFromNBT(compound);
 
         NBTTagList enabledList = compound.getTagList("Enabled", Utilities.NBT_TYPE_LIST);
-        this.enabled = new HashSet<>();
+        this.enabled = new ItemStackSet();
         for (int i = 0; i < enabledList.tagCount(); i++) {
             NBTTagCompound itemTag = enabledList.getCompoundTagAt(i);
             this.enabled.add(ItemStack.loadItemStackFromNBT(itemTag));

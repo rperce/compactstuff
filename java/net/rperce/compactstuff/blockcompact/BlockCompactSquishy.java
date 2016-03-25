@@ -26,7 +26,7 @@ public class BlockCompactSquishy extends Block {
     public BlockCompactSquishy() {
         super(Material.ground);
         this.setCreativeTab(CreativeTabs.tabBlock);
-        this.setStepSound(SoundType.GROUND);
+        this.setSoundType(SoundType.GROUND);
         this.setHarvestLevel("shovel", 1);
     }
     public static final PropertyEnum<Meta> PROPERTY_NAME = PropertyEnum.create("name", Meta.class);

@@ -115,10 +115,7 @@ class ContainerCompactor extends Container {
         Optional<ItemStack> out = CompactorRecipes.findMatchingRecipe(
                 new LocalCrafting(this, TileEntityCompactor.CRAFTING.first()),
                 this.te.getWorld());
-        if (out.isPresent() && CompactorRecipes.isEnabled(this.te.enabled, out.get()))
-            te.setInventorySlotContents(TileEntityCompactor.OUTPUT.first(), out.get());
-        else
-            te.setInventorySlotContents(TileEntityCompactor.OUTPUT.first(), null);
+        te.setInventorySlotContents(TileEntityCompactor.OUTPUT.first(), out.orElse(null));
     }
 
     @Override

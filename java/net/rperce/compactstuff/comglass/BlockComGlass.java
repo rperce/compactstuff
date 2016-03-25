@@ -20,7 +20,7 @@ public class BlockComGlass extends Block {
 
     public BlockComGlass(boolean fancy) {
         super(Material.glass);
-        this.setStepSound(SoundType.GLASS);
+        this.setSoundType(SoundType.GLASS);
         this.setHardness(0.7f);
         this.setResistance(21f);
         this.setLightOpacity(0);
