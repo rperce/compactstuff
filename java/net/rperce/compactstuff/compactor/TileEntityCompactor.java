@@ -10,7 +10,6 @@ import net.minecraft.util.ITickable;
 import net.rperce.compactstuff.*;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,13 +19,13 @@ public class TileEntityCompactor extends CompactTileEntityInventory implements I
     // 3x9 inventory, 3x3 crafting grid, 1 output, 2x3 compacting
     private static final int SLOT_COUNT = 43;
     private ItemStack[] stacks = new ItemStack[SLOT_COUNT];
-    public static final IntRange INVENTORY  = IntRange.closed(0, 26),
-                                 CRAFTING   = IntRange.closed(27, 35),
-                                 OUTPUT     = IntRange.only(36),
-                                 SELECTED   = IntRange.closed(37, 42);
+    static final IntRange INVENTORY  = IntRange.closed(0, 26),
+                          CRAFTING   = IntRange.closed(27, 35),
+                          OUTPUT     = IntRange.only(36),
+                          SELECTED   = IntRange.closed(37, 42);
 
-    public ItemStackSet enabled;
-    public TileEntityCompactor() {
+    private ItemStackSet enabled;
+    TileEntityCompactor() {
         super();
         CompactorRecipes.setup();
         enabled = new ItemStackSet(CompactorRecipes.getDefaultEnabled());
@@ -80,9 +79,9 @@ public class TileEntityCompactor extends CompactTileEntityInventory implements I
         autocompact[id] = value;
     }
 
-    public void acceptCompactorMessage(CompactorMessage message) {
+    void acceptCompactorMessage(CompactorClickMessage message) {
         int globalSlotIndex = message.getSlot();
-        ClickType clickType = message.getClickType();
+        MouseButtonType clickType = message.getClickType();
         System.err.printf("Accepting message with %d and %s\n", globalSlotIndex, clickType);
         if (TileEntityCompactor.OUTPUT.contains(globalSlotIndex)) {
             selectOutputStack();
@@ -113,7 +112,7 @@ public class TileEntityCompactor extends CompactTileEntityInventory implements I
                 });
     }
 
-    private void alterSelectedStack(int globalSlotIndex, ClickType clickType) {
+    private void alterSelectedStack(int globalSlotIndex, MouseButtonType clickType) {
         ItemStack stack = this.getStackInSlot(globalSlotIndex);
         if (stack == null) return;
         int fieldID = globalSlotIndex - TileEntityCompactor.SELECTED.first();
@@ -127,12 +126,12 @@ public class TileEntityCompactor extends CompactTileEntityInventory implements I
             }
             setField(fieldID, 0);
         }
-        if (clickType.equals(ClickType.LEFT)) {
+        if (clickType.equals(MouseButtonType.LEFT)) {
             if (CompactorRecipes.containsRecipe(stack)) {
                 Optional<IRecipe> recipe = CompactorRecipes.getRecipesFor(stack).findFirst();
                 recipe.ifPresent(this::tryToMake);
             }
-        } else if (clickType.equals(ClickType.RIGHT)) {
+        } else if (clickType.equals(MouseButtonType.RIGHT)) {
             if (CompactorRecipes.isEnabled(enabled, stack)) {
                 enabled.remove(stack);
                 setField(fieldID, 0);
@@ -189,7 +188,7 @@ public class TileEntityCompactor extends CompactTileEntityInventory implements I
 
         Stream<ItemStack> reqs = CompactorRecipes.getRequirements(recipe);
         int[] remove = getChangesFromRemoving(reqs);
-        if (remove == null || !hasRoomFor(recipe.getRecipeOutput(), remove)) return false;
+        if (remove == null || !this.hasRoomFor(recipe.getRecipeOutput(), INVENTORY, remove)) return false;
 
         applyRemovalArray(remove);
         this.mergeItemStackWithSlots(recipe.getRecipeOutput().copy(), INVENTORY);
@@ -228,19 +227,5 @@ public class TileEntityCompactor extends CompactTileEntityInventory implements I
         }
         return remove;
     }
-    private boolean hasRoomFor(ItemStack stack, int[] remove) {
-        int want = stack.stackSize;
-        for (int i = INVENTORY.first(); i <= INVENTORY.last(); i++) {
-            if (stacks[i] == null) {
-                want -= Math.min(stack.getMaxStackSize(), this.getInventoryStackLimit());
-                if (want < 1) break;
-            }
-            if (!stacks[i].isItemEqual(stack)) continue;
-            int origSize = stacks[i].stackSize - remove[i];
-            int newSize = Math.min(origSize + want, this.maxStackSize(stack));
-            want = (newSize - origSize);
-            if (want < 1) break;
-        }
-        return want < 1;
-    }
+
 }

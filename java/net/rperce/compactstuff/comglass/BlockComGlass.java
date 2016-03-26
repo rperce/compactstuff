@@ -5,6 +5,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.util.BlockRenderLayer;
@@ -68,17 +69,17 @@ public class BlockComGlass extends Block {
         return state;
     }
 
-//    @Override
-//    protected BlockState createBlockState() {
-//        return new BlockState(this, adjacencies.values().toArray(new IProperty[adjacencies.values().size()]));
-//    }
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, adjacencies.values().toArray(new IProperty[adjacencies.values().size()]));
+    }
 
     @Override
     public int getMetaFromState(IBlockState state) {
         return 0;
     }
 
-    public static final HashMap<EnumFacing, IProperty<Boolean>> adjacencies;
+    private static final HashMap<EnumFacing, IProperty<Boolean>> adjacencies;
     static {
         adjacencies = new HashMap<>();
         EnumFacing[] dirs = EnumFacing.values();

@@ -122,7 +122,29 @@ public abstract class CompactTileEntityInventory extends TileEntity implements I
         return Math.min(stack.getMaxStackSize(), this.getInventoryStackLimit());
     }
 
-    protected void mergeItemStackWithSlots(ItemStack merge, IntRange range) {
+    public boolean hasRoomFor(ItemStack stack, IntRange range) {
+        int[] removeNothing = new int[getStacks().length];
+        Arrays.fill(removeNothing, 0);
+        return hasRoomFor(stack, range, removeNothing);
+    }
+    public boolean hasRoomFor(ItemStack stack, IntRange range, int[] remove) {
+        int want = stack.stackSize;
+        for (int i = range.first(); i <= range.last(); i++) {
+            if (getStacks()[i] == null) {
+                want -= Math.min(stack.getMaxStackSize(), this.getInventoryStackLimit());
+                if (want < 1) break;
+            }
+            if (!getStacks()[i].isItemEqual(stack)) continue;
+            int origSize = getStacks()[i].stackSize - remove[i];
+            int newSize = Math.min(origSize + want, this.maxStackSize(stack));
+            want = (newSize - origSize);
+            if (want < 1) break;
+        }
+        return want < 1;
+    }
+
+    protected boolean mergeItemStackWithSlots(ItemStack merge, IntRange range) {
+        if (!hasRoomFor(merge, range)) return false;
         for (int i = range.first(); i < range.last(); i++) {
             ItemStack stack = this.getStackInSlot(i);
             if (stack == null) continue;
@@ -144,5 +166,6 @@ public abstract class CompactTileEntityInventory extends TileEntity implements I
                 }
             }
         }
+        return true;
     }
 }

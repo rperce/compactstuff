@@ -8,42 +8,31 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.rperce.compactstuff.ClickType;
+import net.rperce.compactstuff.MouseButtonType;
 
-public class CompactorMessage implements IMessage {
-    private int slot;
-    private ClickType clickType;
+public class CompactorClearMessage implements IMessage {
 
-    public CompactorMessage() {}
-    public CompactorMessage(int slot, ClickType clickType) {
-        this.slot = slot;
-        this.clickType = clickType;
-    }
-    public int getSlot() { return slot; }
-    public ClickType getClickType() { return clickType; }
+    public CompactorClearMessage() {}
     @Override
     public void fromBytes(ByteBuf buf) {
-        slot = buf.readInt();
-        clickType = ClickType.fromByte(buf.readByte());
+        // no information needed
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(slot);
-        buf.writeByte(clickType.toByte());
+        // no information needed
     }
 
-    public static class Handler implements IMessageHandler<CompactorMessage, IMessage> {
+    public static class Handler implements IMessageHandler<CompactorClearMessage, IMessage> {
         @Override
-        public IMessage onMessage(CompactorMessage message, MessageContext ctx) {
+        public IMessage onMessage(CompactorClearMessage message, MessageContext ctx) {
             IThreadListener mainThread = (WorldServer)ctx.getServerHandler().playerEntity.worldObj;
             mainThread.addScheduledTask(() -> {
                 EntityPlayerMP player = ctx.getServerHandler().playerEntity;
                 Container container = player.openContainer;
                 if (container instanceof ContainerCompactor) {
                     ContainerCompactor containerCompactor = (ContainerCompactor)container;
-                    TileEntityCompactor tec = containerCompactor.getTileEntity();
-                    tec.acceptCompactorMessage(message);
+                    containerCompactor.clearCraftingGrid();
                 }
             });
             return null;

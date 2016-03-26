@@ -1,6 +1,7 @@
 package net.rperce.compactstuff.compactor;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,7 +10,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.rperce.compactstuff.ClickType;
+import net.rperce.compactstuff.MouseButtonType;
 import net.rperce.compactstuff.CommonProxy;
 import net.rperce.compactstuff.CompactStuff;
 import net.rperce.compactstuff.IntRange;
@@ -30,6 +31,12 @@ class GuiCompactor extends GuiContainer {
     }
 
     @Override
+    public void initGui() {
+        super.initGui();
+        this.buttonList.add(new GuiButton(0, this.guiLeft + 63, this.guiTop + 18, 9, 9, "x"));
+    }
+
+    @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         this.fontRendererObj.drawString(tec.getDisplayName().getUnformattedText(), 8, 6, Color.darkGray.getRGB());
         this.mc.renderEngine.bindTexture(GuiCompactor.texture);
@@ -37,7 +44,6 @@ class GuiCompactor extends GuiContainer {
         for (int r = 0; r < 3 ; r++) {
             for (int c = 0; c < 2; c++) {
                 if (tec.getField(r * 2 + c) == 1) {
-                    System.err.println("Beep beep " + r * 2 + c);
                     this.drawTexturedModalRect(
                             x0 + c * 18,
                             y0 + r * 18,
@@ -92,7 +98,14 @@ class GuiCompactor extends GuiContainer {
 
     private void clickPacket(int slot, int button, boolean shift) {
         CommonProxy.networkWrapper.sendToServer(
-                new CompactorMessage(slot, ClickType.from(button, shift))
+                new CompactorClickMessage(slot, MouseButtonType.from(button, shift))
         );
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+        if(button.id == 0) {
+            CommonProxy.networkWrapper.sendToServer(new CompactorClearMessage());
+        }
     }
 }

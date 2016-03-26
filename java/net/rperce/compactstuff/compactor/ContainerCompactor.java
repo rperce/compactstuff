@@ -7,7 +7,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.rperce.compactstuff.IntRange;
 import net.rperce.compactstuff.slots.CraftSlot;
-import net.rperce.compactstuff.slots.GhostSlot;
+import net.rperce.compactstuff.slots.OutputOnlySlot;
 
 import java.util.Optional;
 
@@ -32,10 +32,10 @@ class ContainerCompactor extends Container {
         addSlots(3, 3, this.te, 8, 19, "CraftSlot");
 
         // output slot
-        addSlots(1, 1, this.te, 89, 37, "GhostSlot");
+        addSlots(1, 1, this.te, 89, 37, "OutputOnlySlot");
 
         // compression slots
-        addSlots(3, 2, this.te, 134, 19, "GhostSlot");
+        addSlots(3, 2, this.te, 134, 19, "OutputOnlySlot");
 
         slotID = 0;
         // player hotbar
@@ -64,8 +64,8 @@ class ContainerCompactor extends Container {
                                 this::craftMatrixChanged
                         ));
                         break;
-                    case "GhostSlot":
-                        this.addSlotToContainer(new GhostSlot(
+                    case "OutputOnlySlot":
+                        this.addSlotToContainer(new OutputOnlySlot(
                                 inv, slotID++, startX + 18 * c, startY + 18 * r
                         ));
                         break;
@@ -83,8 +83,12 @@ class ContainerCompactor extends Container {
                 TileEntityCompactor.INVENTORY.contains(index) ||
                 PLAYER_INV.contains(index);
     }
+    private boolean mergeItemStack(ItemStack stack, IntRange range, boolean backwards) {
+        return this.mergeItemStack(stack, range.first(), range.last() + 1, backwards);
+    }
+
     private boolean mergeItemStackFailed(ItemStack stack, IntRange range, boolean backwards) {
-        return !this.mergeItemStack(stack, range.first(), range.last() + 1, backwards);
+        return !this.mergeItemStack(stack, range, backwards);
     }
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
@@ -111,7 +115,7 @@ class ContainerCompactor extends Container {
         return original;
     }
 
-    public void craftMatrixChanged() {
+    private void craftMatrixChanged() {
         Optional<ItemStack> out = CompactorRecipes.findMatchingRecipe(
                 new LocalCrafting(this, TileEntityCompactor.CRAFTING.first()),
                 this.te.getWorld());
@@ -144,12 +148,24 @@ class ContainerCompactor extends Container {
         te.setField(id, data);
     }
 
-    class LocalCrafting extends InventoryCrafting {
-        public LocalCrafting(Container container, int first) {
+    private class LocalCrafting extends InventoryCrafting {
+        LocalCrafting(Container container, int first) {
             super(container, 3, 3);
             for (int i = 0; i < getSizeInventory(); i++) {
                 this.setInventorySlotContents(i, container.inventoryItemStacks.get(i + first));
             }
         }
+    }
+    void clearCraftingGrid() {
+        TileEntityCompactor.CRAFTING.stream().forEach(slotID -> {
+            ItemStack stack = this.getSlot(slotID).getStack();
+            if (stack != null) {
+                if (this.mergeItemStackFailed(stack, PLAYER_INV, false)) {
+                    this.mergeItemStack(stack, TileEntityCompactor.INVENTORY, false);
+                }
+                if (stack.stackSize == 0)
+                    this.getSlot(slotID).putStack(null);
+            }
+        });
     }
 }

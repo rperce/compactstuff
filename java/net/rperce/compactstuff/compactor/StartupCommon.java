@@ -19,8 +19,13 @@ public class StartupCommon extends BaseStartup {
                 new GuiHandlerCompactor(),
                 CompactStuff.GUI_ID_COMPACTOR);
         CommonProxy.networkWrapper.registerMessage(
-                CompactorMessage.Handler.class,
-                CompactorMessage.class,
+                CompactorClickMessage.Handler.class,
+                CompactorClickMessage.class,
+                CompactStuff.nextChannelID(),
+                Side.SERVER);
+        CommonProxy.networkWrapper.registerMessage(
+                CompactorClearMessage.Handler.class,
+                CompactorClearMessage.class,
                 CompactStuff.nextChannelID(),
                 Side.SERVER);
     }

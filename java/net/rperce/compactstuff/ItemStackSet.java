@@ -17,8 +17,10 @@ public class ItemStackSet extends HashSet<ItemStack> {
     public boolean contains(Object o) {
         if (!(o instanceof ItemStack)) return false;
         ItemStack stack = (ItemStack)o;
-        return this.stream()
-                .anyMatch(stack::isItemEqual);
+        for (ItemStack istack : this) {
+            if (stack.isItemEqual(istack)) return true;
+        }
+        return false;
     }
 
     @Override
